@@ -18,6 +18,8 @@ public class Main {
 //		new HoSoFrame("MinhDat").setVisible(true);
 		
 //		new NhaTuyenDungFrame("MinhDat").setVisible(true);
-		new TinTuyenDungFrame("MinhDat").setVisible(true);
+//		new TinTuyenDungFrame("MinhDat").setVisible(true);
+		
+		new TestFrame("MinhDat").setVisible(true);
 	}
 }
