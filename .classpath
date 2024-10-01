@@ -42,15 +42,11 @@
 	<classpathentry kind="lib" path="lib/styled-xml-parser-8.0.3.jar"/>
 	<classpathentry kind="lib" path="lib/svg-8.0.3.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-api-2.0.13.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk-20">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="lib/controlsfx-11.1.2.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk-17"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
