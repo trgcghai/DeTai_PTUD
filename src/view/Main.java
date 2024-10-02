@@ -21,6 +21,6 @@ public class Main {
 //		new TinTuyenDungFrame("MinhDat").setVisible(true);
 		
 		new HopDongFrame("Minh Dat").setVisible(true);
-		new TestFrame("MinhDat").setVisible(true);
+//		new TestFrame("MinhDat").setVisible(true);
 	}
 }
