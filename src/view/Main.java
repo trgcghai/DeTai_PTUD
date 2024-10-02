@@ -11,7 +11,6 @@ public class Main {
 //		new LoginFrame().setVisible(true);
 //		new MainFrame("MinhDat").setVisible(true);
 		
-//		new NhanVienFrame("MinhDat").setVisible(true);
 //		new TaiKhoanFrame("MinhDat").setVisible(true);
 //		
 //		new UngVienFrame("MinhDat").setVisible(true);
@@ -20,7 +19,7 @@ public class Main {
 //		new NhaTuyenDungFrame("MinhDat").setVisible(true);
 //		new TinTuyenDungFrame("MinhDat").setVisible(true);
 		
-		new HopDongFrame("Minh Dat").setVisible(true);
-		new TestFrame("MinhDat").setVisible(true);
+//		new HopDongFrame("Minh Dat").setVisible(true);
+		new NhanVienFrame("MinhDat").setVisible(true);
 	}
 }
