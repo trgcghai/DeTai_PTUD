@@ -423,7 +423,6 @@ public class NhaTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 		moviePanel.add(southPanelMovie,BorderLayout.SOUTH);
 		
 		add(moviePanel);
-
 	}
 	
 //	change
