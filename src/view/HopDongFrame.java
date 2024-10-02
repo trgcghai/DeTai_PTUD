@@ -14,7 +14,15 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Currency;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Properties;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -28,6 +36,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -38,9 +47,13 @@ import javax.swing.SortOrder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 
+import org.apache.commons.math3.util.Pair;
+import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 import org.w3c.dom.events.MouseEvent;
+
+import controller.LabelDateFormatter;
 
 public class HopDongFrame extends JFrame implements MouseListener, ActionListener {
 //	Thanh menu
@@ -78,8 +91,9 @@ public class HopDongFrame extends JFrame implements MouseListener, ActionListene
 //	Component danh sách nhà tuyển dụng
 	JPanel panel, northPanel, centerPanel, sortSearchPanel;
 	JLabel searchLabel;
-	JTextField searchNameText, searchPhoneText, searchDateText, searchFeeText, searchTitleText, searchEmailText;
-//	JComboBox typeMovieText;
+	JTextField searchNameText, searchPhoneText, searchFeeText, searchTitleText, searchEmailText;
+	UtilDateModel modelDate;
+	JDatePickerImpl dateBillText;
 	JFileChooser fileChooser;
 	JButton btnReset, btnSeeDetail, btnSearch;
 	JTable tableContract;
@@ -335,15 +349,22 @@ public class HopDongFrame extends JFrame implements MouseListener, ActionListene
 		
 		gbca.gridx=4;
 		gbca.anchor=GridBagConstraints.EAST;
-		searchLabel=new JLabel("Thời gian:"); 
+		searchLabel=new JLabel("Ngày lập:"); 
 		searchLabel.setFont(new Font("Segoe UI",1,14));
 		searchPanel.add(searchLabel, gbca);
 		
 		gbca.gridx=5; 
 		gbca.anchor=GridBagConstraints.WEST;
-		searchDateText=new JTextField(15); 
-		searchDateText.setFont(new Font("Segoe UI",1,14));
-		searchPanel.add(searchDateText, gbca);
+		modelDate = new UtilDateModel();
+		Properties properties = new Properties();
+        properties.put("text.today", "Today");
+        properties.put("text.month", "Month");
+        properties.put("text.year", "Year");
+        JDatePanelImpl panelDateBill = new JDatePanelImpl(modelDate, properties);
+        dateBillText = new JDatePickerImpl(panelDateBill, new LabelDateFormatter());
+        dateBillText.setPreferredSize(new Dimension(190,20));
+        searchPanel.add(dateBillText, gbca);
+		
 		
 		sortSearchPanel.add(searchPanel);
 		northPanel.add(sortSearchPanel);
@@ -370,6 +391,19 @@ public class HopDongFrame extends JFrame implements MouseListener, ActionListene
 //		Table nhà tuyển dụng
 		String[] colNameEmp= {"Mã hợp đồng","Tên ứng viên","Số điện thoại","Email","Tin tuyển dụng","Phí dịch vụ", "Ngày lập"};
 		modeltableContract= new DefaultTableModel(colNameEmp,0);
+		
+		for (int i = 0; i < 10; i++) {
+			LocalDate now = LocalDate.now().plusDays(i);
+			int fee = 10000 * i + 10000;
+			
+			DecimalFormat numFormatter = new DecimalFormat("#,##0 VND");
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+	
+			modeltableContract.addRow(new Object[] {"00" + String.valueOf(i), "Truong Cong Hai" + String.valueOf(i), "0909974843" + String.valueOf(i), 
+					"email" + String.valueOf(i) + "@gmail.com", "tin " + String.valueOf(i), numFormatter.format(fee), now.format(formatter)});
+		}
+		
+		
 		tableContract=new JTable(modeltableContract);
 		tableContract.getTableHeader().setFont(new Font("Segoe UI",1,14));
 		tableContract.setFont(new Font("Segoe UI",1,14));
@@ -377,7 +411,7 @@ public class HopDongFrame extends JFrame implements MouseListener, ActionListene
 		ArrayList<RowSorter.SortKey> list = new ArrayList<>();
         DefaultRowSorter sorter = ((DefaultRowSorter)tableContract.getRowSorter());
         sorter.setSortsOnUpdates(true);
-        list.add( new RowSorter.SortKey(6, SortOrder.DESCENDING));
+        list.add(new RowSorter.SortKey(6, SortOrder.ASCENDING));
         sorter.setSortKeys(list);
         sorter.sort();
         
@@ -403,6 +437,61 @@ public class HopDongFrame extends JFrame implements MouseListener, ActionListene
 		btnReset.addActionListener(this);
 		btnSearch.addActionListener(this);
 		btnSeeDetail.addActionListener(this);
+		tableContract.addMouseListener(this);
+	}
+	
+	public ArrayList<String> Validate() {
+		String name = searchNameText.getText().trim();
+		String phone = searchPhoneText.getText().trim();
+		String fee = searchFeeText.getText().trim();
+		String title = searchTitleText.getText().trim();
+		String email = searchEmailText.getText().trim();
+		Date date = modelDate.getValue();
+		
+		ArrayList<String> res = new ArrayList<String>();
+		res.add("name");
+		res.add("phone");
+		res.add("fee");
+		res.add("title");
+		res.add("email");
+		
+		if (name.length() == 0 && phone.length() == 0 && fee.length() == 0 && title.length() == 0 && email.length() == 0 && date == null) {
+			for (int i = 0; i < res.size(); i++) {
+				res.remove(i);
+			}
+		}
+		
+		if (name.matches("^[\\W\\d]+$")) {
+			JOptionPane.showMessageDialog(this, "Tên không thể có kí tự đặc biệt hoặc số");
+			searchNameText.requestFocus();
+			res.remove(0);
+		}
+		
+		if (!phone.matches("^[\\d]*$")) {
+			JOptionPane.showMessageDialog(this, "Số điện thoại không hợp lệ");
+			searchPhoneText.requestFocus();
+			res.remove(1);
+		}
+
+		if (!fee.matches("^[\\d]*$")) {
+			JOptionPane.showMessageDialog(this, "Phí không hợp lệ");
+			searchFeeText.requestFocus();
+			res.remove(2);
+		}
+		
+		if (title.matches("^[\\W]+$")) {
+			JOptionPane.showMessageDialog(this, "Tiêu đề không thể có kí tự đặc biệt hoặc số");
+			searchTitleText.requestFocus();
+			res.remove(3);
+		}
+		
+		if (email.length() != 0 && !email.matches("^[a-zA-Z0-9]{1,}@gmail.(com|vn|yahoo)")) {
+			JOptionPane.showMessageDialog(this, "Email không hợp lệ");
+			searchEmailText.requestFocus();
+			res.remove(4);
+		}
+		
+		return res;
 	}
 	
 	@Override
@@ -413,7 +502,7 @@ public class HopDongFrame extends JFrame implements MouseListener, ActionListene
 
 			searchNameText.setText("");
 			searchPhoneText.setText("");
-			searchDateText.setText("");
+			modelDate.setValue(null);
 			searchFeeText.setText("");
 			searchTitleText.setText("");
 			searchEmailText.setText("");
@@ -421,16 +510,30 @@ public class HopDongFrame extends JFrame implements MouseListener, ActionListene
 			searchNameText.requestFocus();
 			
 		} else if (o.equals(btnSearch)) {
-			System.out.println("tim kiem");
+			
+//			String name = searchNameText.getText().trim();
+//			String phone = searchPhoneText.getText().trim();
+//			String fee = searchFeeText.getText().trim();
+//			String title = searchTitleText.getText().trim();
+//			String email = searchEmailText.getText().trim();
+//			Date date = modelDate.getValue();
+			
+			ArrayList<String> searches = Validate();
+			
+			StringBuilder queryBuilder = new StringBuilder();
+			searches.forEach(item -> queryBuilder.append(item).append(" "));
+			System.out.println(queryBuilder.toString());
+			
 		} else if (o.equals(btnSeeDetail)) {
+			
 			System.out.println("xem chi tiet");
+			
 		}
 	}
 
 	@Override
 	public void mouseClicked(java.awt.event.MouseEvent e) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
