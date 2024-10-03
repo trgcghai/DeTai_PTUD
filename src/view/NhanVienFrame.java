@@ -41,8 +41,9 @@ import controller.ComboBoxRenderer;
 import controller.Database;
 import controller.ExcelHelper;
 import controller.FilterImp;
-import controller.LabelDateFormatter;
-import controller.UpdateDeleteCellRenderer;
+import controller.action.TableActionEvent;
+import controller.action.TableCellEditorUpdateDelete;
+import controller.action.TableCellRendererUpdateDelete;
 import dao.TaiKhoan_DAO;
 import dao.NhanVien_DAO;
 import entity.TaiKhoan;
@@ -85,6 +86,9 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
 		
 //		Tạo component bên phải
 		initComponent();
+
+//		Thêm update và delete vào table
+		addTableActionEvent();
 		
 //		Thêm vào frame
 		add(leftPanel, BorderLayout.WEST);
@@ -197,20 +201,23 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
 		danhsachCenterPanel.setBackground(Color.WHITE);
 		String[] colName= {"Mã nhân viên","Tên nhân viên","Số điện thoại","Ngày vào làm","Vai trò","Hành động"};
 		Object[][] data = {
-			    {1, "MinhDat", "01234567", "13/12/2003", "Admin", ""},
-			    {2, "ThangDat", "07654321", "13/12/2003", "Nhân viên",""}
+			    {1, "MinhDat", "01234567", "13/12/2003", "Admin", null},
+			    {2, "ThangDat", "07654321", "13/12/2003", "Nhân viên",null}
 			};
 		modelTableNhanVien= new DefaultTableModel(data, colName){
+			 boolean[] canEdit = new boolean [] {
+		                false, false, false, false, false, true
+		            };
+			
             @Override
             public boolean isCellEditable(int row, int column) {
-               return false;
+               return canEdit[column];
             }
         };
 		tableNhanVien=new JTable(modelTableNhanVien);
 		tableNhanVien.getTableHeader().setFont(new Font("Segoe UI",1,14));
 		tableNhanVien.setFont(new Font("Segoe UI",0,16));
 		tableNhanVien.setRowHeight(30);
-		tableNhanVien.getColumnModel().getColumn(5).setCellRenderer(new UpdateDeleteCellRenderer());
 		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
 		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
 		for(int i=0;i<tableNhanVien.getColumnCount()-1;i++) {
@@ -241,6 +248,37 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
 		
 		nhanvienPanel.add(northPanelNhanVien, BorderLayout.NORTH);
 		nhanvienPanel.add(centerPanelNhanVien, BorderLayout.CENTER);
+	}
+	
+	public void addTableActionEvent() {
+		TableActionEvent event=new TableActionEvent() {
+			@Override
+			public void onUpdate(int row) {
+				// TODO Auto-generated method stub
+				JOptionPane.showMessageDialog(rootPane, "Chức năng cập nhật nhân viên đang hoàn thiện");
+			}
+			
+			@Override
+			public void onDelete(int row) {
+				// TODO Auto-generated method stub
+				JOptionPane.showMessageDialog(rootPane, "Chức năng xóa nhân viên đang hoàn thiện");
+			}
+
+			@Override
+			public void onViewHoSo(int row) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onCreateHoSo(int row) {
+				// TODO Auto-generated method stub
+				
+			}
+		};
+		
+		tableNhanVien.getColumnModel().getColumn(5).setCellRenderer(new TableCellRendererUpdateDelete());
+		tableNhanVien.getColumnModel().getColumn(5).setCellEditor(new TableCellEditorUpdateDelete(event));
 	}
 	
 //	Trạng thái text chuột không nằm trong ô

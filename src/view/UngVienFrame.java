@@ -42,8 +42,11 @@ import controller.Database;
 import controller.ExcelHelper;
 import controller.FilterImp;
 import controller.LabelDateFormatter;
-import controller.UpdateDeleteCellRenderer;
-import controller.ViewCreateCellRenderer;
+import controller.action.TableActionEvent;
+import controller.action.TableCellEditorUpdateDelete;
+import controller.action.TableCellEditorViewCreateHoSo;
+import controller.action.TableCellRendererUpdateDelete;
+import controller.action.TableCellRendererViewCreateHoSo;
 import dao.TaiKhoan_DAO;
 import dao.NhanVien_DAO;
 import entity.TaiKhoan;
@@ -59,6 +62,7 @@ import exception.checkUserPass;
 public class UngVienFrame extends JFrame implements ActionListener, MouseListener, FocusListener {
 	
 	String userName;
+	UngVienFrame parent;
 	
 //	Component danh sách ứng viên
 	JPanel leftPanel,menuPanel,
@@ -81,12 +85,16 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 		setLayout(new BorderLayout());
 		
 		this.userName=userName;
+		this.parent=this;
 		
 //		Tạo menu bar bên trái
 		initLeft();
 		
 //		Tạo component bên phải
 		initComponent();
+		
+//		Thêm update và delete vào table
+		addTableActionEvent();
 		
 //		Thêm vào frame
 		add(leftPanel, BorderLayout.WEST);
@@ -203,17 +211,19 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 			    {2, "ThangDat", "07654321", "def@gmail.com","",""}
 			};
 		modelTableUngVien= new DefaultTableModel(data, colName){
+			boolean[] canEdit = new boolean [] {
+	                false, false, false, false, true, true
+	            };
+			
             @Override
             public boolean isCellEditable(int row, int column) {
-               return false;
+               return canEdit[column];
             }
         };
 		tableUngVien=new JTable(modelTableUngVien);
 		tableUngVien.getTableHeader().setFont(new Font("Segoe UI",1,14));
 		tableUngVien.setFont(new Font("Segoe UI",0,16));
 		tableUngVien.setRowHeight(30);
-		tableUngVien.getColumnModel().getColumn(4).setCellRenderer(new UpdateDeleteCellRenderer());
-		tableUngVien.getColumnModel().getColumn(5).setCellRenderer(new ViewCreateCellRenderer());
 		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
 		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
 		for(int i=0;i<tableUngVien.getColumnCount()-2;i++) {
@@ -244,6 +254,40 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 		
 		ungvienPanel.add(northPanelUngVien, BorderLayout.NORTH);
 		ungvienPanel.add(centerPanelUngVien, BorderLayout.CENTER);
+	}
+	
+	public void addTableActionEvent() {
+		TableActionEvent event=new TableActionEvent() {
+			@Override
+			public void onUpdate(int row) {
+				// TODO Auto-generated method stub
+				JOptionPane.showMessageDialog(rootPane, "Chức năng cập nhật ứng viên đang hoàn thiện");
+			}
+			
+			@Override
+			public void onDelete(int row) {
+				// TODO Auto-generated method stub
+				JOptionPane.showMessageDialog(rootPane, "Chức năng xóa ứng viên đang hoàn thiện");
+			}
+
+			@Override
+			public void onViewHoSo(int row) {
+				// TODO Auto-generated method stub
+				JOptionPane.showMessageDialog(rootPane, "Chức năng xem hồ sơ ứng viên đang hoàn thiện");
+			}
+
+			@Override
+			public void onCreateHoSo(int row) {
+				// TODO Auto-generated method stub
+				new TaoHoSoDialog(parent, rootPaneCheckingEnabled).setVisible(true);
+			}
+		};
+		
+		tableUngVien.getColumnModel().getColumn(4).setCellRenderer(new TableCellRendererUpdateDelete());
+		tableUngVien.getColumnModel().getColumn(4).setCellEditor(new TableCellEditorUpdateDelete(event));
+		
+		tableUngVien.getColumnModel().getColumn(5).setCellRenderer(new TableCellRendererViewCreateHoSo());
+		tableUngVien.getColumnModel().getColumn(5).setCellEditor(new TableCellEditorViewCreateHoSo(event));
 	}
 	
 //	Trạng thái text chuột không nằm trong ô

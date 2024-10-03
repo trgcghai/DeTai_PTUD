@@ -25,7 +25,7 @@ public class Main {
 //		new ThemSuaNhanVienDialog(new NhanVienFrame("MinhDat"),true).setVisible(true);
 //		frame cấp tài khoản
 		
-//		new UngVienFrame("MinhDat").setVisible(true);
+		new UngVienFrame("MinhDat").setVisible(true);
 //		new ThemSuaUngVienDialog(new UngVienFrame("MinhDat"),true).setVisible(true);
 //		new TaoHoSoDialog(new UngVienFrame("MinhDat"),true).setVisible(true);
 //		frame hiển thị danh sách hồ sơ ứng viên
