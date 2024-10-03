@@ -20,7 +20,6 @@ public class Main {
 //		new TinTuyenDungFrame("MinhDat").setVisible(true);
 
 //		new HopDongFrame("Minh Dat").setVisible(true);
-		new NhanVienFrame("MinhDat").setVisible(true);
-
+		new ThongKeNhanVienFrame("MinhDat").setVisible(true);
 	}
 }
