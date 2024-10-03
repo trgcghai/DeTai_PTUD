@@ -49,7 +49,6 @@ import controller.MultiComponentCellRenderer;
 public class ThongKeNhanVienFrame extends JFrame implements ActionListener, MouseListener, FocusListener{
 	
 //	Thanh menu
-	JMenuBar menuBar;
 	JPanel imgMain;
 	String userName;
 //	Nhân viên
@@ -105,10 +104,6 @@ public class ThongKeNhanVienFrame extends JFrame implements ActionListener, Mous
 		this.userName=userName;
 		
 //		Tạo menu bar bên trái
-<<<<<<< HEAD
-=======
-		initMenu();
->>>>>>> 81a3eeaa395cf9ecf35031cfdbd93ba43ef917b1
 		initLeft();
 		
 //		Tạo component bên phải
@@ -122,61 +117,7 @@ public class ThongKeNhanVienFrame extends JFrame implements ActionListener, Mous
 //		addActionListener();
 //		addMouseListener();
 //		addFocusListener();
-<<<<<<< HEAD
-=======
 		
-	}
-	
-	public void initMenu() {
-		menuBar=new JMenuBar();
-		menuBar.setLayout(new GridLayout(0, 1));
-		menuBar.setBackground(Color.WHITE);
-		
-		menuNhanVien=new JMenu("Nhân viên");  
-		menuNhanVien.setFont(new Font("Segoe UI",0,16)); 
-		menuNhanVien.setIcon(new ImageIcon(getClass().getResource("/image/nhanvien.png")));
-		
-		menuTaiKhoan=new JMenu("Tài khoản"); menuTaiKhoan.setFont(new Font("Segoe UI",0,16));
-		menuTaiKhoan.setIcon(new ImageIcon(getClass().getResource("/image/taikhoan.png")));
-		
-		menuUngVien=new JMenu("Ứng viên");
-		menuUngVien.setFont(new Font("Segoe UI",0,16)); 
-		menuUngVien.setIcon(new ImageIcon(getClass().getResource("/image/ungvien.png")));
-		
-		menuHoSo=new JMenu("Hồ sơ");
-		menuHoSo.setFont(new Font("Segoe UI",0,16)); 
-		menuHoSo.setIcon(new ImageIcon(getClass().getResource("/image/hoso.png")));
-		
-		menuNhaTuyenDung=new JMenu("Nhà tuyển dụng");
-		menuNhaTuyenDung.setFont(new Font("Segoe UI",0,16));
-		menuNhaTuyenDung.setIcon(new ImageIcon(getClass().getResource("/image/nhatuyendung.png")));
-		
-		menuTinTuyenDung=new JMenu("Tin tuyển dụng");
-		menuTinTuyenDung.setFont(new Font("Segoe UI",0,16)); 
-		menuTinTuyenDung.setIcon(new ImageIcon(getClass().getResource("/image/tintuyendung.png")));
-		
-		menuHopDong=new JMenu("Hợp đồng");
-		menuHopDong.setFont(new Font("Segoe UI",0,16));
-		menuHopDong.setIcon(new ImageIcon(getClass().getResource("/image/hopdong.png")));
-		
-		menuTimViecLam=new JMenu("Tìm việc làm");
-		menuTimViecLam.setFont(new Font("Segoe UI",0,16));
-		menuTimViecLam.setIcon(new ImageIcon(getClass().getResource("/image/timviec.png")));
-		
-		menuThongKe=new JMenu("Thống kê");
-		menuThongKe.setFont(new Font("Segoe UI",0,16));
-		menuThongKe.setIcon(new ImageIcon(getClass().getResource("/image/thongke.png")));
-		
-		menuBar.add(menuNhanVien);
-		menuBar.add(menuTaiKhoan);
-		menuBar.add(menuUngVien);
-		menuBar.add(menuHoSo);
-		menuBar.add(menuNhaTuyenDung);
-		menuBar.add(menuTinTuyenDung);
-		menuBar.add(menuHopDong);
-		menuBar.add(menuTimViecLam);
-		menuBar.add(menuThongKe);
->>>>>>> 81a3eeaa395cf9ecf35031cfdbd93ba43ef917b1
 	}
 	
 	public void initLeft() {
