@@ -19,9 +19,18 @@ public class Main {
 //		new NhaTuyenDungFrame("MinhDat").setVisible(true);
 //		new TinTuyenDungFrame("MinhDat").setVisible(true);
 //		new HopDongFrame("Minh Dat").setVisible(true);
-
-		new NhanVienFrame("MinhDat").setVisible(true);
+		
+//============================================================================================
+//		new NhanVienFrame("MinhDat").setVisible(true);
+//		new ThemSuaNhanVienDialog(new NhanVienFrame("MinhDat"),true).setVisible(true);
+//		frame cấp tài khoản
+		
 //		new UngVienFrame("MinhDat").setVisible(true);
+//		new ThemSuaUngVienDialog(new UngVienFrame("MinhDat"),true).setVisible(true);
+//		new TaoHoSoDialog(new UngVienFrame("MinhDat"),true).setVisible(true);
+//		frame hiển thị danh sách hồ sơ ứng viên
+//============================================================================================		
 
+//		new ThongKeNhanVienFrame("MinhDat").setVisible(true);
 	}
 }

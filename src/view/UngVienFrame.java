@@ -42,7 +42,8 @@ import controller.Database;
 import controller.ExcelHelper;
 import controller.FilterImp;
 import controller.LabelDateFormatter;
-import controller.MultiComponentCellRenderer;
+import controller.UpdateDeleteCellRenderer;
+import controller.ViewCreateCellRenderer;
 import dao.TaiKhoan_DAO;
 import dao.NhanVien_DAO;
 import entity.TaiKhoan;
@@ -56,29 +57,8 @@ import exception.checkUserName;
 import exception.checkUserPass;
 
 public class UngVienFrame extends JFrame implements ActionListener, MouseListener, FocusListener {
-//	Thanh menu
-	JMenuBar menuBar;
-	JPanel imgMain;
+	
 	String userName;
-//	Nhân viên
-	JMenu menuNhanVien;
-//	Tài khoản
-	JMenu menuTaiKhoan;
-//	Ứng viên
-	JMenu menuUngVien;
-// 	Hồ sơ
-	JMenu menuHoSo;
-// 	Nhà tuyển dụng
-	JMenu menuNhaTuyenDung;
-// 	Tin tuyển dụng
-	JMenu menuTinTuyenDung;
-// 	Hợp đồng
-	JMenu menuHopDong;
-//	Tìm việc làm
-	JMenu menuTimViecLam;
-// 	Thống kê
-	JMenu menuThongKe;
-
 	
 //	Component danh sách ứng viên
 	JPanel leftPanel,menuPanel,
@@ -86,11 +66,11 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 		danhsachPanel, danhsachNorthPanel, danhsachCenterPanel;
 	JLabel userLabel, iconUserLabel,timkiemTenLabel, timkiemSDTLabel, titleNhanVien,vaitroLeftLabel;
 	JTextField timkiemTenText, timkiemSDTText;
-	JButton btnTimKiem, btnLamLai,btnThem;
+	JButton btnTimKiem, btnLamLai,btnThem,btnLuu;
 	JTable tableUngVien;
 	DefaultTableModel modelTableUngVien;
 	JScrollPane scrollUngVien;
-	Icon iconBtnAdd;
+	Icon iconBtnAdd,iconBtnSave;
 	
 	
 	public UngVienFrame(String userName) {
@@ -103,7 +83,6 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 		this.userName=userName;
 		
 //		Tạo menu bar bên trái
-		initMenu();
 		initLeft();
 		
 //		Tạo component bên phải
@@ -118,57 +97,6 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 		addMouseListener();
 		addFocusListener();
 		
-	}
-	
-	public void initMenu() {
-		menuBar=new JMenuBar();
-		menuBar.setLayout(new GridLayout(0, 1));
-		menuBar.setBackground(Color.WHITE);
-		
-		menuNhanVien=new JMenu("Nhân viên");  
-		menuNhanVien.setFont(new Font("Segoe UI",0,16)); 
-		menuNhanVien.setIcon(new ImageIcon(getClass().getResource("/image/nhanvien.png")));
-		
-		menuTaiKhoan=new JMenu("Tài khoản"); menuTaiKhoan.setFont(new Font("Segoe UI",0,16));
-		menuTaiKhoan.setIcon(new ImageIcon(getClass().getResource("/image/taikhoan.png")));
-		
-		menuUngVien=new JMenu("Ứng viên");
-		menuUngVien.setFont(new Font("Segoe UI",0,16)); 
-		menuUngVien.setIcon(new ImageIcon(getClass().getResource("/image/ungvien.png")));
-		
-		menuHoSo=new JMenu("Hồ sơ");
-		menuHoSo.setFont(new Font("Segoe UI",0,16)); 
-		menuHoSo.setIcon(new ImageIcon(getClass().getResource("/image/hoso.png")));
-		
-		menuNhaTuyenDung=new JMenu("Nhà tuyển dụng");
-		menuNhaTuyenDung.setFont(new Font("Segoe UI",0,16));
-		menuNhaTuyenDung.setIcon(new ImageIcon(getClass().getResource("/image/nhatuyendung.png")));
-		
-		menuTinTuyenDung=new JMenu("Tin tuyển dụng");
-		menuTinTuyenDung.setFont(new Font("Segoe UI",0,16)); 
-		menuTinTuyenDung.setIcon(new ImageIcon(getClass().getResource("/image/tintuyendung.png")));
-		
-		menuHopDong=new JMenu("Hợp đồng");
-		menuHopDong.setFont(new Font("Segoe UI",0,16));
-		menuHopDong.setIcon(new ImageIcon(getClass().getResource("/image/hopdong.png")));
-		
-		menuTimViecLam=new JMenu("Tìm việc làm");
-		menuTimViecLam.setFont(new Font("Segoe UI",0,16));
-		menuTimViecLam.setIcon(new ImageIcon(getClass().getResource("/image/timviec.png")));
-		
-		menuThongKe=new JMenu("Thống kê");
-		menuThongKe.setFont(new Font("Segoe UI",0,16));
-		menuThongKe.setIcon(new ImageIcon(getClass().getResource("/image/thongke.png")));
-		
-		menuBar.add(menuNhanVien);
-		menuBar.add(menuTaiKhoan);
-		menuBar.add(menuUngVien);
-		menuBar.add(menuHoSo);
-		menuBar.add(menuNhaTuyenDung);
-		menuBar.add(menuTinTuyenDung);
-		menuBar.add(menuHopDong);
-		menuBar.add(menuTimViecLam);
-		menuBar.add(menuThongKe);
 	}
 	
 	public void initLeft() {
@@ -187,7 +115,7 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 		menuPanel=new JPanel(); 
 		menuPanel.setLayout(new BorderLayout()); menuPanel.setBackground(Color.WHITE);
 		menuPanel.add(vaitroLeftLabel, BorderLayout.NORTH);
-		menuPanel.add(menuBar, BorderLayout.CENTER);
+		menuPanel.add(new Navbar(), BorderLayout.CENTER);
 		menuPanel.add(res, BorderLayout.SOUTH);
 		
 		leftPanel.add(menuPanel);
@@ -247,6 +175,7 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 		danhsachNorthPanel.setLayout(new BorderLayout(10,10));
 		danhsachNorthPanel.setBackground(Color.WHITE);
 		iconBtnAdd=new ImageIcon(getClass().getResource("/image/add.png"));
+		iconBtnSave=new ImageIcon(getClass().getResource("/image/save.png"));
 		JPanel resBtnThem=new JPanel();
 		resBtnThem.setBorder(BorderFactory.createEmptyBorder(10,10,0,20));
 		resBtnThem.setBackground(Color.WHITE);
@@ -254,7 +183,11 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 		btnThem.setPreferredSize(new Dimension(140,30));
 		btnThem.setBackground(new Color(0,102,102));
 		btnThem.setForeground(Color.WHITE);
-		resBtnThem.add(btnThem);
+		btnLuu=new JButton("Xuất Excel", iconBtnSave); btnLuu.setFont(new Font("Segoe UI",0,16));
+		btnLuu.setPreferredSize(new Dimension(140,30));
+		btnLuu.setBackground(new Color(51,51,255));
+		btnLuu.setForeground(Color.WHITE);
+		resBtnThem.add(btnThem); resBtnThem.add(btnLuu);
 		titleNhanVien=new JLabel("Danh sách ứng viên");
 		titleNhanVien.setFont(new Font("Segoe UI",1,16));
 		titleNhanVien.setBorder(BorderFactory.createEmptyBorder(10,20,0,10));
@@ -279,7 +212,8 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 		tableUngVien.getTableHeader().setFont(new Font("Segoe UI",1,14));
 		tableUngVien.setFont(new Font("Segoe UI",0,16));
 		tableUngVien.setRowHeight(30);
-		tableUngVien.getColumnModel().getColumn(4).setCellRenderer(new MultiComponentCellRenderer());
+		tableUngVien.getColumnModel().getColumn(4).setCellRenderer(new UpdateDeleteCellRenderer());
+		tableUngVien.getColumnModel().getColumn(5).setCellRenderer(new ViewCreateCellRenderer());
 		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
 		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
 		for(int i=0;i<tableUngVien.getColumnCount()-2;i++) {
