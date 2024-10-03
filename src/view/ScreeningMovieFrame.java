@@ -843,7 +843,7 @@ public class ScreeningMovieFrame extends JFrame implements ActionListener, Mouse
 			this.dispose();
 		}
 		else if(obj.equals(itemUpdateCustomer)) {
-			new UngVienFrame(userName).setVisible(true);
+			new UngVienTestFrame(userName).setVisible(true);
 			this.dispose();
 		}
 		else if(obj.equals(itemListMovie)) {

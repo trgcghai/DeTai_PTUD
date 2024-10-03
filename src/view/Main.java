@@ -13,14 +13,15 @@ public class Main {
 		
 //		new TaiKhoanFrame("MinhDat").setVisible(true);
 //		
-//		new UngVienFrame("MinhDat").setVisible(true);
+//		new UngVienTestFrame("MinhDat").setVisible(true);
 //		new HoSoFrame("MinhDat").setVisible(true);
 		
 //		new NhaTuyenDungFrame("MinhDat").setVisible(true);
 //		new TinTuyenDungFrame("MinhDat").setVisible(true);
-
 //		new HopDongFrame("Minh Dat").setVisible(true);
+
 		new NhanVienFrame("MinhDat").setVisible(true);
+//		new UngVienFrame("MinhDat").setVisible(true);
 
 	}
 }

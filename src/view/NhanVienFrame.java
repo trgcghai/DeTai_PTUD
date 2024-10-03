@@ -78,26 +78,15 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
 	JMenu menuTimViecLam;
 // 	Thống kê
 	JMenu menuThongKe;
-//	JMenuItem itemTKNhanVien, itemTKCongTy, itemTKHoSo, itemTKTinTuyenDung;
-// 	Hệ thống
-	JMenu menuUser;
-	JMenuItem itemHome, itemLogout;
+
 	
 //	Component danh sách nhân viên
 	JPanel leftPanel,menuPanel,
 		nhanvienPanel,northPanelNhanVien, centerPanelNhanVien, timkiemPanel,
 		danhsachPanel, danhsachNorthPanel, danhsachCenterPanel;
-	JLabel userLabel, iconUserLabel,
-		timkiemTenLabel, timkiemSDTLabel, titleNhanVien,
-		vaitroLeftLabel,
-		idNVLabel, nameLabel, dateLabel, addressLabel, phoneLabel, dateWorkLabel, genderLabel, passLabel, vaitroLabel;
-	JTextField timkiemTenText, timkiemSDTText,
-		idNVText, nameText, addressText, phoneText, userNameText, passText;
-	JDatePickerImpl dateText, dateWorkText;
-	UtilDateModel modelDate, modelDateWork;
-	JComboBox genderText, timkiemText, timkiem;
-	JButton btnTimKiem, btnLamLai,
-		btnResetEmp, btnThem, btnEditEmp, btnDeleteEmp, btnSaveEmp, btnSearch;
+	JLabel userLabel, iconUserLabel,timkiemTenLabel, timkiemSDTLabel, titleNhanVien,vaitroLeftLabel;
+	JTextField timkiemTenText, timkiemSDTText;
+	JButton btnTimKiem, btnLamLai,btnThem;
 	JTable tableNhanVien;
 	DefaultTableModel modelTableNhanVien;
 	JScrollPane scrollNhanVien;

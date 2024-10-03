@@ -1134,7 +1134,7 @@ public class BookTicketFrame extends JFrame implements FocusListener, ActionList
 			this.dispose();
 		}
 		else if(obj.equals(itemUpdateCustomer)) {
-			new UngVienFrame(userName).setVisible(true);
+			new UngVienTestFrame(userName).setVisible(true);
 			this.dispose();
 		}
 		else if(obj.equals(itemListMovie)) {

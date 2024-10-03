@@ -73,7 +73,7 @@ import exception.checkUserName;
 import exception.checkUserPass;
 
 
-public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseListener{
+public class TinTuyenDungTestFrame extends JFrame implements ActionListener, MouseListener{
 //	Thanh menu
 	JMenuBar menuBar;
 	JPanel imgMain;
@@ -122,7 +122,7 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 	JDatePickerImpl start, end;
 	
 	
-	public TinTuyenDungFrame(String userName) {
+	public TinTuyenDungTestFrame(String userName) {
 		setTitle("Danh sách tin tuyển dụng");
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
 		setLocationRelativeTo(null);
