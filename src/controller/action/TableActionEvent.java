@@ -5,4 +5,5 @@ public interface TableActionEvent {
     public void onDelete(int row);
     public void onViewHoSo(int row);
     public void onCreateHoSo(int row);
+    public void onCreateTaiKhoan(int row);
 }

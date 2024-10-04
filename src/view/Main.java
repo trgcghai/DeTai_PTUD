@@ -11,7 +11,7 @@ public class Main {
 //		new LoginFrame().setVisible(true);
 //		new MainFrame("MinhDat").setVisible(true);
 		
-//		new TaiKhoanFrame("MinhDat").setVisible(true);
+		new TaiKhoanFrame("MinhDat").setVisible(true);
 //		
 //		new UngVienTestFrame("MinhDat").setVisible(true);
 //		new HoSoFrame("MinhDat").setVisible(true);
@@ -22,10 +22,8 @@ public class Main {
 		
 //============================================================================================
 //		new NhanVienFrame("MinhDat").setVisible(true);
-//		new ThemSuaNhanVienDialog(new NhanVienFrame("MinhDat"),true).setVisible(true);
-//		frame cấp tài khoản
+//		new UngVienFrame("MinhDat").setVisible(true);
 		
-		new UngVienFrame("MinhDat").setVisible(true);
 //		new ThemSuaUngVienDialog(new UngVienFrame("MinhDat"),true).setVisible(true);
 //		new TaoHoSoDialog(new UngVienFrame("MinhDat"),true).setVisible(true);
 //		frame hiển thị danh sách hồ sơ ứng viên

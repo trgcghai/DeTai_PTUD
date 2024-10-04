@@ -28,37 +28,31 @@ import controller.LabelDateFormatter;
 import entity.constraint.GioiTinh;
 import entity.constraint.VaiTro;
 
-public class ThemSuaNhanVienDialog extends JDialog {
+public class CapTaiKhoanDialog extends JDialog {
 	
 	JPanel inforNhanVienPanel, btnPanel;
-	JLabel idLabel, tenLabel, sdtLabel, dateLabel, gioitinhLabel, diachiLabel, dateWorkLabel, vaitroLabel;
-	JTextField idText, tenText, sdtText, diachiText;
+	JLabel idLabel, tenLabel, sdtLabel, dateLabel, gioitinhLabel, diachiLabel, dateWorkLabel, vaitroLabel,
+			tendnLabel, matkhauLabel;
+	JTextField idText, tenText, sdtText, diachiText,tendnText, matkhauText;
 	JComboBox gioitinhText, vaitroText;
 	UtilDateModel modelDate, modelDateWork;
 	JDatePickerImpl dateText, dateWorkText;
 	JButton btnThem, btnHuy;
 	GridBagConstraints gbc;
 
-	public ThemSuaNhanVienDialog(Frame parent, boolean modal) {
+	public CapTaiKhoanDialog(Frame parent, boolean modal) {
 		super(parent, modal);
-		setTitle("Thêm mới nhân viên");
+		setTitle("Cấp tài khoản nhân viên");
 		setResizable(false);
-		setSize(550,400);
+		setSize(750,450);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setLayout(new BorderLayout());
 		setLocationRelativeTo(null);
 		
-		initComponentThem();
+		initComponent();
 	}
 	
-	public ThemSuaNhanVienDialog(Frame parent, boolean modal, boolean check) {
-		this(parent, modal);
-		setTitle("Cập nhật nhân viên");
-		
-		initComponentSua();
-	}
-	
-	public void initComponentThem() {
+	public void initComponent() {
 		inforNhanVienPanel=new JPanel(); 
 		inforNhanVienPanel.setBackground(Color.WHITE);
 		inforNhanVienPanel.setLayout(new GridBagLayout());
@@ -67,7 +61,7 @@ public class ThemSuaNhanVienDialog extends JDialog {
 		
 //		Thông tin nhân viên
 		gbc.gridx=0; gbc.gridy=0; gbc.insets=new Insets(5, 10, 5, 10); gbc.anchor=GridBagConstraints.WEST;
-		idLabel=new JLabel("Mã nhân viên"); idLabel.setFont(new Font("Segoe UI",0,16));
+		idLabel=new JLabel("Mã tài khoản"); idLabel.setFont(new Font("Segoe UI",0,16));
 		inforNhanVienPanel.add(idLabel, gbc);
 		gbc.gridx=0; gbc.gridy=1;
 		idText=new JTextField(10); idText.setFont(new Font("Segoe UI",0,16));
@@ -75,10 +69,23 @@ public class ThemSuaNhanVienDialog extends JDialog {
 		inforNhanVienPanel.add(idText, gbc);
 		
 		gbc.gridx=1; gbc.gridy=0;
-		tenLabel=new JLabel("Họ tên"); tenLabel.setFont(new Font("Segoe UI",0,16));
-		inforNhanVienPanel.add(tenLabel, gbc);
+		vaitroLabel=new JLabel("Vai trò"); vaitroLabel.setFont(new Font("Segoe UI",0,16));
+		inforNhanVienPanel.add(vaitroLabel, gbc);
 		gbc.gridx=1; gbc.gridy=1;
+		vaitroText=new JComboBox(); vaitroText.setFont(new Font("Segoe UI",0,16));
+		VaiTro[] vaitros=VaiTro.class.getEnumConstants();
+		for(VaiTro v: vaitros) {
+			vaitroText.addItem(v.getValue());
+		}
+		vaitroText.setPreferredSize(new Dimension(150,25));
+		inforNhanVienPanel.add(vaitroText, gbc);
+		
+		gbc.gridx=2; gbc.gridy=0;
+		tenLabel=new JLabel("Họ tên nhân viên"); tenLabel.setFont(new Font("Segoe UI",0,16));
+		inforNhanVienPanel.add(tenLabel, gbc);
+		gbc.gridx=2; gbc.gridy=1;
 		tenText=new JTextField(20); tenText.setFont(new Font("Segoe UI",0,16));
+		tenText.setEditable(false);
 		inforNhanVienPanel.add(tenText, gbc);
 		
 		gbc.gridx=0; gbc.gridy=2;
@@ -95,16 +102,9 @@ public class ThemSuaNhanVienDialog extends JDialog {
 		inforNhanVienPanel.add(dateText, gbc);
 		
 		gbc.gridx=1; gbc.gridy=2;
-		sdtLabel=new JLabel("Số điện thoại"); sdtLabel.setFont(new Font("Segoe UI",0,16));
-		inforNhanVienPanel.add(sdtLabel, gbc);
-		gbc.gridx=1; gbc.gridy=3;
-		sdtText=new JTextField(20); sdtText.setFont(new Font("Segoe UI",0,16));
-		inforNhanVienPanel.add(sdtText, gbc);
-		
-		gbc.gridx=0; gbc.gridy=4;
 		gioitinhLabel=new JLabel("Giới tính"); gioitinhLabel.setFont(new Font("Segoe UI",0,16));
 		inforNhanVienPanel.add(gioitinhLabel, gbc);
-		gbc.gridx=0; gbc.gridy=5;
+		gbc.gridx=1; gbc.gridy=3;
 		gioitinhText=new JComboBox(); gioitinhText.setFont(new Font("Segoe UI",0,16));
 		GioiTinh[] gioitinhs=GioiTinh.class.getEnumConstants();
 		for(GioiTinh g: gioitinhs) {
@@ -113,23 +113,46 @@ public class ThemSuaNhanVienDialog extends JDialog {
 		gioitinhText.setPreferredSize(new Dimension(150,25));
 		inforNhanVienPanel.add(gioitinhText, gbc);
 		
-		gbc.gridx=1; gbc.gridy=4;
+		gbc.gridx=2; gbc.gridy=2;
+		sdtLabel=new JLabel("Số điện thoại"); sdtLabel.setFont(new Font("Segoe UI",0,16));
+		inforNhanVienPanel.add(sdtLabel, gbc);
+		gbc.gridx=2; gbc.gridy=3;
+		sdtText=new JTextField(20); sdtText.setFont(new Font("Segoe UI",0,16));
+		sdtText.setEditable(false);
+		inforNhanVienPanel.add(sdtText, gbc);
+		
+		gbc.gridx=0; gbc.gridy=4;
 		diachiLabel=new JLabel("Địa chỉ"); diachiLabel.setFont(new Font("Segoe UI",0,16));
 		inforNhanVienPanel.add(diachiLabel, gbc);
-		gbc.gridx=1; gbc.gridy=5;
-		diachiText=new JTextField(20); diachiText.setFont(new Font("Segoe UI",0,16));
+		gbc.gridx=0; gbc.gridy=5; gbc.gridwidth=2;
+		diachiText=new JTextField(23); diachiText.setFont(new Font("Segoe UI",0,16));
+		diachiText.setEditable(false);
 		inforNhanVienPanel.add(diachiText, gbc);
 		
-		gbc.gridx=0; gbc.gridy=6;
+		gbc.gridx=2; gbc.gridy=4; gbc.gridwidth=1;
 		dateWorkLabel=new JLabel("Ngày vào làm"); dateWorkLabel.setFont(new Font("Segoe UI",0,16));
 		inforNhanVienPanel.add(dateWorkLabel,gbc);
-		gbc.gridx=0; gbc.gridy=7;
+		gbc.gridx=2; gbc.gridy=5;
 		modelDateWork=new UtilDateModel();
 		JDatePanelImpl panelDateWork=new JDatePanelImpl(modelDateWork, p);
 		dateWorkText=new JDatePickerImpl(panelDateWork, new LabelDateFormatter());
 		dateWorkText.setPreferredSize(new Dimension(150,25));
 		modelDateWork.setValue(new Date());
 		inforNhanVienPanel.add(dateWorkText,gbc);
+		
+		gbc.gridx=0; gbc.gridy=6;
+		tendnLabel=new JLabel("Tên đăng nhập"); tendnLabel.setFont(new Font("Segoe UI",0,16));
+		inforNhanVienPanel.add(tendnLabel, gbc);
+		gbc.gridx=0; gbc.gridy=7; gbc.gridwidth=2;
+		tendnText=new JTextField(23); tendnText.setFont(new Font("Segoe UI",0,16));
+		inforNhanVienPanel.add(tendnText, gbc);
+		
+		gbc.gridx=2; gbc.gridy=6; gbc.gridwidth=1;
+		matkhauLabel=new JLabel("Mật khẩu"); matkhauLabel.setFont(new Font("Segoe UI",0,16));
+		inforNhanVienPanel.add(matkhauLabel, gbc);
+		gbc.gridx=2; gbc.gridy=7;
+		matkhauText=new JTextField(20); matkhauText.setFont(new Font("Segoe UI",0,16));
+		inforNhanVienPanel.add(matkhauText, gbc);
 		
 		add(inforNhanVienPanel, BorderLayout.CENTER);
 		
@@ -139,13 +162,13 @@ public class ThemSuaNhanVienDialog extends JDialog {
 		btnPanel.setBackground(Color.WHITE);
 		btnPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 35));
 		
-		btnThem=new JButton("Thêm mới"); btnThem.setFont(new Font("Segoe UI",0,16));
-		btnThem.setPreferredSize(new Dimension(120,25));
+		btnThem=new JButton("Cấp tài khoản"); btnThem.setFont(new Font("Segoe UI",0,16));
+		btnThem.setPreferredSize(new Dimension(135,25));
 		btnThem.setBackground(new Color(0,102,102));
 		btnThem.setForeground(Color.WHITE);
 		
 		btnHuy=new JButton("Hủy"); btnHuy.setFont(new Font("Segoe UI",0,16));
-		btnHuy.setPreferredSize(new Dimension(120,25));
+		btnHuy.setPreferredSize(new Dimension(135,25));
 		btnHuy.setBackground(Color.WHITE);
 		btnHuy.setForeground(Color.BLACK);
 		
@@ -154,19 +177,4 @@ public class ThemSuaNhanVienDialog extends JDialog {
 		add(btnPanel, BorderLayout.SOUTH);
 	}
 
-	public void initComponentSua() {
-		gbc.gridx=1; gbc.gridy=6;
-		vaitroLabel=new JLabel("Vai trò"); vaitroLabel.setFont(new Font("Segoe UI",0,16));
-		inforNhanVienPanel.add(vaitroLabel, gbc);
-		gbc.gridx=1; gbc.gridy=7;
-		vaitroText=new JComboBox(); vaitroText.setFont(new Font("Segoe UI",0,16));
-		VaiTro[] vaitros=VaiTro.class.getEnumConstants();
-		for(VaiTro v: vaitros) {
-			vaitroText.addItem(v.getValue());
-		}
-		vaitroText.setPreferredSize(new Dimension(150,25));
-		inforNhanVienPanel.add(vaitroText, gbc);
-		
-		btnThem.setText("Cập nhật");
-	}
 }

@@ -42,7 +42,9 @@ import controller.Database;
 import controller.ExcelHelper;
 import controller.FilterImp;
 import controller.action.TableActionEvent;
+import controller.action.TableCellEditorCreateTaiKhoan;
 import controller.action.TableCellEditorUpdateDelete;
+import controller.action.TableCellRendererCreateTaiKhoan;
 import controller.action.TableCellRendererUpdateDelete;
 import dao.TaiKhoan_DAO;
 import dao.NhanVien_DAO;
@@ -59,6 +61,7 @@ import exception.checkUserPass;
 public class NhanVienFrame extends JFrame implements ActionListener, MouseListener, FocusListener {
 
 	String userName;
+	NhanVienFrame parent;
 	
 //	Component danh sách nhân viên
 	JPanel leftPanel,menuPanel,
@@ -80,6 +83,7 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
 		setLayout(new BorderLayout());
 		
 		this.userName=userName;
+		this.parent=this;
 		
 //		Tạo menu bar bên trái
 		initLeft();
@@ -199,14 +203,14 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
 		danhsachCenterPanel=new JPanel();
 		danhsachCenterPanel.setLayout(new BoxLayout(danhsachCenterPanel, BoxLayout.PAGE_AXIS));
 		danhsachCenterPanel.setBackground(Color.WHITE);
-		String[] colName= {"Mã nhân viên","Tên nhân viên","Số điện thoại","Ngày vào làm","Vai trò","Hành động"};
+		String[] colName= {"Mã nhân viên","Tên nhân viên","Số điện thoại","Ngày vào làm","Vai trò","Hành động","Tài khoản"};
 		Object[][] data = {
-			    {1, "MinhDat", "01234567", "13/12/2003", "Admin", null},
-			    {2, "ThangDat", "07654321", "13/12/2003", "Nhân viên",null}
+			    {1, "MinhDat", "01234567", "13/12/2003", "Admin", null,null},
+			    {2, "ThangDat", "07654321", "13/12/2003", "Nhân viên",null,null}
 			};
 		modelTableNhanVien= new DefaultTableModel(data, colName){
 			 boolean[] canEdit = new boolean [] {
-		                false, false, false, false, false, true
+		                false, false, false, false, false, true, true
 		            };
 			
             @Override
@@ -255,7 +259,7 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
 			@Override
 			public void onUpdate(int row) {
 				// TODO Auto-generated method stub
-				JOptionPane.showMessageDialog(rootPane, "Chức năng cập nhật nhân viên đang hoàn thiện");
+				new ThemSuaNhanVienDialog(parent, rootPaneCheckingEnabled, true).setVisible(true);
 			}
 			
 			@Override
@@ -275,10 +279,19 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
 				// TODO Auto-generated method stub
 				
 			}
+
+			@Override
+			public void onCreateTaiKhoan(int row) {
+				// TODO Auto-generated method stub
+				new CapTaiKhoanDialog(parent, rootPaneCheckingEnabled).setVisible(true);
+			}
 		};
 		
 		tableNhanVien.getColumnModel().getColumn(5).setCellRenderer(new TableCellRendererUpdateDelete());
 		tableNhanVien.getColumnModel().getColumn(5).setCellEditor(new TableCellEditorUpdateDelete(event));
+		
+		tableNhanVien.getColumnModel().getColumn(6).setCellRenderer(new TableCellRendererCreateTaiKhoan());
+		tableNhanVien.getColumnModel().getColumn(6).setCellEditor(new TableCellEditorCreateTaiKhoan(event));
 	}
 	
 //	Trạng thái text chuột không nằm trong ô
@@ -320,7 +333,7 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
 	}
 	
 	public void addMouseListener() {
-		
+		tableNhanVien.addMouseListener(this);
 	}
 
 	@Override

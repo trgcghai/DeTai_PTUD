@@ -49,6 +49,12 @@ public class ThemSuaUngVienDialog extends JDialog {
 		initComponent();
 	}
 	
+	public ThemSuaUngVienDialog(Frame parent, boolean modal, boolean check) {
+		this(parent, modal);
+		setTitle("Cập nhật ứng viên");
+		btnThem.setText("Cập nhật");
+	}
+	
 	public void initComponent() {
 		inforUngVienPanel=new JPanel(); 
 		inforUngVienPanel.setBackground(Color.WHITE);

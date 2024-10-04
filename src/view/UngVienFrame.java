@@ -207,8 +207,8 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 		danhsachCenterPanel.setBackground(Color.WHITE);
 		String[] colName= {"Mã ứng viên","Tên ứng viên","Số điện thoại","Email","Hành động","Hồ sơ"};
 		Object[][] data = {
-			    {1, "MinhDat", "01234567", "abc@gmail.com","",""},
-			    {2, "ThangDat", "07654321", "def@gmail.com","",""}
+			    {1, "MinhDat", "01234567", "abc@gmail.com",null,null},
+			    {2, "ThangDat", "07654321", "def@gmail.com",null,null}
 			};
 		modelTableUngVien= new DefaultTableModel(data, colName){
 			boolean[] canEdit = new boolean [] {
@@ -261,7 +261,7 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 			@Override
 			public void onUpdate(int row) {
 				// TODO Auto-generated method stub
-				JOptionPane.showMessageDialog(rootPane, "Chức năng cập nhật ứng viên đang hoàn thiện");
+				new ThemSuaUngVienDialog(parent, rootPaneCheckingEnabled, true).setVisible(true);
 			}
 			
 			@Override
@@ -280,6 +280,12 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 			public void onCreateHoSo(int row) {
 				// TODO Auto-generated method stub
 				new TaoHoSoDialog(parent, rootPaneCheckingEnabled).setVisible(true);
+			}
+
+			@Override
+			public void onCreateTaiKhoan(int row) {
+				// TODO Auto-generated method stub
+				
 			}
 		};
 		
