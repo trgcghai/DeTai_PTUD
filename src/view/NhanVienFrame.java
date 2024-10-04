@@ -118,10 +118,12 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
 		res.setPreferredSize(new Dimension(getWidth(),400));
 		res.setBackground(Color.WHITE);
 		
+		Navbar nav=new Navbar(this);
+		
 		menuPanel=new JPanel(); 
 		menuPanel.setLayout(new BorderLayout()); menuPanel.setBackground(Color.WHITE);
 		menuPanel.add(vaitroLeftLabel, BorderLayout.NORTH);
-		menuPanel.add(new Navbar(), BorderLayout.CENTER);
+		menuPanel.add(nav, BorderLayout.CENTER);
 		menuPanel.add(res, BorderLayout.SOUTH);
 		
 		leftPanel.add(menuPanel);
@@ -283,7 +285,7 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
 			@Override
 			public void onCreateTaiKhoan(int row) {
 				// TODO Auto-generated method stub
-				new CapTaiKhoanDialog(parent, rootPaneCheckingEnabled).setVisible(true);
+				new CapSuaTaiKhoanDialog(parent, rootPaneCheckingEnabled).setVisible(true);
 			}
 		};
 		

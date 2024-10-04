@@ -30,23 +30,26 @@ import controller.LabelDateFormatter;
 import entity.constraint.GioiTinh;
 import entity.constraint.TrangThai;
 
-public class TaoHoSoDialog extends JDialog{
+public class TaoSuaHoSoDialog extends JDialog{
 	
 	JPanel inforUngVienPanel, btnPanel;
-	JLabel idLabel, tenLabel, sdtLabel, dateLabel, gioitinhLabel, diachiLabel,emailLabel,trangthaiLabel, motaLabel;
-	JTextField idText, tenText, sdtText, diachiText, emailText;
+	JLabel idLabel, tenLabel, sdtLabel, dateLabel, gioitinhLabel, diachiLabel,emailLabel,trangthaiLabel, motaLabel,
+			nhatuyendungLabel, tintuyendungLabel;
+	JTextField idText, tenText, sdtText, diachiText, emailText,
+			nhatuyendungText, tintuyendungText;
 	JComboBox gioitinhText, trangthaiText;
 	UtilDateModel modelDate;
 	JDatePickerImpl dateText;
 	JTextArea motaText;
 	JScrollPane scrollMoTa;
 	JButton btnThem, btnHuy;
+	GridBagConstraints gbc;
 	
-	public TaoHoSoDialog(Frame parent, boolean modal) {
+	public TaoSuaHoSoDialog(Frame parent, boolean modal) {
 		super(parent, modal);
 		setTitle("Tạo hồ sơ");
 		setResizable(false);
-		setSize(800,600);
+		setSize(800,680);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setLayout(new BorderLayout());
 		setLocationRelativeTo(null);
@@ -54,12 +57,35 @@ public class TaoHoSoDialog extends JDialog{
 		initComponent();
 	}
 	
+	public TaoSuaHoSoDialog(Frame parent, boolean modal, boolean check) {
+		this(parent, modal);
+		setTitle("Cập nhật hồ sơ");
+		
+		gbc.gridx=0; gbc.gridy=6; gbc.gridwidth=1;
+		nhatuyendungLabel=new JLabel("Nhà tuyển dụng"); nhatuyendungLabel.setFont(new Font("Segoe UI",0,16));
+		inforUngVienPanel.add(nhatuyendungLabel,gbc);
+		gbc.gridx=0; gbc.gridy=7; gbc.gridwidth=2;
+		nhatuyendungText=new JTextField(23); nhatuyendungText.setFont(new Font("Segoe UI",0,16));
+		nhatuyendungText.setEditable(false);
+		inforUngVienPanel.add(nhatuyendungText,gbc);
+		
+		gbc.gridx=2; gbc.gridy=6; gbc.gridwidth=1;
+		tintuyendungLabel=new JLabel("Tin tuyển dụng"); tintuyendungLabel.setFont(new Font("Segoe UI",0,16));
+		inforUngVienPanel.add(tintuyendungLabel,gbc);
+		gbc.gridx=2; gbc.gridy=7; gbc.gridwidth=2;
+		tintuyendungText=new JTextField(23); tintuyendungText.setFont(new Font("Segoe UI",0,16));
+		tintuyendungText.setEditable(false);
+		inforUngVienPanel.add(tintuyendungText,gbc);
+		
+		btnThem.setText("Cập nhật");
+	}
+	
 	public void initComponent() {
 		inforUngVienPanel=new JPanel(); 
 		inforUngVienPanel.setBackground(Color.WHITE);
 		inforUngVienPanel.setLayout(new GridBagLayout());
 		inforUngVienPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		GridBagConstraints gbc= new GridBagConstraints();
+		gbc= new GridBagConstraints();
 		
 //		Thông tin hồ sơ
 		gbc.gridx=0; gbc.gridy=0; gbc.insets=new Insets(5, 10, 5, 10); gbc.anchor=GridBagConstraints.WEST;
@@ -139,10 +165,10 @@ public class TaoHoSoDialog extends JDialog{
 		diachiText.setEditable(false);
 		inforUngVienPanel.add(diachiText, gbc);
 		
-		gbc.gridx=0; gbc.gridy=6;
+		gbc.gridx=0; gbc.gridy=8;
 		motaLabel=new JLabel("Mô tả hồ sơ"); motaLabel.setFont(new Font("Segoe UI",0,16));
 		inforUngVienPanel.add(motaLabel, gbc);
-		gbc.gridx=0; gbc.gridy=7; gbc.gridwidth=4;
+		gbc.gridx=0; gbc.gridy=9; gbc.gridwidth=4;
 		motaText=new JTextArea(10, 48); motaText.setFont(new Font("Segoe UI",0,16));
 		motaText.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
 		motaText.setLineWrap(true);

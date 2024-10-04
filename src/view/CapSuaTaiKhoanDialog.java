@@ -28,7 +28,7 @@ import controller.LabelDateFormatter;
 import entity.constraint.GioiTinh;
 import entity.constraint.VaiTro;
 
-public class CapTaiKhoanDialog extends JDialog {
+public class CapSuaTaiKhoanDialog extends JDialog {
 	
 	JPanel inforNhanVienPanel, btnPanel;
 	JLabel idLabel, tenLabel, sdtLabel, dateLabel, gioitinhLabel, diachiLabel, dateWorkLabel, vaitroLabel,
@@ -40,7 +40,7 @@ public class CapTaiKhoanDialog extends JDialog {
 	JButton btnThem, btnHuy;
 	GridBagConstraints gbc;
 
-	public CapTaiKhoanDialog(Frame parent, boolean modal) {
+	public CapSuaTaiKhoanDialog(Frame parent, boolean modal) {
 		super(parent, modal);
 		setTitle("Cấp tài khoản nhân viên");
 		setResizable(false);
@@ -50,6 +50,12 @@ public class CapTaiKhoanDialog extends JDialog {
 		setLocationRelativeTo(null);
 		
 		initComponent();
+	}
+	
+	public CapSuaTaiKhoanDialog(Frame parent, boolean modal, boolean check) {
+		this(parent, modal);
+		setTitle("Cập nhật tài khoản nhân viên");
+		btnThem.setText("Cập nhật");
 	}
 	
 	public void initComponent() {

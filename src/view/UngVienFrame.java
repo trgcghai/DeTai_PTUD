@@ -120,10 +120,12 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 		res.setPreferredSize(new Dimension(getWidth(),400));
 		res.setBackground(Color.WHITE);
 		
+		Navbar nav=new Navbar(this);
+		
 		menuPanel=new JPanel(); 
 		menuPanel.setLayout(new BorderLayout()); menuPanel.setBackground(Color.WHITE);
 		menuPanel.add(vaitroLeftLabel, BorderLayout.NORTH);
-		menuPanel.add(new Navbar(), BorderLayout.CENTER);
+		menuPanel.add(nav, BorderLayout.CENTER);
 		menuPanel.add(res, BorderLayout.SOUTH);
 		
 		leftPanel.add(menuPanel);
@@ -279,7 +281,7 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 			@Override
 			public void onCreateHoSo(int row) {
 				// TODO Auto-generated method stub
-				new TaoHoSoDialog(parent, rootPaneCheckingEnabled).setVisible(true);
+				new TaoSuaHoSoDialog(parent, rootPaneCheckingEnabled).setVisible(true);
 			}
 
 			@Override
