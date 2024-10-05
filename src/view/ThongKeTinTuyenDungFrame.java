@@ -1,11 +1,11 @@
 package view;
 
 import java.awt.BorderLayout;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.GridBagConstraints;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,13 +14,11 @@ import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Properties;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultRowSorter;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -45,7 +43,8 @@ import org.jdatepicker.impl.UtilDateModel;
 
 import controller.LabelDateFormatter;
 
-public class ThongKeNhanVienFrame extends JFrame implements ActionListener, MouseListener, FocusListener{
+
+public class ThongKeTinTuyenDungFrame extends JFrame implements ActionListener, MouseListener, FocusListener{
 	
 //	Thanh menu
 	JMenuBar menuBar;
@@ -76,21 +75,21 @@ public class ThongKeNhanVienFrame extends JFrame implements ActionListener, Mous
 	
 //	Component danh sách nhân viên
 	JPanel leftPanel,menuPanel,
-		nhanvienPanel,northPanelNhanVien, centerPanelNhanVien, thongkePanel,
+		tinTuyenDungPanel,northPanelNhanVien, centerPanelTinTuyenDung, thongkePanel, buttonPanel, thongkeButtonPanel,
 		danhsachPanel, danhsachNorthPanel, danhsachCenterPanel;
-	JLabel userLabel, iconUserLabel, titleNhanVien, ngayBatDauLabel, ngayKetThucLabel,
+	JLabel userLabel, iconUserLabel, titleTinTuyenDung, ngayBatDauLabel, ngayKetThucLabel, comboLabelNTD, comboLabelTrinhDo, comboLabelKyNang,
 		vaitroLeftLabel;
 	JDatePickerImpl dateText;
 	UtilDateModel modelDate;
 	JButton btnXacNhan, btnHuy, btnExcel;
-	JTable tableNhanVien;
-	DefaultTableModel modelTableNhanVien;
-	JScrollPane scrollNhanVien;
-	Icon iconBtnAdd;
+	JTable tableTinTuyenDung;
+	DefaultTableModel modeltableTinTuyenDung;
+	JScrollPane scrollTinTuyenDung;
 	JDatePickerImpl ngayBatDau, ngayKetThuc;
+	JComboBox<Object> comboBoxNTD, comboBoxTrinhDo, comboBoxKyNang;
 	
-	public ThongKeNhanVienFrame(String userName) {
-		setTitle("Thống kê nhân viên");
+	public ThongKeTinTuyenDungFrame(String userName) {
+		setTitle("Thống kê tin tuyển dụng");
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -107,13 +106,12 @@ public class ThongKeNhanVienFrame extends JFrame implements ActionListener, Mous
 		
 //		Thêm vào frame
 		add(leftPanel, BorderLayout.WEST);
-		add(nhanvienPanel, BorderLayout.CENTER);
+		add(tinTuyenDungPanel, BorderLayout.CENTER);
 		
 //		Thêm sự kiện
 //		addActionListener();
 //		addMouseListener();
 //		addFocusListener();
-		
 	}
 	
 	public void initMenu() {
@@ -190,9 +188,9 @@ public class ThongKeNhanVienFrame extends JFrame implements ActionListener, Mous
 	}
 	
 	public void initComponent() {
-		nhanvienPanel=new JPanel(); 
-		nhanvienPanel.setLayout(new BorderLayout(5,5));
-		nhanvienPanel.setBackground(new Color(220, 220, 220));
+		tinTuyenDungPanel=new JPanel(); 
+		tinTuyenDungPanel.setLayout(new BorderLayout(5,5));
+		tinTuyenDungPanel.setBackground(new Color(220, 220, 220));
 		
 //		Hiển thị tài khoản
 		northPanelNhanVien=new JPanel();
@@ -207,15 +205,19 @@ public class ThongKeNhanVienFrame extends JFrame implements ActionListener, Mous
 		
 		northPanelNhanVien.add(userLabel); northPanelNhanVien.add(iconUserLabel);
 		
-//		Hiển thị thống kê và danh sách nhân viên
-		centerPanelNhanVien=new JPanel();
-		centerPanelNhanVien.setLayout(new BorderLayout(10, 10));
-		centerPanelNhanVien.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		centerPanelNhanVien.setBackground(new Color(220, 220, 220));
-//		Thống kê nhân viên
+//		Hiển thị thống kê và danh sách tin tuyển dụng
+		centerPanelTinTuyenDung=new JPanel();
+		centerPanelTinTuyenDung.setLayout(new BorderLayout(10, 10));
+		centerPanelTinTuyenDung.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		centerPanelTinTuyenDung.setBackground(new Color(220, 220, 220));
+//		Thống kê tin tuyển dụng
 		thongkePanel=new JPanel();
 		thongkePanel.setBackground(Color.WHITE);
 		thongkePanel.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 15));
+		
+		buttonPanel=new JPanel();
+		buttonPanel.setBackground(Color.WHITE);
+		buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 15));
 		
 		modelDate=new UtilDateModel();
 		
@@ -229,7 +231,7 @@ public class ThongKeNhanVienFrame extends JFrame implements ActionListener, Mous
         JDatePanelImpl panelNgayBatDau = new JDatePanelImpl(modelDate, properties);
         ngayBatDau = new JDatePickerImpl(panelNgayBatDau, new LabelDateFormatter());
 //FIX LỖI MẤT VIỀN
-        ngayBatDau.setPreferredSize(new Dimension(190, 27)); 
+        ngayBatDau.setPreferredSize(new Dimension(160, 27)); 
         ngayBatDau.setBorder(BorderFactory.createLineBorder(Color.GRAY)); 
         panelNgayBatDau.revalidate();
         panelNgayBatDau.repaint();
@@ -242,17 +244,38 @@ public class ThongKeNhanVienFrame extends JFrame implements ActionListener, Mous
         JDatePanelImpl panelNgayKetThuc = new JDatePanelImpl(modelDate, properties);
         ngayKetThuc = new JDatePickerImpl(panelNgayKetThuc, new LabelDateFormatter());
 //FIX LỖI MẤT VIỀN
-        ngayKetThuc.setPreferredSize(new Dimension(190, 27)); 
+        ngayKetThuc.setPreferredSize(new Dimension(160, 27)); 
         ngayKetThuc.setBorder(BorderFactory.createLineBorder(Color.GRAY)); 
         panelNgayKetThuc.revalidate();
         panelNgayKetThuc.repaint();
+        
+        comboLabelNTD = new JLabel("Chọn nhà tuyển dụng:");
+        comboLabelNTD.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        String[] itemsNTD = {"NTD 1", "NTD 2", "NTD 3"};
+        comboBoxNTD = new JComboBox<>(itemsNTD);
+        comboBoxNTD.setPreferredSize(new Dimension(160, 27));
+        comboBoxNTD.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 		
+        comboLabelTrinhDo = new JLabel("Chọn trình độ:");
+        comboLabelTrinhDo.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        String[] itemsTrinhDo = {"Trung học", "Cao đẳng", "Đại học"};
+        comboBoxTrinhDo = new JComboBox<>(itemsTrinhDo);
+        comboBoxTrinhDo.setPreferredSize(new Dimension(160, 27));
+        comboBoxTrinhDo.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        
+        comboLabelKyNang = new JLabel("Chọn kỹ năng:");
+        comboLabelKyNang.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        String[] itemsKyNang = {"KN1", "KN2", "KN3"};
+        comboBoxKyNang = new JComboBox<>(itemsKyNang);
+        comboBoxKyNang.setPreferredSize(new Dimension(160, 27));
+        comboBoxKyNang.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        
 		btnXacNhan=new JButton("Xác nhận"); btnXacNhan.setFont(new Font("Segoe UI",0,16));
-		btnXacNhan.setPreferredSize(new Dimension(120,25));
+		btnXacNhan.setPreferredSize(new Dimension(100,25));
 		btnXacNhan.setBackground(new Color(0,102,102));
 		btnXacNhan.setForeground(Color.WHITE);
 		btnHuy=new JButton("Hủy"); btnHuy.setFont(new Font("Segoe UI",0,16));
-		btnHuy.setPreferredSize(new Dimension(120,25));
+		btnHuy.setPreferredSize(new Dimension(100,25));
 		btnHuy.setBackground(Color.RED);
 		btnHuy.setForeground(Color.WHITE);
 		btnExcel=new JButton("Xuất Excel"); btnExcel.setFont(new Font("Segoe UI",0,16));
@@ -262,10 +285,18 @@ public class ThongKeNhanVienFrame extends JFrame implements ActionListener, Mous
 		
 		thongkePanel.add(ngayBatDauLabel); thongkePanel.add(ngayBatDau);
 		thongkePanel.add(ngayKetThucLabel); thongkePanel.add(ngayKetThuc);
-		thongkePanel.add(btnXacNhan); thongkePanel.add(btnHuy); thongkePanel.add(btnExcel);
+		thongkePanel.add(comboLabelNTD); thongkePanel.add(comboBoxNTD);
+		thongkePanel.add(comboLabelTrinhDo); thongkePanel.add(comboBoxTrinhDo);
+		thongkePanel.add(comboLabelKyNang); thongkePanel.add(comboBoxKyNang);
+		buttonPanel.add(btnXacNhan); buttonPanel.add(btnHuy); buttonPanel.add(btnExcel);
+		
+		thongkeButtonPanel = new JPanel();
+		thongkeButtonPanel.setLayout(new BorderLayout());
+		thongkeButtonPanel.add(thongkePanel, BorderLayout.NORTH);
+		thongkeButtonPanel.add(buttonPanel, BorderLayout.SOUTH);
 		
 		
-//		Danh sách nhân viên
+//		Danh sách nhà tuyển dụng
 		danhsachPanel=new JPanel();
 		danhsachPanel.setBackground(Color.WHITE);
 		danhsachPanel.setLayout(new BorderLayout(10, 10));
@@ -273,61 +304,61 @@ public class ThongKeNhanVienFrame extends JFrame implements ActionListener, Mous
 		danhsachNorthPanel=new JPanel();
 		danhsachNorthPanel.setLayout(new BorderLayout(10,10));
 		danhsachNorthPanel.setBackground(Color.WHITE);
-		iconBtnAdd=new ImageIcon(getClass().getResource("/image/add.png"));
-		titleNhanVien=new JLabel("Danh sách nhân viên");
-		titleNhanVien.setFont(new Font("Segoe UI",1,16));
-		titleNhanVien.setBorder(BorderFactory.createEmptyBorder(10,20,0,10));
-		danhsachNorthPanel.add(titleNhanVien, BorderLayout.WEST);
+		titleTinTuyenDung=new JLabel("Danh sách tin tuyển dụng");
+		titleTinTuyenDung.setFont(new Font("Segoe UI",1,16));
+		titleTinTuyenDung.setBorder(BorderFactory.createEmptyBorder(10,20,0,10));
+		danhsachNorthPanel.add(titleTinTuyenDung, BorderLayout.WEST);
 		
 		danhsachCenterPanel=new JPanel();
 		danhsachCenterPanel.setLayout(new BoxLayout(danhsachCenterPanel, BoxLayout.PAGE_AXIS));
 		danhsachCenterPanel.setBackground(Color.WHITE);
-		String[] colName= {"Mã nhân viên","Tên nhân viên","Email","Số điện thoại","Địa chỉ","Giới tính","Ngày sinh","Số lượng hồ sơ","Số lượng hợp đồng"};
+		String[] colName= {"Mã tin tuyển dụng","Tên tin tuyển dụng","Kỹ năng","Trình độ","Mức lương",
+				"Nhà tuyển dụng", "Hình thức làm việc","Số lượng tuyển dụng","Số lượng ứng tuyển"};
 		Object[][] data = {
-			    {1, "MinhDat","a1@gmail.com", "01234567","HCM","Nam","13/12/2003","100","100"},
-			    {2, "ThangDat","b1@gmail.com", "01234567","HCM","Nam","13/12/2003","100","100"},
+			    {1,"Tuyển dụng 1", "KN1", "Đại học", "100", "MinhDat", "Online", "100", "150"},
+			    {2,"Tuyển dụng 2", "KN2", "Đại học", "200", "MinhDat", "Online", "100", "250"},
 			};
-		modelTableNhanVien= new DefaultTableModel(data, colName){
+		modeltableTinTuyenDung= new DefaultTableModel(data, colName){
             @Override
             public boolean isCellEditable(int row, int column) {
                return false;
             }
         };
-		tableNhanVien=new JTable(modelTableNhanVien);
-		tableNhanVien.getTableHeader().setFont(new Font("Segoe UI",1,14));
-		tableNhanVien.setFont(new Font("Segoe UI",0,16));
-		tableNhanVien.setRowHeight(30);
-//		tableNhanVien.getColumnModel().getColumn(5).setCellRenderer(new MultiComponentCellRenderer());
+		tableTinTuyenDung=new JTable(modeltableTinTuyenDung);
+		tableTinTuyenDung.getTableHeader().setFont(new Font("Segoe UI",1,14));
+		tableTinTuyenDung.setFont(new Font("Segoe UI",0,16));
+		tableTinTuyenDung.setRowHeight(30);
+//		tableTinTuyenDung.getColumnModel().getColumn(5).setCellRenderer(new MultiComponentCellRenderer());
 		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
 		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
-		for(int i=0;i<tableNhanVien.getColumnCount();i++) {
-			tableNhanVien.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);			
+		for(int i=0;i<tableTinTuyenDung.getColumnCount();i++) {
+			tableTinTuyenDung.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);			
 		}
-		tableNhanVien.setAutoCreateRowSorter(true);
+		tableTinTuyenDung.setAutoCreateRowSorter(true);
 		ArrayList<RowSorter.SortKey> list = new ArrayList<>();
-        DefaultRowSorter sorter = ((DefaultRowSorter)tableNhanVien.getRowSorter());
+        DefaultRowSorter sorter = ((DefaultRowSorter)tableTinTuyenDung.getRowSorter());
         sorter.setSortsOnUpdates(true);
         list.add( new RowSorter.SortKey(0, SortOrder.ASCENDING));
         sorter.setSortKeys(list);
         sorter.sort();
-		scrollNhanVien=new JScrollPane(tableNhanVien);
-		scrollNhanVien.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
+		scrollTinTuyenDung=new JScrollPane(tableTinTuyenDung);
+		scrollTinTuyenDung.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
 		JPanel resScroll=new JPanel();
 		resScroll.setBorder(BorderFactory.createEmptyBorder(0,20,20,20));
 		resScroll.setLayout(new BoxLayout(resScroll, BoxLayout.PAGE_AXIS));
 		resScroll.setBackground(Color.WHITE);
-		resScroll.add(scrollNhanVien);
+		resScroll.add(scrollTinTuyenDung);
 		danhsachCenterPanel.add(resScroll);
 		
 		danhsachPanel.add(danhsachNorthPanel, BorderLayout.NORTH);
 		danhsachPanel.add(danhsachCenterPanel, BorderLayout.CENTER);
 		
-		centerPanelNhanVien.add(thongkePanel, BorderLayout.NORTH);
-		centerPanelNhanVien.add(danhsachPanel, BorderLayout.CENTER);
+		centerPanelTinTuyenDung.add(thongkeButtonPanel, BorderLayout.NORTH);
+		centerPanelTinTuyenDung.add(danhsachPanel, BorderLayout.CENTER);
 		
 		
-		nhanvienPanel.add(northPanelNhanVien, BorderLayout.NORTH);
-		nhanvienPanel.add(centerPanelNhanVien, BorderLayout.CENTER);
+		tinTuyenDungPanel.add(northPanelNhanVien, BorderLayout.NORTH);
+		tinTuyenDungPanel.add(centerPanelTinTuyenDung, BorderLayout.CENTER);
 	}
 	
 //	Xóa trạng thái text chuột không nằm trong ô
@@ -336,11 +367,6 @@ public class ThongKeNhanVienFrame extends JFrame implements ActionListener, Mous
 		font=font.deriveFont(Font.PLAIN);
 		text.setFont(font);
 		text.setForeground(Color.BLACK);
-	}
-
-	@Override
-	public void focusGained(FocusEvent e) {
-		// TODO Auto-generated method stub
 	}
 	
 //	Trạng thái text chuột không nằm trong ô
@@ -352,8 +378,15 @@ public class ThongKeNhanVienFrame extends JFrame implements ActionListener, Mous
 	}
 
 	@Override
+	public void focusGained(FocusEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
 	public void focusLost(FocusEvent e) {
 		// TODO Auto-generated method stub
+		
 	}
 
 	@Override

@@ -22,7 +22,7 @@ public class Main {
 		
 //============================================================================================
 //		new LoginFrame().setVisible(true);
-		new MainFrame("MinhDat").setVisible(true);
+//		new MainFrame("MinhDat").setVisible(true);
 		
 //		new NhanVienFrame("MinhDat").setVisible(true);
 //		Nhân viên chưa có tài khoản mới sử dụng chức năng cấp tài khoản
@@ -36,6 +36,6 @@ public class Main {
 //		còn hồ sơ chưa nộp thì trạng thái hồ sơ là Chưa nộp
 //============================================================================================		
 
-//		new ThongKeNhanVienFrame("MinhDat").setVisible(true);
+		new ThongKeTinTuyenDungFrame("MinhDat").setVisible(true);
 	}
 }
