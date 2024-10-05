@@ -16,9 +16,7 @@ public class Main {
 //		
 //		new UngVienTestFrame("MinhDat").setVisible(true);
 		
-//		new NhaTuyenDungFrame("MinhDat").setVisible(true);
-//		new TinTuyenDungFrame("MinhDat").setVisible(true);
-//		new HopDongFrame("Minh Dat").setVisible(true);
+		new HopDongFrame("Minh Dat").setVisible(true);
 		
 //============================================================================================
 //		new LoginFrame().setVisible(true);
@@ -34,8 +32,12 @@ public class Main {
 //		new HoSoFrame("MinhDat").setVisible(true);
 //		Chức năng cập nhật hồ sơ: hồ sơ đã nộp chỉ cập nhật trạng thái hồ sơ,
 //		còn hồ sơ chưa nộp thì trạng thái hồ sơ là Chưa nộp
+		
+//		new NhaTuyenDungFrame("MinhDat").setVisible(true);
+		
+//		new TinTuyenDungFrame("MinhDat").setVisible(true);
 //============================================================================================		
 
-		new ThongKeTinTuyenDungFrame("MinhDat").setVisible(true);
+//		new ThongKeTinTuyenDungFrame("MinhDat").setVisible(true);
 	}
 }

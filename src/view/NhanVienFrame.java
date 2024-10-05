@@ -41,11 +41,11 @@ import controller.ComboBoxRenderer;
 import controller.Database;
 import controller.ExcelHelper;
 import controller.FilterImp;
-import controller.action.TableActionEvent;
-import controller.action.TableCellEditorCreateTaiKhoan;
-import controller.action.TableCellEditorUpdateDelete;
-import controller.action.TableCellRendererCreateTaiKhoan;
-import controller.action.TableCellRendererUpdateDelete;
+import controller.actiontable.TableActionEvent;
+import controller.actiontable.TableCellEditorCreateTaiKhoan;
+import controller.actiontable.TableCellEditorUpdateDelete;
+import controller.actiontable.TableCellRendererCreateTaiKhoan;
+import controller.actiontable.TableCellRendererUpdateDelete;
 import dao.TaiKhoan_DAO;
 import dao.NhanVien_DAO;
 import entity.TaiKhoan;
@@ -286,6 +286,24 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
 			public void onCreateTaiKhoan(int row) {
 				// TODO Auto-generated method stub
 				new CapSuaTaiKhoanDialog(parent, rootPaneCheckingEnabled).setVisible(true);
+			}
+
+			@Override
+			public void onViewTinTuyenDung(int row) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onCreateTinTuyenDung(int row) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onTimViecLam(int row) {
+				// TODO Auto-generated method stub
+				
 			}
 		};
 		

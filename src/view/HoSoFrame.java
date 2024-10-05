@@ -42,11 +42,13 @@ import controller.Database;
 import controller.ExcelHelper;
 import controller.FilterImp;
 import controller.LabelDateFormatter;
-import controller.action.TableActionEvent;
-import controller.action.TableCellEditorUpdateDelete;
-import controller.action.TableCellEditorViewCreateHoSo;
-import controller.action.TableCellRendererUpdateDelete;
-import controller.action.TableCellRendererViewCreateHoSo;
+import controller.actiontable.TableActionEvent;
+import controller.actiontable.TableCellEditorTimViecLam;
+import controller.actiontable.TableCellEditorUpdateDelete;
+import controller.actiontable.TableCellEditorViewCreateHoSo;
+import controller.actiontable.TableCellRendererTimViecLam;
+import controller.actiontable.TableCellRendererUpdateDelete;
+import controller.actiontable.TableCellRendererViewCreateHoSo;
 import dao.TaiKhoan_DAO;
 import dao.NhanVien_DAO;
 import entity.TaiKhoan;
@@ -210,14 +212,14 @@ public class HoSoFrame extends JFrame implements ActionListener, MouseListener, 
 		danhsachCenterPanel=new JPanel();
 		danhsachCenterPanel.setLayout(new BoxLayout(danhsachCenterPanel, BoxLayout.PAGE_AXIS));
 		danhsachCenterPanel.setBackground(Color.WHITE);
-		String[] colName= {"Mã hồ sơ","Trạng thái","Tên ứng viên","Nhà tuyển dụng","Tin tuyển dụng","Hành động"};
+		String[] colName= {"Mã hồ sơ","Trạng thái","Tên ứng viên","Nhà tuyển dụng","Tin tuyển dụng","Hành động","Tìm việc làm"};
 		Object[][] data = {
-			    {1, "Chờ", "Minh Đạt", "Amazon", "abc",null},
-			    {2, "Chờ", "Thắng Đạt", "Facebook", "xyz",null}
+			    {1, "Chờ", "Minh Đạt", "Amazon", "abc",null, null},
+			    {2, "Chờ", "Thắng Đạt", "Facebook", "xyz",null, null}
 			};
 		modelTableHoSo= new DefaultTableModel(data, colName){
 			boolean[] canEdit = new boolean [] {
-	                false, false, false, false, false, true
+	                false, false, false, false, false, true, true
 	            };
 			
             @Override
@@ -231,7 +233,7 @@ public class HoSoFrame extends JFrame implements ActionListener, MouseListener, 
 		tableHoSo.setRowHeight(30);
 		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
 		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
-		for(int i=0;i<tableHoSo.getColumnCount()-1;i++) {
+		for(int i=0;i<tableHoSo.getColumnCount()-2;i++) {
 			tableHoSo.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);			
 		}
 		tableHoSo.setAutoCreateRowSorter(true);
@@ -292,10 +294,31 @@ public class HoSoFrame extends JFrame implements ActionListener, MouseListener, 
 				// TODO Auto-generated method stub
 				
 			}
+
+			@Override
+			public void onViewTinTuyenDung(int row) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onCreateTinTuyenDung(int row) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onTimViecLam(int row) {
+				// TODO Auto-generated method stub
+				JOptionPane.showMessageDialog(rootPane, "Chức năng tìm việc làm đang hoàn thiện");
+			}
 		};
 		
 		tableHoSo.getColumnModel().getColumn(5).setCellRenderer(new TableCellRendererUpdateDelete());
 		tableHoSo.getColumnModel().getColumn(5).setCellEditor(new TableCellEditorUpdateDelete(event));
+		
+		tableHoSo.getColumnModel().getColumn(6).setCellRenderer(new TableCellRendererTimViecLam());
+		tableHoSo.getColumnModel().getColumn(6).setCellEditor(new TableCellEditorTimViecLam(event));
 	}
 	
 //	Trạng thái text chuột không nằm trong ô

@@ -50,6 +50,7 @@ import controller.actiontable.TableCellRendererViewCreateHoSo;
 import dao.TaiKhoan_DAO;
 import dao.NhanVien_DAO;
 import entity.TaiKhoan;
+import entity.constraint.TrangThai;
 import entity.Customer;
 import entity.NhanVien;
 import exception.checkBirthday;
@@ -59,26 +60,26 @@ import exception.checkPhone;
 import exception.checkUserName;
 import exception.checkUserPass;
 
-public class UngVienFrame extends JFrame implements ActionListener, MouseListener, FocusListener {
+public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseListener, FocusListener {
 	
 	String userName;
-	UngVienFrame parent;
+	TinTuyenDungFrame parent;
 	
-//	Component danh sách ứng viên
+//	Component danh sách tin tuyển dụng
 	JPanel leftPanel,menuPanel,
-		ungvienPanel,northPanelUngVien, centerPanelUngVien, timkiemPanel,
+		tintuyendungPanel,northPanelTinTuyenDung, centerPanelTinTuyenDung, timkiemPanel,
 		danhsachPanel, danhsachNorthPanel, danhsachCenterPanel;
-	JLabel userLabel, iconUserLabel,timkiemTenLabel, timkiemSDTLabel, titleNhanVien,vaitroLeftLabel;
-	JTextField timkiemTenText, timkiemSDTText;
-	JButton btnTimKiem, btnLamLai,btnThem,btnLuu;
-	JTable tableUngVien;
-	DefaultTableModel modelTableUngVien;
-	JScrollPane scrollUngVien;
-	Icon iconBtnAdd,iconBtnSave;
+	JLabel userLabel, iconUserLabel,timkiemTenLabel, timkiemLuongLabel, titleHoSo,vaitroLeftLabel;
+	JTextField timkiemTenText, timkiemLuongText;
+	JButton btnTimKiem, btnLamLai, btnLuu;
+	JTable tableTinTuyenDung;
+	DefaultTableModel modelTableTinTuyenDung;
+	JScrollPane scrollTinTuyenDung;
+	Icon iconBtnSave;
 	
 	
-	public UngVienFrame(String userName) {
-		setTitle("Ứng viên");
+	public TinTuyenDungFrame(String userName) {
+		setTitle("Tin tuyển dụng");
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -98,7 +99,7 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 		
 //		Thêm vào frame
 		add(leftPanel, BorderLayout.WEST);
-		add(ungvienPanel, BorderLayout.CENTER);
+		add(tintuyendungPanel, BorderLayout.CENTER);
 		
 //		Thêm sự kiện
 		addActionListener();
@@ -132,14 +133,14 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 	}
 	
 	public void initComponent() {
-		ungvienPanel=new JPanel(); 
-		ungvienPanel.setLayout(new BorderLayout(5,5));
-		ungvienPanel.setBackground(new Color(220, 220, 220));
+		tintuyendungPanel=new JPanel(); 
+		tintuyendungPanel.setLayout(new BorderLayout(5,5));
+		tintuyendungPanel.setBackground(new Color(220, 220, 220));
 		
 //		Hiển thị tài khoản
-		northPanelUngVien=new JPanel();
-		northPanelUngVien.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 10));
-		northPanelUngVien.setBackground(new Color(220, 220, 220));
+		northPanelTinTuyenDung=new JPanel();
+		northPanelTinTuyenDung.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 10));
+		northPanelTinTuyenDung.setBackground(new Color(220, 220, 220));
 		
 		userLabel=new JLabel();
 		userLabel.setFont(new Font("Segoe UI",0,16));
@@ -147,22 +148,24 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 		iconUserLabel=new JLabel();
 		iconUserLabel.setIcon(new ImageIcon(getClass().getResource("/image/user.png")));
 		
-		northPanelUngVien.add(userLabel); northPanelUngVien.add(iconUserLabel);
+		northPanelTinTuyenDung.add(userLabel); northPanelTinTuyenDung.add(iconUserLabel);
 		
-//		Hiển thị tìm kiếm và danh sách ứng viên
-		centerPanelUngVien=new JPanel();
-		centerPanelUngVien.setLayout(new BorderLayout(10, 10));
-		centerPanelUngVien.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		centerPanelUngVien.setBackground(new Color(220, 220, 220));
-//		Tìm kiếm ứng viên
+//		Hiển thị tìm kiếm và danh sách tin tuyển dụng
+		centerPanelTinTuyenDung=new JPanel();
+		centerPanelTinTuyenDung.setLayout(new BorderLayout(10, 10));
+		centerPanelTinTuyenDung.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		centerPanelTinTuyenDung.setBackground(new Color(220, 220, 220));
+//		Tìm kiếm tin tuyển dụng
 		timkiemPanel=new JPanel();
 		timkiemPanel.setBackground(Color.WHITE);
 		timkiemPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 5));
 		
-		timkiemTenLabel=new JLabel("Tên:"); timkiemTenLabel.setFont(new Font("Segoe UI",0,16));
+		timkiemTenLabel=new JLabel("Tiêu đề tin tuyển dụng:"); timkiemTenLabel.setFont(new Font("Segoe UI",0,16));
 		timkiemTenText=new JTextField(15); timkiemTenText.setFont(new Font("Segoe UI",0,16));
-		timkiemSDTLabel=new JLabel("Số điện thoại:"); timkiemSDTLabel.setFont(new Font("Segoe UI",0,16));
-		timkiemSDTText=new JTextField(15); timkiemSDTText.setFont(new Font("Segoe UI",0,16));
+		
+		timkiemLuongLabel=new JLabel("Mức lương:"); timkiemLuongLabel.setFont(new Font("Segoe UI",0,16));
+		timkiemLuongText=new JTextField(15); timkiemLuongText.setFont(new Font("Segoe UI",0,16));
+		
 		
 		btnTimKiem=new JButton("Tìm kiếm"); btnTimKiem.setFont(new Font("Segoe UI",0,16));
 		btnTimKiem.setPreferredSize(new Dimension(120,25));
@@ -174,9 +177,9 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 		btnLamLai.setForeground(Color.WHITE);
 		
 		timkiemPanel.add(timkiemTenLabel); timkiemPanel.add(timkiemTenText);
-		timkiemPanel.add(timkiemSDTLabel); timkiemPanel.add(timkiemSDTText);
+		timkiemPanel.add(timkiemLuongLabel); timkiemPanel.add(timkiemLuongText);
 		timkiemPanel.add(btnTimKiem); timkiemPanel.add(btnLamLai);
-//		Danh sách ứng viên
+//		Danh sách tin tuyển dụng
 		danhsachPanel=new JPanel();
 		danhsachPanel.setBackground(Color.WHITE);
 		danhsachPanel.setLayout(new BorderLayout(10, 10));
@@ -184,37 +187,32 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 		danhsachNorthPanel=new JPanel();
 		danhsachNorthPanel.setLayout(new BorderLayout(10,10));
 		danhsachNorthPanel.setBackground(Color.WHITE);
-		iconBtnAdd=new ImageIcon(getClass().getResource("/image/add.png"));
 		iconBtnSave=new ImageIcon(getClass().getResource("/image/save.png"));
-		JPanel resBtnThem=new JPanel();
-		resBtnThem.setBorder(BorderFactory.createEmptyBorder(10,10,0,20));
-		resBtnThem.setBackground(Color.WHITE);
-		btnThem=new JButton("Thêm mới", iconBtnAdd); btnThem.setFont(new Font("Segoe UI",0,16));
-		btnThem.setPreferredSize(new Dimension(140,30));
-		btnThem.setBackground(new Color(0,102,102));
-		btnThem.setForeground(Color.WHITE);
+		JPanel resBtn=new JPanel();
+		resBtn.setBorder(BorderFactory.createEmptyBorder(10,10,0,20));
+		resBtn.setBackground(Color.WHITE);
 		btnLuu=new JButton("Xuất Excel", iconBtnSave); btnLuu.setFont(new Font("Segoe UI",0,16));
 		btnLuu.setPreferredSize(new Dimension(140,30));
 		btnLuu.setBackground(new Color(51,51,255));
 		btnLuu.setForeground(Color.WHITE);
-		resBtnThem.add(btnThem); resBtnThem.add(btnLuu);
-		titleNhanVien=new JLabel("Danh sách ứng viên");
-		titleNhanVien.setFont(new Font("Segoe UI",1,16));
-		titleNhanVien.setBorder(BorderFactory.createEmptyBorder(10,20,0,10));
-		danhsachNorthPanel.add(titleNhanVien, BorderLayout.WEST);
-		danhsachNorthPanel.add(resBtnThem, BorderLayout.EAST);
+		resBtn.add(btnLuu);
+		titleHoSo=new JLabel("Danh sách tin tuyển dụng");
+		titleHoSo.setFont(new Font("Segoe UI",1,16));
+		titleHoSo.setBorder(BorderFactory.createEmptyBorder(10,20,0,10));
+		danhsachNorthPanel.add(titleHoSo, BorderLayout.WEST);
+		danhsachNorthPanel.add(resBtn, BorderLayout.EAST);
 		
 		danhsachCenterPanel=new JPanel();
 		danhsachCenterPanel.setLayout(new BoxLayout(danhsachCenterPanel, BoxLayout.PAGE_AXIS));
 		danhsachCenterPanel.setBackground(Color.WHITE);
-		String[] colName= {"Mã ứng viên","Tên ứng viên","Số điện thoại","Email","Hành động","Hồ sơ"};
+		String[] colName= {"Mã tin tuyển dụng","Tiêu đề","Nhà tuyển dụng","Lương","Trình độ","Trạng thái","Hành động"};
 		Object[][] data = {
-			    {1, "MinhDat", "01234567", "abc@gmail.com",null,null},
-			    {2, "ThangDat", "07654321", "def@gmail.com",null,null}
+			    {1, "Manual Tester", "Minh Đạt", "1000", "Cao đẳng", "Khả dụng",null},
+			    {2, "Technical Project Manager", "Thắng Đạt", "1000", "Đại học", "Khả dụng",null}
 			};
-		modelTableUngVien= new DefaultTableModel(data, colName){
+		modelTableTinTuyenDung= new DefaultTableModel(data, colName){
 			boolean[] canEdit = new boolean [] {
-	                false, false, false, false, true, true
+	                false, false, false, false, false, false, true
 	            };
 			
             @Override
@@ -222,40 +220,40 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
                return canEdit[column];
             }
         };
-		tableUngVien=new JTable(modelTableUngVien);
-		tableUngVien.getTableHeader().setFont(new Font("Segoe UI",1,14));
-		tableUngVien.setFont(new Font("Segoe UI",0,16));
-		tableUngVien.setRowHeight(30);
+		tableTinTuyenDung=new JTable(modelTableTinTuyenDung);
+		tableTinTuyenDung.getTableHeader().setFont(new Font("Segoe UI",1,14));
+		tableTinTuyenDung.setFont(new Font("Segoe UI",0,16));
+		tableTinTuyenDung.setRowHeight(30);
 		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
 		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
-		for(int i=0;i<tableUngVien.getColumnCount()-2;i++) {
-			tableUngVien.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);			
+		for(int i=0;i<tableTinTuyenDung.getColumnCount()-1;i++) {
+			tableTinTuyenDung.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);			
 		}
-		tableUngVien.setAutoCreateRowSorter(true);
+		tableTinTuyenDung.setAutoCreateRowSorter(true);
 		ArrayList<RowSorter.SortKey> list = new ArrayList<>();
-        DefaultRowSorter sorter = ((DefaultRowSorter)tableUngVien.getRowSorter());
+        DefaultRowSorter sorter = ((DefaultRowSorter)tableTinTuyenDung.getRowSorter());
         sorter.setSortsOnUpdates(true);
         list.add( new RowSorter.SortKey(0, SortOrder.ASCENDING));
         sorter.setSortKeys(list);
         sorter.sort();
-		scrollUngVien=new JScrollPane(tableUngVien);
-		scrollUngVien.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
+		scrollTinTuyenDung=new JScrollPane(tableTinTuyenDung);
+		scrollTinTuyenDung.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
 		JPanel resScroll=new JPanel();
 		resScroll.setBorder(BorderFactory.createEmptyBorder(0,20,20,20));
 		resScroll.setLayout(new BoxLayout(resScroll, BoxLayout.PAGE_AXIS));
 		resScroll.setBackground(Color.WHITE);
-		resScroll.add(scrollUngVien);
+		resScroll.add(scrollTinTuyenDung);
 		danhsachCenterPanel.add(resScroll);
 		
 		danhsachPanel.add(danhsachNorthPanel, BorderLayout.NORTH);
 		danhsachPanel.add(danhsachCenterPanel, BorderLayout.CENTER);
 		
-		centerPanelUngVien.add(timkiemPanel, BorderLayout.NORTH);
-		centerPanelUngVien.add(danhsachPanel, BorderLayout.CENTER);
+		centerPanelTinTuyenDung.add(timkiemPanel, BorderLayout.NORTH);
+		centerPanelTinTuyenDung.add(danhsachPanel, BorderLayout.CENTER);
 		
 		
-		ungvienPanel.add(northPanelUngVien, BorderLayout.NORTH);
-		ungvienPanel.add(centerPanelUngVien, BorderLayout.CENTER);
+		tintuyendungPanel.add(northPanelTinTuyenDung, BorderLayout.NORTH);
+		tintuyendungPanel.add(centerPanelTinTuyenDung, BorderLayout.CENTER);
 	}
 	
 	public void addTableActionEvent() {
@@ -263,25 +261,25 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 			@Override
 			public void onUpdate(int row) {
 				// TODO Auto-generated method stub
-				new ThemSuaUngVienDialog(parent, rootPaneCheckingEnabled, true).setVisible(true);
+				new TaoSuaTinTuyenDungDialog(parent, rootPaneCheckingEnabled, true).setVisible(true);
 			}
 			
 			@Override
 			public void onDelete(int row) {
 				// TODO Auto-generated method stub
-				JOptionPane.showMessageDialog(rootPane, "Chức năng xóa ứng viên đang hoàn thiện");
+				JOptionPane.showMessageDialog(rootPane, "Chức năng xóa tin tuyển dụng đang hoàn thiện");
 			}
 
 			@Override
 			public void onViewHoSo(int row) {
 				// TODO Auto-generated method stub
-				JOptionPane.showMessageDialog(rootPane, "Chức năng xem hồ sơ ứng viên đang hoàn thiện");
+			
 			}
 
 			@Override
 			public void onCreateHoSo(int row) {
 				// TODO Auto-generated method stub
-				new TaoSuaHoSoDialog(parent, rootPaneCheckingEnabled).setVisible(true);
+				
 			}
 
 			@Override
@@ -309,11 +307,8 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 			}
 		};
 		
-		tableUngVien.getColumnModel().getColumn(4).setCellRenderer(new TableCellRendererUpdateDelete());
-		tableUngVien.getColumnModel().getColumn(4).setCellEditor(new TableCellEditorUpdateDelete(event));
-		
-		tableUngVien.getColumnModel().getColumn(5).setCellRenderer(new TableCellRendererViewCreateHoSo());
-		tableUngVien.getColumnModel().getColumn(5).setCellEditor(new TableCellEditorViewCreateHoSo(event));
+		tableTinTuyenDung.getColumnModel().getColumn(6).setCellRenderer(new TableCellRendererUpdateDelete());
+		tableTinTuyenDung.getColumnModel().getColumn(6).setCellEditor(new TableCellEditorUpdateDelete(event));
 	}
 	
 //	Trạng thái text chuột không nằm trong ô
@@ -335,23 +330,19 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 //	Listener
 	public void addFocusListener() {
 		timkiemTenText.addFocusListener(this);
-		timkiemSDTText.addFocusListener(this);
+		timkiemLuongText.addFocusListener(this);
 		
 		addPlaceHolder(timkiemTenText);
-		addPlaceHolder(timkiemSDTText);
+		addPlaceHolder(timkiemLuongText);
 	}
 	
 	public void addActionListener() {
-		btnThem.addActionListener(this);
 	}
 
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		var obj=e.getSource();
 		
-		if(obj.equals(btnThem)) {
-			new ThemSuaUngVienDialog(this, rootPaneCheckingEnabled).setVisible(true);
-		}
 	}
 	
 	public void addMouseListener() {
@@ -400,12 +391,12 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 				removePlaceHolder(timkiemTenText);
 			}
 		}
-		else if(obj.equals(timkiemSDTText)) {
-			if(timkiemSDTText.getText().equals("Nhập dữ liệu")) {
-				timkiemSDTText.setText(null);
-				timkiemSDTText.requestFocus();
+		else if(obj.equals(timkiemLuongText)) {
+			if(timkiemLuongText.getText().equals("Nhập dữ liệu")) {
+				timkiemLuongText.setText(null);
+				timkiemLuongText.requestFocus();
 				
-				removePlaceHolder(timkiemSDTText);
+				removePlaceHolder(timkiemLuongText);
 			}
 		}
 	}
@@ -420,10 +411,10 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 				timkiemTenText.setText("Nhập dữ liệu");
 			}
 		}
-		else if(obj.equals(timkiemSDTText)) {
-			if(timkiemSDTText.getText().length()==0) {
-				addPlaceHolder(timkiemSDTText);
-				timkiemSDTText.setText("Nhập dữ liệu");
+		else if(obj.equals(timkiemLuongText)) {
+			if(timkiemLuongText.getText().length()==0) {
+				addPlaceHolder(timkiemLuongText);
+				timkiemLuongText.setText("Nhập dữ liệu");
 			}
 		}
 	}
