@@ -38,10 +38,10 @@ public class LoginFrame extends JFrame implements ActionListener {
 		initComponent();
 		addActionListener();
 		
-		listUser=new TaiKhoan_DAO();
-		
-		Database.getInstance().connect();
-		loadUser();
+//		listUser=new TaiKhoan_DAO();
+//		
+//		Database.getInstance().connect();
+//		loadUser();
 		
 //		for(TaiKhoan tk: listUser.getListTaiKhoan()) {
 //			System.out.println(tk.getMaTK()+" "+tk.getEmail()+" "+tk.getMatkhau()+" "+tk.getVaitro());
