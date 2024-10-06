@@ -37,7 +37,7 @@ public class Main {
 		
 //		new TinTuyenDungFrame("MinhDat").setVisible(true);
 		
-//		new DanhSachHoSoDialog(new UngVienFrame("MinhDat"), true).setVisible(true);
+//		new HopDongFrame("Minh Dat").setVisible(true);
 //============================================================================================		
 
 //		new ThongKeTinTuyenDungFrame("MinhDat").setVisible(true);
