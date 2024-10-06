@@ -142,7 +142,7 @@ public class HoSoFrame extends JFrame implements ActionListener, MouseListener, 
 		
 //		Hiển thị tài khoản
 		northPanelHoSo=new JPanel();
-		northPanelHoSo.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 10));
+		northPanelHoSo.setLayout(new FlowLayout(FlowLayout.RIGHT, 15, 5));
 		northPanelHoSo.setBackground(new Color(220, 220, 220));
 		
 		userLabel=new JLabel();
@@ -161,9 +161,9 @@ public class HoSoFrame extends JFrame implements ActionListener, MouseListener, 
 //		Tìm kiếm hồ sơ
 		timkiemPanel=new JPanel();
 		timkiemPanel.setBackground(Color.WHITE);
-		timkiemPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 5));
+		timkiemPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 15, 5));
 		
-		timkiemTenLabel=new JLabel("Tên:"); timkiemTenLabel.setFont(new Font("Segoe UI",0,16));
+		timkiemTenLabel=new JLabel("Họ tên ứng viên:"); timkiemTenLabel.setFont(new Font("Segoe UI",0,16));
 		timkiemTenText=new JTextField(15); timkiemTenText.setFont(new Font("Segoe UI",0,16));
 		timkiemTrangThaiLabel=new JLabel("Trạng thái:"); timkiemTrangThaiLabel.setFont(new Font("Segoe UI",0,16));
 		timkiemTrangThaiText=new JComboBox(); 
@@ -174,6 +174,10 @@ public class HoSoFrame extends JFrame implements ActionListener, MouseListener, 
 		timkiemTrangThaiText.setFont(new Font("Segoe UI",0,16));
 		timkiemTrangThaiText.setPreferredSize(new Dimension(156,26));
 		
+		JPanel resBtnSearch=new JPanel();
+		resBtnSearch.setPreferredSize(new Dimension(350, 45));
+		resBtnSearch.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 10));
+		resBtnSearch.setBackground(Color.WHITE);
 		btnTimKiem=new JButton("Tìm kiếm"); btnTimKiem.setFont(new Font("Segoe UI",0,16));
 		btnTimKiem.setPreferredSize(new Dimension(120,25));
 		btnTimKiem.setBackground(new Color(0,102,102));
@@ -182,10 +186,11 @@ public class HoSoFrame extends JFrame implements ActionListener, MouseListener, 
 		btnLamLai.setPreferredSize(new Dimension(120,25));
 		btnLamLai.setBackground(Color.RED);
 		btnLamLai.setForeground(Color.WHITE);
+		resBtnSearch.add(btnTimKiem); resBtnSearch.add(btnLamLai);
 		
 		timkiemPanel.add(timkiemTenLabel); timkiemPanel.add(timkiemTenText);
 		timkiemPanel.add(timkiemTrangThaiLabel); timkiemPanel.add(timkiemTrangThaiText);
-		timkiemPanel.add(btnTimKiem); timkiemPanel.add(btnLamLai);
+		timkiemPanel.add(resBtnSearch);
 //		Danh sách hồ sơ
 		danhsachPanel=new JPanel();
 		danhsachPanel.setBackground(Color.WHITE);
@@ -311,6 +316,12 @@ public class HoSoFrame extends JFrame implements ActionListener, MouseListener, 
 			public void onTimViecLam(int row) {
 				// TODO Auto-generated method stub
 				JOptionPane.showMessageDialog(rootPane, "Chức năng tìm việc làm đang hoàn thiện");
+			}
+
+			@Override
+			public void onViewDetail(int row) {
+				// TODO Auto-generated method stub
+				
 			}
 		};
 		

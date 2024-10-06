@@ -197,7 +197,7 @@ public class TaiKhoanFrame extends JFrame implements ActionListener, MouseListen
 		danhsachCenterPanel=new JPanel();
 		danhsachCenterPanel.setLayout(new BoxLayout(danhsachCenterPanel, BoxLayout.PAGE_AXIS));
 		danhsachCenterPanel.setBackground(Color.WHITE);
-		String[] colName= {"Mã tài khoản","Tên đăng nhập", "Tên ứng viên", "Vai trò","Hành động"};
+		String[] colName= {"Mã tài khoản","Tên đăng nhập", "Tên nhân viên", "Vai trò","Hành động"};
 		Object[][] data = {
 			    {1, "MinhDat", "Minh Đạt", "Admin", null},
 			    {2, "ThangDat", "Thắng Đạt", "Nhân viên", null}
@@ -293,6 +293,12 @@ public class TaiKhoanFrame extends JFrame implements ActionListener, MouseListen
 
 			@Override
 			public void onTimViecLam(int row) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onViewDetail(int row) {
 				// TODO Auto-generated method stub
 				
 			}

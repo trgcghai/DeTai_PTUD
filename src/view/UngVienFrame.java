@@ -157,13 +157,17 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 //		Tìm kiếm ứng viên
 		timkiemPanel=new JPanel();
 		timkiemPanel.setBackground(Color.WHITE);
-		timkiemPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 5));
+		timkiemPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 15, 5));
 		
-		timkiemTenLabel=new JLabel("Tên:"); timkiemTenLabel.setFont(new Font("Segoe UI",0,16));
+		timkiemTenLabel=new JLabel("Họ tên ứng viên:"); timkiemTenLabel.setFont(new Font("Segoe UI",0,16));
 		timkiemTenText=new JTextField(15); timkiemTenText.setFont(new Font("Segoe UI",0,16));
 		timkiemSDTLabel=new JLabel("Số điện thoại:"); timkiemSDTLabel.setFont(new Font("Segoe UI",0,16));
 		timkiemSDTText=new JTextField(15); timkiemSDTText.setFont(new Font("Segoe UI",0,16));
 		
+		JPanel resBtnSearch=new JPanel();
+		resBtnSearch.setPreferredSize(new Dimension(350, 35));
+		resBtnSearch.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 5));
+		resBtnSearch.setBackground(Color.WHITE);
 		btnTimKiem=new JButton("Tìm kiếm"); btnTimKiem.setFont(new Font("Segoe UI",0,16));
 		btnTimKiem.setPreferredSize(new Dimension(120,25));
 		btnTimKiem.setBackground(new Color(0,102,102));
@@ -172,10 +176,11 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 		btnLamLai.setPreferredSize(new Dimension(120,25));
 		btnLamLai.setBackground(Color.RED);
 		btnLamLai.setForeground(Color.WHITE);
+		resBtnSearch.add(btnTimKiem); resBtnSearch.add(btnLamLai);
 		
 		timkiemPanel.add(timkiemTenLabel); timkiemPanel.add(timkiemTenText);
 		timkiemPanel.add(timkiemSDTLabel); timkiemPanel.add(timkiemSDTText);
-		timkiemPanel.add(btnTimKiem); timkiemPanel.add(btnLamLai);
+		timkiemPanel.add(resBtnSearch);
 //		Danh sách ứng viên
 		danhsachPanel=new JPanel();
 		danhsachPanel.setBackground(Color.WHITE);
@@ -275,7 +280,7 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 			@Override
 			public void onViewHoSo(int row) {
 				// TODO Auto-generated method stub
-				JOptionPane.showMessageDialog(rootPane, "Chức năng xem hồ sơ ứng viên đang hoàn thiện");
+				new DanhSachHoSoDialog(parent, rootPaneCheckingEnabled).setVisible(true);
 			}
 
 			@Override
@@ -304,6 +309,12 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 
 			@Override
 			public void onTimViecLam(int row) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onViewDetail(int row) {
 				// TODO Auto-generated method stub
 				
 			}

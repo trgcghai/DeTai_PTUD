@@ -166,7 +166,7 @@ public class CapSuaTaiKhoanDialog extends JDialog {
 		btnPanel=new JPanel(); 
 		btnPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		btnPanel.setBackground(Color.WHITE);
-		btnPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 35));
+		btnPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 47));
 		
 		btnThem=new JButton("Cấp tài khoản"); btnThem.setFont(new Font("Segoe UI",0,16));
 		btnThem.setPreferredSize(new Dimension(135,25));

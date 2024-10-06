@@ -51,6 +51,7 @@ import dao.TaiKhoan_DAO;
 import dao.NhanVien_DAO;
 import entity.TaiKhoan;
 import entity.constraint.TrangThai;
+import entity.constraint.TrinhDo;
 import entity.Customer;
 import entity.NhanVien;
 import exception.checkBirthday;
@@ -69,12 +70,14 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 	JPanel leftPanel,menuPanel,
 		tintuyendungPanel,northPanelTinTuyenDung, centerPanelTinTuyenDung, timkiemPanel,
 		danhsachPanel, danhsachNorthPanel, danhsachCenterPanel;
-	JLabel userLabel, iconUserLabel,timkiemTenLabel, timkiemLuongLabel, titleHoSo,vaitroLeftLabel;
+	JLabel userLabel, iconUserLabel,timkiemTenLabel, timkiemLuongLabel, timkiemNTDLabel, timkiemTrinhDoLabel, 
+		titleHoSo,vaitroLeftLabel;
 	JTextField timkiemTenText, timkiemLuongText;
 	JButton btnTimKiem, btnLamLai, btnLuu;
 	JTable tableTinTuyenDung;
 	DefaultTableModel modelTableTinTuyenDung;
 	JScrollPane scrollTinTuyenDung;
+	JComboBox timkiemNTDText, timkiemTrinhDoText;
 	Icon iconBtnSave;
 	
 	
@@ -158,15 +161,48 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 //		Tìm kiếm tin tuyển dụng
 		timkiemPanel=new JPanel();
 		timkiemPanel.setBackground(Color.WHITE);
-		timkiemPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 5));
+		timkiemPanel.setLayout(new BorderLayout(5,5));
 		
+		JPanel resSearch=new JPanel(); resSearch.setLayout(new GridBagLayout());
+		resSearch.setBackground(Color.WHITE);
+		GridBagConstraints gbc= new GridBagConstraints();
+		gbc.gridx=0; gbc.gridy=0; gbc.insets=new Insets(5, 10, 5, 10); gbc.anchor=GridBagConstraints.EAST;
 		timkiemTenLabel=new JLabel("Tiêu đề tin tuyển dụng:"); timkiemTenLabel.setFont(new Font("Segoe UI",0,16));
+		resSearch.add(timkiemTenLabel, gbc);
+		gbc.gridx=1; gbc.gridy=0; gbc.anchor=GridBagConstraints.WEST;
 		timkiemTenText=new JTextField(15); timkiemTenText.setFont(new Font("Segoe UI",0,16));
+		resSearch.add(timkiemTenText, gbc);
 		
+		gbc.gridx=2; gbc.gridy=0; gbc.anchor=GridBagConstraints.EAST;
 		timkiemLuongLabel=new JLabel("Mức lương:"); timkiemLuongLabel.setFont(new Font("Segoe UI",0,16));
+		resSearch.add(timkiemLuongLabel, gbc);
+		gbc.gridx=3; gbc.gridy=0; gbc.anchor=GridBagConstraints.WEST;
 		timkiemLuongText=new JTextField(15); timkiemLuongText.setFont(new Font("Segoe UI",0,16));
+		resSearch.add(timkiemLuongText, gbc);
 		
+		gbc.gridx=0; gbc.gridy=1; gbc.anchor=GridBagConstraints.EAST;
+		timkiemNTDLabel=new JLabel("Nhà tuyển dụng:"); timkiemNTDLabel.setFont(new Font("Segoe UI",0,16));
+		resSearch.add(timkiemNTDLabel, gbc);
+		gbc.gridx=1; gbc.gridy=1; gbc.anchor=GridBagConstraints.WEST;
+		timkiemNTDText=new JComboBox(); timkiemNTDText.setFont(new Font("Segoe UI",0,16));
+		timkiemNTDText.setPreferredSize(new Dimension(213,26));
+		resSearch.add(timkiemNTDText, gbc);
 		
+		gbc.gridx=2; gbc.gridy=1; gbc.anchor=GridBagConstraints.EAST;
+		timkiemTrinhDoLabel=new JLabel("Trình độ:"); timkiemTrinhDoLabel.setFont(new Font("Segoe UI",0,16));
+		resSearch.add(timkiemTrinhDoLabel, gbc);
+		gbc.gridx=3; gbc.gridy=1; gbc.anchor=GridBagConstraints.WEST;
+		timkiemTrinhDoText=new JComboBox(); timkiemTrinhDoText.setFont(new Font("Segoe UI",0,16));
+		TrinhDo[] trinhdos=TrinhDo.class.getEnumConstants();
+		for(TrinhDo t: trinhdos) {
+			timkiemTrinhDoText.addItem(t.getValue());
+		}
+		timkiemTrinhDoText.setPreferredSize(new Dimension(213,26));
+		resSearch.add(timkiemTrinhDoText, gbc);
+		
+		JPanel resBtnSearch=new JPanel(); resBtnSearch.setLayout(new BorderLayout(0,5));
+		resBtnSearch.setBorder(BorderFactory.createEmptyBorder(10,10,10,23));
+		resBtnSearch.setBackground(Color.WHITE);
 		btnTimKiem=new JButton("Tìm kiếm"); btnTimKiem.setFont(new Font("Segoe UI",0,16));
 		btnTimKiem.setPreferredSize(new Dimension(120,25));
 		btnTimKiem.setBackground(new Color(0,102,102));
@@ -175,10 +211,11 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 		btnLamLai.setPreferredSize(new Dimension(120,25));
 		btnLamLai.setBackground(Color.RED);
 		btnLamLai.setForeground(Color.WHITE);
+		resBtnSearch.add(btnTimKiem, BorderLayout.NORTH); resBtnSearch.add(btnLamLai, BorderLayout.SOUTH);
 		
-		timkiemPanel.add(timkiemTenLabel); timkiemPanel.add(timkiemTenText);
-		timkiemPanel.add(timkiemLuongLabel); timkiemPanel.add(timkiemLuongText);
-		timkiemPanel.add(btnTimKiem); timkiemPanel.add(btnLamLai);
+		timkiemPanel.add(resSearch, BorderLayout.CENTER);
+		timkiemPanel.add(resBtnSearch, BorderLayout.EAST);
+		
 //		Danh sách tin tuyển dụng
 		danhsachPanel=new JPanel();
 		danhsachPanel.setBackground(Color.WHITE);
@@ -302,6 +339,12 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 
 			@Override
 			public void onTimViecLam(int row) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onViewDetail(int row) {
 				// TODO Auto-generated method stub
 				
 			}

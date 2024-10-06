@@ -9,4 +9,5 @@ public interface TableActionEvent {
     public void onViewTinTuyenDung(int row);
     public void onCreateTinTuyenDung(int row);
     public void onTimViecLam(int row);
+    public void onViewDetail(int row);
 }

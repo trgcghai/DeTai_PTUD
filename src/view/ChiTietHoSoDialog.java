@@ -32,7 +32,7 @@ import controller.LabelDateFormatter;
 import entity.constraint.GioiTinh;
 import entity.constraint.TrangThai;
 
-public class TaoSuaHoSoDialog extends JDialog{
+public class ChiTietHoSoDialog extends JDialog{
 	
 	JPanel inforUngVienPanel, btnPanel;
 	JLabel idLabel, tenLabel, sdtLabel, dateLabel, gioitinhLabel, diachiLabel,emailLabel,trangthaiLabel, motaLabel,
@@ -47,9 +47,9 @@ public class TaoSuaHoSoDialog extends JDialog{
 	JButton btnThem, btnHuy;
 	GridBagConstraints gbc;
 	
-	public TaoSuaHoSoDialog(Frame parent, boolean modal) {
+	public ChiTietHoSoDialog(Dialog parent, boolean modal) {
 		super(parent, modal);
-		setTitle("Tạo hồ sơ");
+		setTitle("Xem chi tiết hồ sơ");
 		setResizable(false);
 		setSize(800,680);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -58,30 +58,6 @@ public class TaoSuaHoSoDialog extends JDialog{
 		
 		initComponent();
 	}
-
-	public TaoSuaHoSoDialog(Frame parent, boolean modal, boolean check) {
-		this(parent, modal);
-		setTitle("Cập nhật hồ sơ");
-		
-		gbc.gridx=0; gbc.gridy=6; gbc.gridwidth=1;
-		nhatuyendungLabel=new JLabel("Nhà tuyển dụng"); nhatuyendungLabel.setFont(new Font("Segoe UI",0,16));
-		inforUngVienPanel.add(nhatuyendungLabel,gbc);
-		gbc.gridx=0; gbc.gridy=7; gbc.gridwidth=2;
-		nhatuyendungText=new JTextField(23); nhatuyendungText.setFont(new Font("Segoe UI",0,16));
-		nhatuyendungText.setEditable(false);
-		inforUngVienPanel.add(nhatuyendungText,gbc);
-		
-		gbc.gridx=2; gbc.gridy=6; gbc.gridwidth=1;
-		tintuyendungLabel=new JLabel("Tin tuyển dụng"); tintuyendungLabel.setFont(new Font("Segoe UI",0,16));
-		inforUngVienPanel.add(tintuyendungLabel,gbc);
-		gbc.gridx=2; gbc.gridy=7; gbc.gridwidth=2;
-		tintuyendungText=new JTextField(23); tintuyendungText.setFont(new Font("Segoe UI",0,16));
-		tintuyendungText.setEditable(false);
-		inforUngVienPanel.add(tintuyendungText,gbc);
-		
-		btnThem.setText("Cập nhật");
-	}
-	
 	
 	public void initComponent() {
 		inforUngVienPanel=new JPanel(); 
@@ -175,8 +151,25 @@ public class TaoSuaHoSoDialog extends JDialog{
 		motaText=new JTextArea(10, 48); motaText.setFont(new Font("Segoe UI",0,16));
 		motaText.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
 		motaText.setLineWrap(true);
+		motaText.setEditable(false);
 		scrollMoTa=new JScrollPane(motaText);
 		inforUngVienPanel.add(scrollMoTa, gbc);
+		
+		gbc.gridx=0; gbc.gridy=6; gbc.gridwidth=1;
+		nhatuyendungLabel=new JLabel("Nhà tuyển dụng"); nhatuyendungLabel.setFont(new Font("Segoe UI",0,16));
+		inforUngVienPanel.add(nhatuyendungLabel,gbc);
+		gbc.gridx=0; gbc.gridy=7; gbc.gridwidth=2;
+		nhatuyendungText=new JTextField(23); nhatuyendungText.setFont(new Font("Segoe UI",0,16));
+		nhatuyendungText.setEditable(false);
+		inforUngVienPanel.add(nhatuyendungText,gbc);
+		
+		gbc.gridx=2; gbc.gridy=6; gbc.gridwidth=1;
+		tintuyendungLabel=new JLabel("Tin tuyển dụng"); tintuyendungLabel.setFont(new Font("Segoe UI",0,16));
+		inforUngVienPanel.add(tintuyendungLabel,gbc);
+		gbc.gridx=2; gbc.gridy=7; gbc.gridwidth=2;
+		tintuyendungText=new JTextField(23); tintuyendungText.setFont(new Font("Segoe UI",0,16));
+		tintuyendungText.setEditable(false);
+		inforUngVienPanel.add(tintuyendungText,gbc);
 		
 		add(inforUngVienPanel, BorderLayout.CENTER);
 		
@@ -186,17 +179,12 @@ public class TaoSuaHoSoDialog extends JDialog{
 		btnPanel.setBackground(Color.WHITE);
 		btnPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 50));
 		
-		btnThem=new JButton("Tạo mới"); btnThem.setFont(new Font("Segoe UI",0,16));
-		btnThem.setPreferredSize(new Dimension(120,25));
-		btnThem.setBackground(new Color(0,102,102));
-		btnThem.setForeground(Color.WHITE);
-		
 		btnHuy=new JButton("Hủy"); btnHuy.setFont(new Font("Segoe UI",0,16));
 		btnHuy.setPreferredSize(new Dimension(120,25));
-		btnHuy.setBackground(Color.WHITE);
-		btnHuy.setForeground(Color.BLACK);
+		btnHuy.setBackground(Color.RED);
+		btnHuy.setForeground(Color.WHITE);
 		
-		btnPanel.add(btnThem); btnPanel.add(btnHuy);
+		btnPanel.add(btnHuy);
 		
 		add(btnPanel, BorderLayout.SOUTH);
 	}
