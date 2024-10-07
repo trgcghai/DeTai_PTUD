@@ -38,6 +38,8 @@ public class Main {
 //		new TinTuyenDungFrame("MinhDat").setVisible(true);
 		
 //		new HopDongFrame("Minh Dat").setVisible(true);
+		
+//		new TimViecLamFrame("MinhDat").setVisible(true);
 //============================================================================================		
 
 //		new ThongKeTinTuyenDungFrame("MinhDat").setVisible(true);

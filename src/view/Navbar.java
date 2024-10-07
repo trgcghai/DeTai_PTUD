@@ -39,6 +39,8 @@ public class Navbar extends JMenuBar{
 	JMenu menuTinTuyenDung;
 // 	Hợp đồng
 	JMenu menuHopDong;
+//	Tìm việc làm
+	JMenu menuTimViec;
 // 	Thống kê
 	JMenu menuThongKe;
 //	JMenuItem itemTKNhanVien, itemTKCongTy, itemTKHoSo, itemTKTinTuyenDung;
@@ -82,6 +84,10 @@ public class Navbar extends JMenuBar{
 		menuHopDong.setFont(new Font("Segoe UI",0,16));
 		menuHopDong.setIcon(new ImageIcon(getClass().getResource("/image/hopdong.png")));
 		
+		menuTimViec=new JMenu("Tìm việc làm");
+		menuTimViec.setFont(new Font("Segoe UI",0,16));
+		menuTimViec.setIcon(new ImageIcon(getClass().getResource("/image/timviec16.png")));
+		
 		menuThongKe=new JMenu("Thống kê");
 		menuThongKe.setFont(new Font("Segoe UI",0,16));
 		menuThongKe.setIcon(new ImageIcon(getClass().getResource("/image/thongke.png")));
@@ -93,6 +99,7 @@ public class Navbar extends JMenuBar{
 		add(menuNhaTuyenDung);
 		add(menuTinTuyenDung);
 		add(menuHopDong);
+		add(menuTimViec);
 		add(menuThongKe);
 		
 		addMouseListener();
@@ -332,6 +339,40 @@ public class Navbar extends JMenuBar{
 			public void mouseClicked(MouseEvent e) {
 				// TODO Auto-generated method stub
 				new HopDongFrame("MinhDat").setVisible(true);
+				parent.dispose();
+			}
+		});
+
+		menuTimViec.addMouseListener(new MouseListener() {
+			
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				// TODO Auto-generated method stub
+				new TimViecLamFrame("MinhDat").setVisible(true);
 				parent.dispose();
 			}
 		});
