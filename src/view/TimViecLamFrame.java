@@ -90,27 +90,14 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 	
 	
 	public TimViecLamFrame(String userName) {
-		setTitle("Tìm việc làm");
-		setExtendedState(JFrame.MAXIMIZED_BOTH);
-		setLocationRelativeTo(null);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setLayout(new BorderLayout());
-		
 		this.userName=userName;
 		this.parent=this;
-		
-//		Tạo menu bar bên trái
-		initLeft();
 		
 //		Tạo component bên phải
 		initComponent();
 		
 //		Thêm update và delete vào table
 		addTableActionEvent();
-		
-//		Thêm vào frame
-		add(leftPanel, BorderLayout.WEST);
-		add(timviecPanel, BorderLayout.CENTER);
 		
 //		Thêm sự kiện
 		addActionListener();
@@ -119,47 +106,10 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 		
 	}
 	
-	public void initLeft() {
-		leftPanel=new JPanel();
-		leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
-		leftPanel.setBackground(Color.WHITE);
-		
-		vaitroLeftLabel=new JLabel("ADMIN", SwingConstants.CENTER);
-		vaitroLeftLabel.setFont(new Font("Segoe UI",0,16));
-		vaitroLeftLabel.setPreferredSize(new Dimension(getWidth(), 50));
-		
-		JPanel res= new JPanel();
-		res.setPreferredSize(new Dimension(getWidth(),400));
-		res.setBackground(Color.WHITE);
-		
-		Navbar nav=new Navbar(this);
-		
-		menuPanel=new JPanel(); 
-		menuPanel.setLayout(new BorderLayout()); menuPanel.setBackground(Color.WHITE);
-		menuPanel.add(vaitroLeftLabel, BorderLayout.NORTH);
-		menuPanel.add(nav, BorderLayout.CENTER);
-		menuPanel.add(res, BorderLayout.SOUTH);
-		
-		leftPanel.add(menuPanel);
-	}
-	
 	public void initComponent() {
 		timviecPanel=new JPanel(); 
 		timviecPanel.setLayout(new BorderLayout(5,5));
 		timviecPanel.setBackground(new Color(220, 220, 220));
-		
-//		Hiển thị tài khoản
-		northPanelTimViec=new JPanel();
-		northPanelTimViec.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 10));
-		northPanelTimViec.setBackground(new Color(220, 220, 220));
-		
-		userLabel=new JLabel();
-		userLabel.setFont(new Font("Segoe UI",0,16));
-		userLabel.setText("Welcome "+userName);
-		iconUserLabel=new JLabel();
-		iconUserLabel.setIcon(new ImageIcon(getClass().getResource("/image/user.png")));
-		
-		northPanelTimViec.add(userLabel); northPanelTimViec.add(iconUserLabel);
 		
 //		Hiển thị tìm kiếm và danh sách việc làm
 		centerPanelTimViec=new JPanel();
@@ -307,8 +257,6 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 		centerPanelTimViec.add(timkiemPanel, BorderLayout.NORTH);
 		centerPanelTimViec.add(danhsachPanel, BorderLayout.CENTER);
 		
-		
-		timviecPanel.add(northPanelTimViec, BorderLayout.NORTH);
 		timviecPanel.add(centerPanelTimViec, BorderLayout.CENTER);
 	}
 	
@@ -357,12 +305,6 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 			}
 
 			@Override
-			public void onTimViecLam(int row) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
 			public void onViewDetail(int row) {
 				// TODO Auto-generated method stub
 				new ChiTietViecLamDialog(parent, rootPaneCheckingEnabled).setVisible(true);
@@ -371,6 +313,10 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 		
 		tableTimViec.getColumnModel().getColumn(6).setCellRenderer(new TableCellRendererDetail());
 		tableTimViec.getColumnModel().getColumn(6).setCellEditor(new TableCellEditorDetail(event));
+	}
+	
+	public JPanel getPanel() {
+		return this.timviecPanel;
 	}
 	
 //	Trạng thái text chuột không nằm trong ô

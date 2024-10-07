@@ -80,17 +80,8 @@ public class NhaTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 	
 	
 	public NhaTuyenDungFrame(String userName) {
-		setTitle("Nhà tuyển dụng");
-		setExtendedState(JFrame.MAXIMIZED_BOTH);
-		setLocationRelativeTo(null);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setLayout(new BorderLayout());
-		
 		this.userName=userName;
 		this.parent=this;
-		
-//		Tạo menu bar bên trái
-		initLeft();
 		
 //		Tạo component bên phải
 		initComponent();
@@ -98,58 +89,16 @@ public class NhaTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 //		Thêm update và delete vào table
 		addTableActionEvent();
 		
-//		Thêm vào frame
-		add(leftPanel, BorderLayout.WEST);
-		add(nhatuyendungPanel, BorderLayout.CENTER);
-		
 //		Thêm sự kiện
 		addActionListener();
 		addMouseListener();
-		addFocusListener();
-		
-	}
-	
-	public void initLeft() {
-		leftPanel=new JPanel();
-		leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
-		leftPanel.setBackground(Color.WHITE);
-		
-		vaitroLeftLabel=new JLabel("ADMIN", SwingConstants.CENTER);
-		vaitroLeftLabel.setFont(new Font("Segoe UI",0,16));
-		vaitroLeftLabel.setPreferredSize(new Dimension(getWidth(), 50));
-		
-		JPanel res= new JPanel();
-		res.setPreferredSize(new Dimension(getWidth(),400));
-		res.setBackground(Color.WHITE);
-		
-		Navbar nav=new Navbar(this);
-		
-		menuPanel=new JPanel(); 
-		menuPanel.setLayout(new BorderLayout()); menuPanel.setBackground(Color.WHITE);
-		menuPanel.add(vaitroLeftLabel, BorderLayout.NORTH);
-		menuPanel.add(nav, BorderLayout.CENTER);
-		menuPanel.add(res, BorderLayout.SOUTH);
-		
-		leftPanel.add(menuPanel);
+		addFocusListener();	
 	}
 	
 	public void initComponent() {
 		nhatuyendungPanel=new JPanel(); 
 		nhatuyendungPanel.setLayout(new BorderLayout(5,5));
 		nhatuyendungPanel.setBackground(new Color(220, 220, 220));
-		
-//		Hiển thị tài khoản
-		northPanelNhaTuyenDung=new JPanel();
-		northPanelNhaTuyenDung.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 10));
-		northPanelNhaTuyenDung.setBackground(new Color(220, 220, 220));
-		
-		userLabel=new JLabel();
-		userLabel.setFont(new Font("Segoe UI",0,16));
-		userLabel.setText("Welcome "+userName);
-		iconUserLabel=new JLabel();
-		iconUserLabel.setIcon(new ImageIcon(getClass().getResource("/image/user.png")));
-		
-		northPanelNhaTuyenDung.add(userLabel); northPanelNhaTuyenDung.add(iconUserLabel);
 		
 //		Hiển thị tìm kiếm và danh sách nhà tuyển dụng
 		centerPanelNhaTuyenDung=new JPanel();
@@ -260,8 +209,6 @@ public class NhaTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 		centerPanelNhaTuyenDung.add(timkiemPanel, BorderLayout.NORTH);
 		centerPanelNhaTuyenDung.add(danhsachPanel, BorderLayout.CENTER);
 		
-		
-		nhatuyendungPanel.add(northPanelNhaTuyenDung, BorderLayout.NORTH);
 		nhatuyendungPanel.add(centerPanelNhaTuyenDung, BorderLayout.CENTER);
 	}
 	
@@ -310,12 +257,6 @@ public class NhaTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 			}
 
 			@Override
-			public void onTimViecLam(int row) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
 			public void onViewDetail(int row) {
 				// TODO Auto-generated method stub
 				
@@ -327,6 +268,10 @@ public class NhaTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 		
 		tableNhaTuyenDung.getColumnModel().getColumn(6).setCellRenderer(new TableCellRendererViewCreateTinTuyenDung());
 		tableNhaTuyenDung.getColumnModel().getColumn(6).setCellEditor(new TableCellEditorViewCreateTinTuyenDung(event));
+	}
+	
+	public JPanel getPanel() {
+		return this.nhatuyendungPanel;
 	}
 	
 //	Trạng thái text chuột không nằm trong ô

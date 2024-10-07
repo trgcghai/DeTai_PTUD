@@ -26,10 +26,8 @@ import javax.swing.table.DefaultTableModel;
 
 import controller.actiontable.TableActionEvent;
 import controller.actiontable.TableCellEditorDetail;
-import controller.actiontable.TableCellEditorTimViecLam;
 import controller.actiontable.TableCellEditorUpdateDelete;
 import controller.actiontable.TableCellRendererDetail;
-import controller.actiontable.TableCellRendererTimViecLam;
 import controller.actiontable.TableCellRendererUpdateDelete;
 import entity.constraint.TrangThai;
 
@@ -198,12 +196,6 @@ public class DanhSachHoSoDialog extends JDialog {
 
 			@Override
 			public void onCreateTinTuyenDung(int row) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onTimViecLam(int row) {
 				// TODO Auto-generated method stub
 				
 			}

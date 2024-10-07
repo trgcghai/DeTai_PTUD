@@ -78,27 +78,14 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 	
 	
 	public UngVienFrame(String userName) {
-		setTitle("Ứng viên");
-		setExtendedState(JFrame.MAXIMIZED_BOTH);
-		setLocationRelativeTo(null);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setLayout(new BorderLayout());
-		
 		this.userName=userName;
 		this.parent=this;
-		
-//		Tạo menu bar bên trái
-		initLeft();
 		
 //		Tạo component bên phải
 		initComponent();
 		
 //		Thêm update và delete vào table
 		addTableActionEvent();
-		
-//		Thêm vào frame
-		add(leftPanel, BorderLayout.WEST);
-		add(ungvienPanel, BorderLayout.CENTER);
 		
 //		Thêm sự kiện
 		addActionListener();
@@ -107,47 +94,10 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 		
 	}
 	
-	public void initLeft() {
-		leftPanel=new JPanel();
-		leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
-		leftPanel.setBackground(Color.WHITE);
-		
-		vaitroLeftLabel=new JLabel("ADMIN", SwingConstants.CENTER);
-		vaitroLeftLabel.setFont(new Font("Segoe UI",0,16));
-		vaitroLeftLabel.setPreferredSize(new Dimension(getWidth(), 50));
-		
-		JPanel res= new JPanel();
-		res.setPreferredSize(new Dimension(getWidth(),400));
-		res.setBackground(Color.WHITE);
-		
-		Navbar nav=new Navbar(this);
-		
-		menuPanel=new JPanel(); 
-		menuPanel.setLayout(new BorderLayout()); menuPanel.setBackground(Color.WHITE);
-		menuPanel.add(vaitroLeftLabel, BorderLayout.NORTH);
-		menuPanel.add(nav, BorderLayout.CENTER);
-		menuPanel.add(res, BorderLayout.SOUTH);
-		
-		leftPanel.add(menuPanel);
-	}
-	
 	public void initComponent() {
 		ungvienPanel=new JPanel(); 
 		ungvienPanel.setLayout(new BorderLayout(5,5));
 		ungvienPanel.setBackground(new Color(220, 220, 220));
-		
-//		Hiển thị tài khoản
-		northPanelUngVien=new JPanel();
-		northPanelUngVien.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 10));
-		northPanelUngVien.setBackground(new Color(220, 220, 220));
-		
-		userLabel=new JLabel();
-		userLabel.setFont(new Font("Segoe UI",0,16));
-		userLabel.setText("Welcome "+userName);
-		iconUserLabel=new JLabel();
-		iconUserLabel.setIcon(new ImageIcon(getClass().getResource("/image/user.png")));
-		
-		northPanelUngVien.add(userLabel); northPanelUngVien.add(iconUserLabel);
 		
 //		Hiển thị tìm kiếm và danh sách ứng viên
 		centerPanelUngVien=new JPanel();
@@ -258,8 +208,6 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 		centerPanelUngVien.add(timkiemPanel, BorderLayout.NORTH);
 		centerPanelUngVien.add(danhsachPanel, BorderLayout.CENTER);
 		
-		
-		ungvienPanel.add(northPanelUngVien, BorderLayout.NORTH);
 		ungvienPanel.add(centerPanelUngVien, BorderLayout.CENTER);
 	}
 	
@@ -308,12 +256,6 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 			}
 
 			@Override
-			public void onTimViecLam(int row) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
 			public void onViewDetail(int row) {
 				// TODO Auto-generated method stub
 				
@@ -325,6 +267,10 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 		
 		tableUngVien.getColumnModel().getColumn(5).setCellRenderer(new TableCellRendererViewCreateHoSo());
 		tableUngVien.getColumnModel().getColumn(5).setCellEditor(new TableCellEditorViewCreateHoSo(event));
+	}
+	
+	public JPanel getPanel() {
+		return this.ungvienPanel;
 	}
 	
 //	Trạng thái text chuột không nằm trong ô

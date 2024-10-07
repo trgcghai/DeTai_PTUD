@@ -82,27 +82,14 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 	
 	
 	public TinTuyenDungFrame(String userName) {
-		setTitle("Tin tuyển dụng");
-		setExtendedState(JFrame.MAXIMIZED_BOTH);
-		setLocationRelativeTo(null);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setLayout(new BorderLayout());
-		
 		this.userName=userName;
 		this.parent=this;
-		
-//		Tạo menu bar bên trái
-		initLeft();
 		
 //		Tạo component bên phải
 		initComponent();
 		
 //		Thêm update và delete vào table
 		addTableActionEvent();
-		
-//		Thêm vào frame
-		add(leftPanel, BorderLayout.WEST);
-		add(tintuyendungPanel, BorderLayout.CENTER);
 		
 //		Thêm sự kiện
 		addActionListener();
@@ -111,47 +98,10 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 		
 	}
 	
-	public void initLeft() {
-		leftPanel=new JPanel();
-		leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
-		leftPanel.setBackground(Color.WHITE);
-		
-		vaitroLeftLabel=new JLabel("ADMIN", SwingConstants.CENTER);
-		vaitroLeftLabel.setFont(new Font("Segoe UI",0,16));
-		vaitroLeftLabel.setPreferredSize(new Dimension(getWidth(), 50));
-		
-		JPanel res= new JPanel();
-		res.setPreferredSize(new Dimension(getWidth(),400));
-		res.setBackground(Color.WHITE);
-		
-		Navbar nav=new Navbar(this);
-		
-		menuPanel=new JPanel(); 
-		menuPanel.setLayout(new BorderLayout()); menuPanel.setBackground(Color.WHITE);
-		menuPanel.add(vaitroLeftLabel, BorderLayout.NORTH);
-		menuPanel.add(nav, BorderLayout.CENTER);
-		menuPanel.add(res, BorderLayout.SOUTH);
-		
-		leftPanel.add(menuPanel);
-	}
-	
 	public void initComponent() {
 		tintuyendungPanel=new JPanel(); 
 		tintuyendungPanel.setLayout(new BorderLayout(5,5));
 		tintuyendungPanel.setBackground(new Color(220, 220, 220));
-		
-//		Hiển thị tài khoản
-		northPanelTinTuyenDung=new JPanel();
-		northPanelTinTuyenDung.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 10));
-		northPanelTinTuyenDung.setBackground(new Color(220, 220, 220));
-		
-		userLabel=new JLabel();
-		userLabel.setFont(new Font("Segoe UI",0,16));
-		userLabel.setText("Welcome "+userName);
-		iconUserLabel=new JLabel();
-		iconUserLabel.setIcon(new ImageIcon(getClass().getResource("/image/user.png")));
-		
-		northPanelTinTuyenDung.add(userLabel); northPanelTinTuyenDung.add(iconUserLabel);
 		
 //		Hiển thị tìm kiếm và danh sách tin tuyển dụng
 		centerPanelTinTuyenDung=new JPanel();
@@ -288,8 +238,6 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 		centerPanelTinTuyenDung.add(timkiemPanel, BorderLayout.NORTH);
 		centerPanelTinTuyenDung.add(danhsachPanel, BorderLayout.CENTER);
 		
-		
-		tintuyendungPanel.add(northPanelTinTuyenDung, BorderLayout.NORTH);
 		tintuyendungPanel.add(centerPanelTinTuyenDung, BorderLayout.CENTER);
 	}
 	
@@ -338,12 +286,6 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 			}
 
 			@Override
-			public void onTimViecLam(int row) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
 			public void onViewDetail(int row) {
 				// TODO Auto-generated method stub
 				
@@ -352,6 +294,10 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 		
 		tableTinTuyenDung.getColumnModel().getColumn(6).setCellRenderer(new TableCellRendererUpdateDelete());
 		tableTinTuyenDung.getColumnModel().getColumn(6).setCellEditor(new TableCellEditorUpdateDelete(event));
+	}
+	
+	public JPanel getPanel() {
+		return this.tintuyendungPanel;
 	}
 	
 //	Trạng thái text chuột không nằm trong ô
