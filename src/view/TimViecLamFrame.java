@@ -43,13 +43,19 @@ import controller.ExcelHelper;
 import controller.FilterImp;
 import controller.LabelDateFormatter;
 import controller.actiontable.TableActionEvent;
+import controller.actiontable.TableCellEditorDetail;
 import controller.actiontable.TableCellEditorUpdateDelete;
 import controller.actiontable.TableCellEditorViewCreateHoSo;
+import controller.actiontable.TableCellRendererDetail;
 import controller.actiontable.TableCellRendererUpdateDelete;
 import controller.actiontable.TableCellRendererViewCreateHoSo;
 import dao.TaiKhoan_DAO;
 import dao.NhanVien_DAO;
 import entity.TaiKhoan;
+import entity.constraint.HinhThucLamViec;
+import entity.constraint.NganhNghe;
+import entity.constraint.TrangThai;
+import entity.constraint.TrinhDo;
 import entity.Customer;
 import entity.NhanVien;
 import exception.checkBirthday;
@@ -59,25 +65,31 @@ import exception.checkPhone;
 import exception.checkUserName;
 import exception.checkUserPass;
 
-public class UngVienFrame extends JFrame implements ActionListener, MouseListener, FocusListener {
+public class TimViecLamFrame extends JFrame implements ActionListener, MouseListener, FocusListener {
 	
 	String userName;
-	UngVienFrame parent;
+	TimViecLamFrame parent;
 	
-//	Component danh sách ứng viên
+//	Component tìm việc làm
 	JPanel leftPanel,menuPanel,
-		ungvienPanel,northPanelUngVien, centerPanelUngVien, timkiemPanel,
-		danhsachPanel, danhsachNorthPanel, danhsachCenterPanel;
-	JLabel userLabel, iconUserLabel,timkiemTenLabel, timkiemSDTLabel, titleNhanVien,vaitroLeftLabel;
-	JTextField timkiemTenText, timkiemSDTText;
-	JButton btnTimKiem, btnLamLai,btnThem,btnLuu;
-	JTable tableUngVien;
-	DefaultTableModel modelTableUngVien;
-	JScrollPane scrollUngVien;
-	Icon iconBtnAdd,iconBtnSave;
+		timviecPanel,northPanelTimViec, centerPanelTimViec, timkiemPanel,
+		danhsachPanel, danhsachNorthPanel, danhsachCenterPanel, ngaylapPanel;
+	JLabel trinhdoLabel, luongLabel, hinhthucLabel,
+		userLabel, iconUserLabel,timkiemTenLabel, timkiemNTDLabel,
+		titleHopDong,vaitroLeftLabel, ngaylapLabel, startLabel, endLabel;
+	JTextField timkiemTenText, luongText, ungvienText;
+	JButton btnTimKiem, btnLamLai, btnLuu;
+	JTable tableTimViec;
+	DefaultTableModel modelTableTimViec;
+	JScrollPane scrollTimViec;
+	JComboBox ungvienComBo, trinhdoText, hinhthucText;
+	Icon iconBtnSave;
+	UtilDateModel modelDateStart, modelDateEnd;
+	JDatePanelImpl panelStart, panelEnd;
+	JDatePickerImpl startText, endText;
 	
 	
-	public UngVienFrame(String userName) {
+	public TimViecLamFrame(String userName) {
 		this.userName=userName;
 		this.parent=this;
 		
@@ -95,28 +107,70 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 	}
 	
 	public void initComponent() {
-		ungvienPanel=new JPanel(); 
-		ungvienPanel.setLayout(new BorderLayout(5,5));
-		ungvienPanel.setBackground(new Color(220, 220, 220));
+		timviecPanel=new JPanel(); 
+		timviecPanel.setLayout(new BorderLayout(5,5));
+		timviecPanel.setBackground(new Color(220, 220, 220));
 		
-//		Hiển thị tìm kiếm và danh sách ứng viên
-		centerPanelUngVien=new JPanel();
-		centerPanelUngVien.setLayout(new BorderLayout(10, 10));
-		centerPanelUngVien.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		centerPanelUngVien.setBackground(new Color(220, 220, 220));
-//		Tìm kiếm ứng viên
+//		Hiển thị tìm kiếm và danh sách việc làm
+		centerPanelTimViec=new JPanel();
+		centerPanelTimViec.setLayout(new BorderLayout(10, 10));
+		centerPanelTimViec.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		centerPanelTimViec.setBackground(new Color(220, 220, 220));
+//		Tìm kiếm việc làm
 		timkiemPanel=new JPanel();
 		timkiemPanel.setBackground(Color.WHITE);
-		timkiemPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 15, 5));
+		timkiemPanel.setLayout(new BorderLayout(5,5));
 		
-		timkiemTenLabel=new JLabel("Họ tên ứng viên:"); timkiemTenLabel.setFont(new Font("Segoe UI",0,16));
-		timkiemTenText=new JTextField(15); timkiemTenText.setFont(new Font("Segoe UI",0,16));
-		timkiemSDTLabel=new JLabel("Số điện thoại:"); timkiemSDTLabel.setFont(new Font("Segoe UI",0,16));
-		timkiemSDTText=new JTextField(15); timkiemSDTText.setFont(new Font("Segoe UI",0,16));
+		JPanel resSearch=new JPanel(); resSearch.setLayout(new GridBagLayout());
+		resSearch.setBackground(Color.WHITE);
 		
-		JPanel resBtnSearch=new JPanel();
-		resBtnSearch.setPreferredSize(new Dimension(350, 35));
-		resBtnSearch.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 5));
+		GridBagConstraints gbc= new GridBagConstraints();
+		gbc.gridx=0; gbc.gridy=0; gbc.insets=new Insets(5, 10, 5, 10); gbc.anchor=GridBagConstraints.EAST;
+		ungvienComBo = new JComboBox<String>();
+		ungvienComBo.setFont(new Font("Segoe UI",0,16));
+		ungvienComBo.setPreferredSize(new Dimension(150,25));
+		ungvienComBo.setRenderer(new ComboBoxRenderer("Chọn ứng viên"));
+		ungvienComBo.setSelectedIndex(-1);
+		resSearch.add(ungvienComBo, gbc);
+		
+		gbc.gridx=1;
+		ungvienText=new JTextField(15); ungvienText.setFont(new Font("Segoe UI",0,16));
+		ungvienText.setEditable(false);
+		resSearch.add(ungvienText, gbc);
+		
+		gbc.gridx=2;
+		trinhdoLabel=new JLabel("Trình độ:"); trinhdoLabel.setFont(new Font("Segoe UI",0,16));
+		resSearch.add(trinhdoLabel, gbc);
+		gbc.gridx=3;
+		trinhdoText=new JComboBox(); trinhdoText.setFont(new Font("Segoe UI",0,16));
+		TrinhDo[] trinhdos=TrinhDo.class.getEnumConstants();
+		for(TrinhDo t: trinhdos) {
+			trinhdoText.addItem(t.getValue());
+		}
+		trinhdoText.setPreferredSize(new Dimension(156,25));
+		resSearch.add(trinhdoText, gbc);
+		
+		gbc.gridx=0; gbc.gridy=1;
+		luongLabel=new JLabel("Lương:"); luongLabel.setFont(new Font("Segoe UI",0,16));
+		resSearch.add(luongLabel, gbc);
+		gbc.gridx=1;
+		luongText=new JTextField(15); luongText.setFont(new Font("Segoe UI",0,16));
+		resSearch.add(luongText, gbc);
+		
+		gbc.gridx=2;
+		hinhthucLabel=new JLabel("Hình thức làm việc:"); hinhthucLabel.setFont(new Font("Segoe UI",0,16));
+		resSearch.add(hinhthucLabel, gbc);
+		gbc.gridx=3;
+		hinhthucText=new JComboBox(); hinhthucText.setFont(new Font("Segoe UI",0,16));
+		HinhThucLamViec[] hinhthucs=HinhThucLamViec.class.getEnumConstants();
+		for(HinhThucLamViec h: hinhthucs) {
+			hinhthucText.addItem(h.getValue());
+		}
+		hinhthucText.setPreferredSize(new Dimension(156,25));
+		resSearch.add(hinhthucText,gbc);
+		
+		JPanel resBtnSearch=new JPanel(); resBtnSearch.setLayout(new BorderLayout(0,5));
+		resBtnSearch.setBorder(BorderFactory.createEmptyBorder(10,10,10,23));
 		resBtnSearch.setBackground(Color.WHITE);
 		btnTimKiem=new JButton("Tìm kiếm"); btnTimKiem.setFont(new Font("Segoe UI",0,16));
 		btnTimKiem.setPreferredSize(new Dimension(120,25));
@@ -126,12 +180,12 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 		btnLamLai.setPreferredSize(new Dimension(120,25));
 		btnLamLai.setBackground(Color.RED);
 		btnLamLai.setForeground(Color.WHITE);
-		resBtnSearch.add(btnTimKiem); resBtnSearch.add(btnLamLai);
+		resBtnSearch.add(btnTimKiem, BorderLayout.NORTH); resBtnSearch.add(btnLamLai, BorderLayout.SOUTH);
 		
-		timkiemPanel.add(timkiemTenLabel); timkiemPanel.add(timkiemTenText);
-		timkiemPanel.add(timkiemSDTLabel); timkiemPanel.add(timkiemSDTText);
-		timkiemPanel.add(resBtnSearch);
-//		Danh sách ứng viên
+		timkiemPanel.add(resSearch, BorderLayout.CENTER);
+		timkiemPanel.add(resBtnSearch, BorderLayout.EAST);
+		
+//		Danh sách việc làm
 		danhsachPanel=new JPanel();
 		danhsachPanel.setBackground(Color.WHITE);
 		danhsachPanel.setLayout(new BorderLayout(10, 10));
@@ -139,37 +193,32 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 		danhsachNorthPanel=new JPanel();
 		danhsachNorthPanel.setLayout(new BorderLayout(10,10));
 		danhsachNorthPanel.setBackground(Color.WHITE);
-		iconBtnAdd=new ImageIcon(getClass().getResource("/image/add.png"));
 		iconBtnSave=new ImageIcon(getClass().getResource("/image/save.png"));
-		JPanel resBtnThem=new JPanel();
-		resBtnThem.setBorder(BorderFactory.createEmptyBorder(10,10,0,20));
-		resBtnThem.setBackground(Color.WHITE);
-		btnThem=new JButton("Thêm mới", iconBtnAdd); btnThem.setFont(new Font("Segoe UI",0,16));
-		btnThem.setPreferredSize(new Dimension(140,30));
-		btnThem.setBackground(new Color(0,102,102));
-		btnThem.setForeground(Color.WHITE);
+		JPanel resBtn=new JPanel();
+		resBtn.setBorder(BorderFactory.createEmptyBorder(10,10,0,20));
+		resBtn.setBackground(Color.WHITE);
 		btnLuu=new JButton("Xuất Excel", iconBtnSave); btnLuu.setFont(new Font("Segoe UI",0,16));
 		btnLuu.setPreferredSize(new Dimension(140,30));
 		btnLuu.setBackground(new Color(51,51,255));
 		btnLuu.setForeground(Color.WHITE);
-		resBtnThem.add(btnThem); resBtnThem.add(btnLuu);
-		titleNhanVien=new JLabel("Danh sách ứng viên");
-		titleNhanVien.setFont(new Font("Segoe UI",1,16));
-		titleNhanVien.setBorder(BorderFactory.createEmptyBorder(10,20,0,10));
-		danhsachNorthPanel.add(titleNhanVien, BorderLayout.WEST);
-		danhsachNorthPanel.add(resBtnThem, BorderLayout.EAST);
+		resBtn.add(btnLuu);
+		titleHopDong=new JLabel("Danh sách việc làm thích hợp");
+		titleHopDong.setFont(new Font("Segoe UI",1,16));
+		titleHopDong.setBorder(BorderFactory.createEmptyBorder(10,20,0,10));
+		danhsachNorthPanel.add(titleHopDong, BorderLayout.WEST);
+		danhsachNorthPanel.add(resBtn, BorderLayout.EAST);
 		
 		danhsachCenterPanel=new JPanel();
 		danhsachCenterPanel.setLayout(new BoxLayout(danhsachCenterPanel, BoxLayout.PAGE_AXIS));
 		danhsachCenterPanel.setBackground(Color.WHITE);
-		String[] colName= {"Mã ứng viên","Tên ứng viên","Số điện thoại","Email","Hành động","Hồ sơ"};
+		String[] colName= {"Mã tin tuyển dụng","Tiêu đề","Nhà tuyển dụng","Trình độ","Lương","Hình thức làm việc","Hành động"};
 		Object[][] data = {
-			    {1, "MinhDat", "01234567", "abc@gmail.com",null,null},
-			    {2, "ThangDat", "07654321", "def@gmail.com",null,null}
+			    {1, "Technical Project Manager","Facebook", "Đại học","1000","Part time",null},
+			    {2, "Manual Tester","Amazon", "Cao đẳng", "500","Full time",null}
 			};
-		modelTableUngVien= new DefaultTableModel(data, colName){
+		modelTableTimViec= new DefaultTableModel(data, colName){
 			boolean[] canEdit = new boolean [] {
-	                false, false, false, false, true, true
+	                false, false, false, false, false, false, true
 	            };
 			
             @Override
@@ -177,38 +226,38 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
                return canEdit[column];
             }
         };
-		tableUngVien=new JTable(modelTableUngVien);
-		tableUngVien.getTableHeader().setFont(new Font("Segoe UI",1,14));
-		tableUngVien.setFont(new Font("Segoe UI",0,16));
-		tableUngVien.setRowHeight(30);
+		tableTimViec=new JTable(modelTableTimViec);
+		tableTimViec.getTableHeader().setFont(new Font("Segoe UI",1,14));
+		tableTimViec.setFont(new Font("Segoe UI",0,16));
+		tableTimViec.setRowHeight(30);
 		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
 		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
-		for(int i=0;i<tableUngVien.getColumnCount()-2;i++) {
-			tableUngVien.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);			
+		for(int i=0;i<tableTimViec.getColumnCount()-1;i++) {
+			tableTimViec.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);			
 		}
-		tableUngVien.setAutoCreateRowSorter(true);
+		tableTimViec.setAutoCreateRowSorter(true);
 		ArrayList<RowSorter.SortKey> list = new ArrayList<>();
-        DefaultRowSorter sorter = ((DefaultRowSorter)tableUngVien.getRowSorter());
+        DefaultRowSorter sorter = ((DefaultRowSorter)tableTimViec.getRowSorter());
         sorter.setSortsOnUpdates(true);
         list.add( new RowSorter.SortKey(0, SortOrder.ASCENDING));
         sorter.setSortKeys(list);
         sorter.sort();
-		scrollUngVien=new JScrollPane(tableUngVien);
-		scrollUngVien.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
+		scrollTimViec=new JScrollPane(tableTimViec);
+		scrollTimViec.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
 		JPanel resScroll=new JPanel();
 		resScroll.setBorder(BorderFactory.createEmptyBorder(0,20,20,20));
 		resScroll.setLayout(new BoxLayout(resScroll, BoxLayout.PAGE_AXIS));
 		resScroll.setBackground(Color.WHITE);
-		resScroll.add(scrollUngVien);
+		resScroll.add(scrollTimViec);
 		danhsachCenterPanel.add(resScroll);
 		
 		danhsachPanel.add(danhsachNorthPanel, BorderLayout.NORTH);
 		danhsachPanel.add(danhsachCenterPanel, BorderLayout.CENTER);
 		
-		centerPanelUngVien.add(timkiemPanel, BorderLayout.NORTH);
-		centerPanelUngVien.add(danhsachPanel, BorderLayout.CENTER);
+		centerPanelTimViec.add(timkiemPanel, BorderLayout.NORTH);
+		centerPanelTimViec.add(danhsachPanel, BorderLayout.CENTER);
 		
-		ungvienPanel.add(centerPanelUngVien, BorderLayout.CENTER);
+		timviecPanel.add(centerPanelTimViec, BorderLayout.CENTER);
 	}
 	
 	public void addTableActionEvent() {
@@ -216,25 +265,25 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 			@Override
 			public void onUpdate(int row) {
 				// TODO Auto-generated method stub
-				new ThemSuaUngVienDialog(parent, rootPaneCheckingEnabled, true).setVisible(true);
+				
 			}
 			
 			@Override
 			public void onDelete(int row) {
 				// TODO Auto-generated method stub
-				JOptionPane.showMessageDialog(rootPane, "Chức năng xóa ứng viên đang hoàn thiện");
+				
 			}
 
 			@Override
 			public void onViewHoSo(int row) {
 				// TODO Auto-generated method stub
-				new DanhSachHoSoDialog(parent, rootPaneCheckingEnabled).setVisible(true);
+			
 			}
 
 			@Override
 			public void onCreateHoSo(int row) {
 				// TODO Auto-generated method stub
-				new TaoSuaHoSoDialog(parent, rootPaneCheckingEnabled).setVisible(true);
+				
 			}
 
 			@Override
@@ -258,19 +307,16 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 			@Override
 			public void onViewDetail(int row) {
 				// TODO Auto-generated method stub
-				
+				new ChiTietViecLamDialog(parent, rootPaneCheckingEnabled).setVisible(true);
 			}
 		};
 		
-		tableUngVien.getColumnModel().getColumn(4).setCellRenderer(new TableCellRendererUpdateDelete());
-		tableUngVien.getColumnModel().getColumn(4).setCellEditor(new TableCellEditorUpdateDelete(event));
-		
-		tableUngVien.getColumnModel().getColumn(5).setCellRenderer(new TableCellRendererViewCreateHoSo());
-		tableUngVien.getColumnModel().getColumn(5).setCellEditor(new TableCellEditorViewCreateHoSo(event));
+		tableTimViec.getColumnModel().getColumn(6).setCellRenderer(new TableCellRendererDetail());
+		tableTimViec.getColumnModel().getColumn(6).setCellEditor(new TableCellEditorDetail(event));
 	}
 	
 	public JPanel getPanel() {
-		return this.ungvienPanel;
+		return this.timviecPanel;
 	}
 	
 //	Trạng thái text chuột không nằm trong ô
@@ -291,24 +337,20 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 	
 //	Listener
 	public void addFocusListener() {
-		timkiemTenText.addFocusListener(this);
-		timkiemSDTText.addFocusListener(this);
+		ungvienText.addFocusListener(this);
+		luongText.addFocusListener(this);
 		
-		addPlaceHolder(timkiemTenText);
-		addPlaceHolder(timkiemSDTText);
+		addPlaceHolder(ungvienText);
+		addPlaceHolder(luongText);
 	}
 	
 	public void addActionListener() {
-		btnThem.addActionListener(this);
 	}
 
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		var obj=e.getSource();
 		
-		if(obj.equals(btnThem)) {
-			new ThemSuaUngVienDialog(this, rootPaneCheckingEnabled).setVisible(true);
-		}
 	}
 	
 	public void addMouseListener() {
@@ -349,20 +391,20 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 	public void focusGained(FocusEvent e) {
 		// TODO Auto-generated method stub
 		var obj=e.getSource();
-		if(obj.equals(timkiemTenText)) {
-			if(timkiemTenText.getText().equals("Nhập dữ liệu")) {
-				timkiemTenText.setText(null);
-				timkiemTenText.requestFocus();
+		if(obj.equals(ungvienText)) {
+			if(ungvienText.getText().equals("Hiển thị email ứng viên")) {
+				ungvienText.setText(null);
+				ungvienText.requestFocus();
 				
-				removePlaceHolder(timkiemTenText);
+				removePlaceHolder(ungvienText);
 			}
 		}
-		else if(obj.equals(timkiemSDTText)) {
-			if(timkiemSDTText.getText().equals("Nhập dữ liệu")) {
-				timkiemSDTText.setText(null);
-				timkiemSDTText.requestFocus();
+		else if(obj.equals(luongText)) {
+			if(luongText.getText().equals("Nhập dữ liệu")) {
+				luongText.setText(null);
+				luongText.requestFocus();
 				
-				removePlaceHolder(timkiemSDTText);
+				removePlaceHolder(luongText);
 			}
 		}
 	}
@@ -371,16 +413,16 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 	public void focusLost(FocusEvent e) {
 		// TODO Auto-generated method stub
 		var obj=e.getSource();
-		if(obj.equals(timkiemTenText)) {
-			if(timkiemTenText.getText().length()==0) {
-				addPlaceHolder(timkiemTenText);
-				timkiemTenText.setText("Nhập dữ liệu");
+		if(obj.equals(ungvienText)) {
+			if(ungvienText.getText().length()==0) {
+				addPlaceHolder(ungvienText);
+				ungvienText.setText("Hiển thị email ứng viên");
 			}
 		}
-		else if(obj.equals(timkiemSDTText)) {
-			if(timkiemSDTText.getText().length()==0) {
-				addPlaceHolder(timkiemSDTText);
-				timkiemSDTText.setText("Nhập dữ liệu");
+		else if(obj.equals(luongText)) {
+			if(luongText.getText().length()==0) {
+				addPlaceHolder(luongText);
+				luongText.setText("Nhập dữ liệu");
 			}
 		}
 	}

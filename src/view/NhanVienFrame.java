@@ -76,17 +76,8 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
 	Icon iconBtnAdd, iconBtnSave;
 	
 	public NhanVienFrame(String userName) {
-		setTitle("Nhân viên");
-		setExtendedState(JFrame.MAXIMIZED_BOTH);
-		setLocationRelativeTo(null);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setLayout(new BorderLayout());
-		
 		this.userName=userName;
 		this.parent=this;
-		
-//		Tạo menu bar bên trái
-		initLeft();
 		
 //		Tạo component bên phải
 		initComponent();
@@ -94,58 +85,17 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
 //		Thêm update và delete vào table
 		addTableActionEvent();
 		
-//		Thêm vào frame
-		add(leftPanel, BorderLayout.WEST);
-		add(nhanvienPanel, BorderLayout.CENTER);
-		
 //		Thêm sự kiện
 		addActionListener();
 		addMouseListener();
-		addFocusListener();
-		
+		addFocusListener();		
 	}
 	
-	public void initLeft() {
-		leftPanel=new JPanel();
-		leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
-		leftPanel.setBackground(Color.WHITE);
-		
-		vaitroLeftLabel=new JLabel("ADMIN", SwingConstants.CENTER);
-		vaitroLeftLabel.setFont(new Font("Segoe UI",0,16));
-		vaitroLeftLabel.setPreferredSize(new Dimension(getWidth(), 50));
-		
-		JPanel res= new JPanel();
-		res.setPreferredSize(new Dimension(getWidth(),400));
-		res.setBackground(Color.WHITE);
-		
-		Navbar nav=new Navbar(this);
-		
-		menuPanel=new JPanel(); 
-		menuPanel.setLayout(new BorderLayout()); menuPanel.setBackground(Color.WHITE);
-		menuPanel.add(vaitroLeftLabel, BorderLayout.NORTH);
-		menuPanel.add(nav, BorderLayout.CENTER);
-		menuPanel.add(res, BorderLayout.SOUTH);
-		
-		leftPanel.add(menuPanel);
-	}
-	
+//	
 	public void initComponent() {
 		nhanvienPanel=new JPanel(); 
 		nhanvienPanel.setLayout(new BorderLayout(5,5));
 		nhanvienPanel.setBackground(new Color(220, 220, 220));
-		
-//		Hiển thị tài khoản
-		northPanelNhanVien=new JPanel();
-		northPanelNhanVien.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 10));
-		northPanelNhanVien.setBackground(new Color(220, 220, 220));
-		
-		userLabel=new JLabel();
-		userLabel.setFont(new Font("Segoe UI",0,16));
-		userLabel.setText("Welcome "+userName);
-		iconUserLabel=new JLabel();
-		iconUserLabel.setIcon(new ImageIcon(getClass().getResource("/image/user.png")));
-		
-		northPanelNhanVien.add(userLabel); northPanelNhanVien.add(iconUserLabel);
 		
 //		Hiển thị tìm kiếm và danh sách nhân viên
 		centerPanelNhanVien=new JPanel();
@@ -155,13 +105,17 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
 //		Tìm kiếm nhân viên
 		timkiemPanel=new JPanel();
 		timkiemPanel.setBackground(Color.WHITE);
-		timkiemPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 5));
+		timkiemPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 15, 5));
 		
-		timkiemTenLabel=new JLabel("Tên:"); timkiemTenLabel.setFont(new Font("Segoe UI",0,16));
+		timkiemTenLabel=new JLabel("Họ tên nhân viên:"); timkiemTenLabel.setFont(new Font("Segoe UI",0,16));
 		timkiemTenText=new JTextField(15); timkiemTenText.setFont(new Font("Segoe UI",0,16));
 		timkiemSDTLabel=new JLabel("Số điện thoại:"); timkiemSDTLabel.setFont(new Font("Segoe UI",0,16));
 		timkiemSDTText=new JTextField(15); timkiemSDTText.setFont(new Font("Segoe UI",0,16));
 		
+		JPanel resBtnSearch=new JPanel();
+		resBtnSearch.setPreferredSize(new Dimension(350, 35));
+		resBtnSearch.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 5));
+		resBtnSearch.setBackground(Color.WHITE);
 		btnTimKiem=new JButton("Tìm kiếm"); btnTimKiem.setFont(new Font("Segoe UI",0,16));
 		btnTimKiem.setPreferredSize(new Dimension(120,25));
 		btnTimKiem.setBackground(new Color(0,102,102));
@@ -170,10 +124,11 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
 		btnLamLai.setPreferredSize(new Dimension(120,25));
 		btnLamLai.setBackground(Color.RED);
 		btnLamLai.setForeground(Color.WHITE);
+		resBtnSearch.add(btnTimKiem); resBtnSearch.add(btnLamLai);
 		
 		timkiemPanel.add(timkiemTenLabel); timkiemPanel.add(timkiemTenText);
 		timkiemPanel.add(timkiemSDTLabel); timkiemPanel.add(timkiemSDTText);
-		timkiemPanel.add(btnTimKiem); timkiemPanel.add(btnLamLai);
+		timkiemPanel.add(resBtnSearch);
 //		Danh sách nhân viên
 		danhsachPanel=new JPanel();
 		danhsachPanel.setBackground(Color.WHITE);
@@ -251,8 +206,6 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
 		centerPanelNhanVien.add(timkiemPanel, BorderLayout.NORTH);
 		centerPanelNhanVien.add(danhsachPanel, BorderLayout.CENTER);
 		
-		
-		nhanvienPanel.add(northPanelNhanVien, BorderLayout.NORTH);
 		nhanvienPanel.add(centerPanelNhanVien, BorderLayout.CENTER);
 	}
 	
@@ -301,7 +254,7 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
 			}
 
 			@Override
-			public void onTimViecLam(int row) {
+			public void onViewDetail(int row) {
 				// TODO Auto-generated method stub
 				
 			}
@@ -312,6 +265,10 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
 		
 		tableNhanVien.getColumnModel().getColumn(6).setCellRenderer(new TableCellRendererCreateTaiKhoan());
 		tableNhanVien.getColumnModel().getColumn(6).setCellEditor(new TableCellEditorCreateTaiKhoan(event));
+	}
+	
+	public JPanel getPanel() {
+		return this.nhanvienPanel;
 	}
 	
 //	Trạng thái text chuột không nằm trong ô

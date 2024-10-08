@@ -7,28 +7,28 @@ import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
-public class PanelActionTimViecLam extends JPanel {
+public class PanelActionDetail extends JPanel {
 	
-	private ButtonAction search;
+	private ButtonAction view;
 	
-	public PanelActionTimViecLam() {
+	public PanelActionDetail() {
         initComponent();
     }
 	
 	public void initComponent() {
-		search=new ButtonAction();
-		search.setIcon(new ImageIcon(getClass().getResource("/image/timviec.png")));
+		view=new ButtonAction();
+		view.setIcon(new ImageIcon(getClass().getResource("/image/eye.png")));
 		
 		this.setLayout(new FlowLayout(FlowLayout.CENTER,15,0));
-		add(search);
+		add(view);
 	}
 
 	public void initEvent(TableActionEvent event, int row) {
-		search.addActionListener(new ActionListener() {
+		view.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				event.onTimViecLam(row);;
+				event.onViewDetail(row);
 			}
 		});
 	}

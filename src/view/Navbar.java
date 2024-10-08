@@ -4,21 +4,12 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.event.MenuEvent;
-import javax.swing.event.MenuListener;
-
-import org.apache.commons.compress.harmony.unpack200.bytecode.forms.ThisFieldRefForm;
 
 public class Navbar extends JMenuBar{
 
@@ -39,6 +30,8 @@ public class Navbar extends JMenuBar{
 	JMenu menuTinTuyenDung;
 // 	Hợp đồng
 	JMenu menuHopDong;
+//	Tìm việc làm
+	JMenu menuTimViec;
 // 	Thống kê
 	JMenu menuThongKe;
 //	JMenuItem itemTKNhanVien, itemTKCongTy, itemTKHoSo, itemTKTinTuyenDung;
@@ -82,6 +75,10 @@ public class Navbar extends JMenuBar{
 		menuHopDong.setFont(new Font("Segoe UI",0,16));
 		menuHopDong.setIcon(new ImageIcon(getClass().getResource("/image/hopdong.png")));
 		
+		menuTimViec=new JMenu("Tìm việc làm");
+		menuTimViec.setFont(new Font("Segoe UI",0,16));
+		menuTimViec.setIcon(new ImageIcon(getClass().getResource("/image/timviec16.png")));
+		
 		menuThongKe=new JMenu("Thống kê");
 		menuThongKe.setFont(new Font("Segoe UI",0,16));
 		menuThongKe.setIcon(new ImageIcon(getClass().getResource("/image/thongke.png")));
@@ -93,215 +90,9 @@ public class Navbar extends JMenuBar{
 		add(menuNhaTuyenDung);
 		add(menuTinTuyenDung);
 		add(menuHopDong);
+		add(menuTimViec);
 		add(menuThongKe);
 		
-		addMouseListener();
 	}
-	
-	private void addMouseListener() {
-		menuNhanVien.addMouseListener(new MouseListener() {
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mouseExited(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				// TODO Auto-generated method stub
-				new NhanVienFrame("MinhDat").setVisible(true);
-				parent.dispose();
-			}
-		});
 
-		menuUngVien.addMouseListener(new MouseListener() {
-			
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mouseExited(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				// TODO Auto-generated method stub
-				new UngVienFrame("MinhDat").setVisible(true);
-				parent.dispose();
-			}
-		});
-
-		menuTaiKhoan.addMouseListener(new MouseListener() {
-			
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mouseExited(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				// TODO Auto-generated method stub
-				new TaiKhoanFrame("MinhDat").setVisible(true);
-				parent.dispose();
-			}
-		});
-
-		menuHoSo.addMouseListener(new MouseListener() {
-			
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mouseExited(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				// TODO Auto-generated method stub
-				new HoSoFrame("MinhDat").setVisible(true);
-				parent.dispose();
-			}
-		});
-
-		menuNhaTuyenDung.addMouseListener(new MouseListener() {
-			
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mouseExited(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				// TODO Auto-generated method stub
-				new NhaTuyenDungFrame("MinhDat").setVisible(true);
-				parent.dispose();
-			}
-		});
-		
-		menuTinTuyenDung.addMouseListener(new MouseListener() {
-			
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mouseExited(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				// TODO Auto-generated method stub
-				new TinTuyenDungFrame("MinhDat").setVisible(true);
-				parent.dispose();
-			}
-		});
-
-
-	}
 }

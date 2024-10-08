@@ -14,8 +14,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class MainFrame extends JFrame {
+public class MainFrame extends JFrame implements MouseListener{
 	String userName;
+	Navbar nav;
 	
 //	Component
 	JPanel leftPanel,menuPanel,
@@ -37,6 +38,8 @@ public class MainFrame extends JFrame {
 //		Tạo component bên phải
 		initComponent();
 		
+		addMenuListener(nav);
+		
 //		Thêm vào frame
 		add(leftPanel, BorderLayout.WEST);
 		add(mainPanel, BorderLayout.CENTER);
@@ -55,7 +58,7 @@ public class MainFrame extends JFrame {
 		res.setPreferredSize(new Dimension(getWidth(),400));
 		res.setBackground(Color.WHITE);
 		
-		Navbar nav=new Navbar(this);
+		nav=new Navbar(this);
 		
 		menuPanel=new JPanel(); 
 		menuPanel.setLayout(new BorderLayout()); menuPanel.setBackground(Color.WHITE);
@@ -103,5 +106,99 @@ public class MainFrame extends JFrame {
 		mainPanel.add(centerPanel, BorderLayout.CENTER);
 	}
 	
+	public void addMenuListener(Navbar nav) {
+		for(Component c: nav.getComponents()) {
+			if(c.getClass().equals(JMenu.class)) {
+				((JMenu)c).addMouseListener(this);
+			}
+		}
+	}
+	
+//	1 Nhân viên     5 Nhà tuyển dụng    9 Thống kê
+//	2 Tài khoản     6 Tin tuyển dụng
+//	3 Ứng viên      7 Hợp đồng
+//	4 Hồ sơ         8 Tìm việc làm
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		var obj=e.getSource();
+		if(obj.getClass().equals(JMenu.class)) {
+			if(((JMenu)obj).getText().equals("Nhân viên")) {
+				centerPanel.removeAll();
+				centerPanel.add(new NhanVienFrame("MinhDat").getPanel());
+				
+				this.setTitle("Nhân viên");
+			}
+			else if(((JMenu)obj).getText().equals("Tài khoản")) {
+				centerPanel.removeAll();
+				centerPanel.add(new TaiKhoanFrame("MinhDat").getPanel());
+				
+				this.setTitle("Tài khoản");
+			}
+			else if(((JMenu)obj).getText().equals("Ứng viên")) {
+				centerPanel.removeAll();
+				centerPanel.add(new UngVienFrame("MinhDat").getPanel());
+				
+				this.setTitle("Ứng viên");
+			}
+			else if(((JMenu)obj).getText().equals("Hồ sơ")) {
+				centerPanel.removeAll();
+				centerPanel.add(new HoSoFrame("MinhDat").getPanel());
+				
+				this.setTitle("Hồ sơ");
+			}
+			else if(((JMenu)obj).getText().equals("Nhà tuyển dụng")) {
+				centerPanel.removeAll();
+				centerPanel.add(new NhaTuyenDungFrame("MinhDat").getPanel());
+				
+				this.setTitle("Nhà tuyển dụng");
+			}
+			else if(((JMenu)obj).getText().equals("Tin tuyển dụng")) {
+				centerPanel.removeAll();
+				centerPanel.add(new TinTuyenDungFrame("MinhDat").getPanel());
+				
+				this.setTitle("Tin tuyển dụng");
+			}
+			else if(((JMenu)obj).getText().equals("Hợp đồng")) {
+				centerPanel.removeAll();
+				centerPanel.add(new HopDongFrame("MinhDat").getPanel());
+				
+				this.setTitle("Hợp đồng");
+			}
+			else if(((JMenu)obj).getText().equals("Tìm việc làm")) {
+				centerPanel.removeAll();
+				centerPanel.add(new TimViecLamFrame("MinhDat").getPanel());
+				
+				this.setTitle("Tìm việc làm");
+			}
+			centerPanel.revalidate();
+			centerPanel.repaint();
+		}
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

@@ -43,10 +43,8 @@ import controller.ExcelHelper;
 import controller.FilterImp;
 import controller.LabelDateFormatter;
 import controller.actiontable.TableActionEvent;
-import controller.actiontable.TableCellEditorTimViecLam;
 import controller.actiontable.TableCellEditorUpdateDelete;
 import controller.actiontable.TableCellEditorViewCreateHoSo;
-import controller.actiontable.TableCellRendererTimViecLam;
 import controller.actiontable.TableCellRendererUpdateDelete;
 import controller.actiontable.TableCellRendererViewCreateHoSo;
 import dao.TaiKhoan_DAO;
@@ -82,27 +80,14 @@ public class HoSoFrame extends JFrame implements ActionListener, MouseListener, 
 	
 	
 	public HoSoFrame(String userName) {
-		setTitle("Hồ sơ");
-		setExtendedState(JFrame.MAXIMIZED_BOTH);
-		setLocationRelativeTo(null);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setLayout(new BorderLayout());
-		
 		this.userName=userName;
 		this.parent=this;
-		
-//		Tạo menu bar bên trái
-		initLeft();
 		
 //		Tạo component bên phải
 		initComponent();
 		
 //		Thêm update và delete vào table
 		addTableActionEvent();
-		
-//		Thêm vào frame
-		add(leftPanel, BorderLayout.WEST);
-		add(hosoPanel, BorderLayout.CENTER);
 		
 //		Thêm sự kiện
 		addActionListener();
@@ -111,47 +96,10 @@ public class HoSoFrame extends JFrame implements ActionListener, MouseListener, 
 		
 	}
 	
-	public void initLeft() {
-		leftPanel=new JPanel();
-		leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
-		leftPanel.setBackground(Color.WHITE);
-		
-		vaitroLeftLabel=new JLabel("ADMIN", SwingConstants.CENTER);
-		vaitroLeftLabel.setFont(new Font("Segoe UI",0,16));
-		vaitroLeftLabel.setPreferredSize(new Dimension(getWidth(), 50));
-		
-		JPanel res= new JPanel();
-		res.setPreferredSize(new Dimension(getWidth(),400));
-		res.setBackground(Color.WHITE);
-		
-		Navbar nav=new Navbar(this);
-		
-		menuPanel=new JPanel(); 
-		menuPanel.setLayout(new BorderLayout()); menuPanel.setBackground(Color.WHITE);
-		menuPanel.add(vaitroLeftLabel, BorderLayout.NORTH);
-		menuPanel.add(nav, BorderLayout.CENTER);
-		menuPanel.add(res, BorderLayout.SOUTH);
-		
-		leftPanel.add(menuPanel);
-	}
-	
 	public void initComponent() {
 		hosoPanel=new JPanel(); 
 		hosoPanel.setLayout(new BorderLayout(5,5));
 		hosoPanel.setBackground(new Color(220, 220, 220));
-		
-//		Hiển thị tài khoản
-		northPanelHoSo=new JPanel();
-		northPanelHoSo.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 10));
-		northPanelHoSo.setBackground(new Color(220, 220, 220));
-		
-		userLabel=new JLabel();
-		userLabel.setFont(new Font("Segoe UI",0,16));
-		userLabel.setText("Welcome "+userName);
-		iconUserLabel=new JLabel();
-		iconUserLabel.setIcon(new ImageIcon(getClass().getResource("/image/user.png")));
-		
-		northPanelHoSo.add(userLabel); northPanelHoSo.add(iconUserLabel);
 		
 //		Hiển thị tìm kiếm và danh sách hồ sơ
 		centerPanelHoSo=new JPanel();
@@ -161,9 +109,9 @@ public class HoSoFrame extends JFrame implements ActionListener, MouseListener, 
 //		Tìm kiếm hồ sơ
 		timkiemPanel=new JPanel();
 		timkiemPanel.setBackground(Color.WHITE);
-		timkiemPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 5));
+		timkiemPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 15, 5));
 		
-		timkiemTenLabel=new JLabel("Tên:"); timkiemTenLabel.setFont(new Font("Segoe UI",0,16));
+		timkiemTenLabel=new JLabel("Họ tên ứng viên:"); timkiemTenLabel.setFont(new Font("Segoe UI",0,16));
 		timkiemTenText=new JTextField(15); timkiemTenText.setFont(new Font("Segoe UI",0,16));
 		timkiemTrangThaiLabel=new JLabel("Trạng thái:"); timkiemTrangThaiLabel.setFont(new Font("Segoe UI",0,16));
 		timkiemTrangThaiText=new JComboBox(); 
@@ -174,6 +122,10 @@ public class HoSoFrame extends JFrame implements ActionListener, MouseListener, 
 		timkiemTrangThaiText.setFont(new Font("Segoe UI",0,16));
 		timkiemTrangThaiText.setPreferredSize(new Dimension(156,26));
 		
+		JPanel resBtnSearch=new JPanel();
+		resBtnSearch.setPreferredSize(new Dimension(350, 45));
+		resBtnSearch.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 10));
+		resBtnSearch.setBackground(Color.WHITE);
 		btnTimKiem=new JButton("Tìm kiếm"); btnTimKiem.setFont(new Font("Segoe UI",0,16));
 		btnTimKiem.setPreferredSize(new Dimension(120,25));
 		btnTimKiem.setBackground(new Color(0,102,102));
@@ -182,10 +134,11 @@ public class HoSoFrame extends JFrame implements ActionListener, MouseListener, 
 		btnLamLai.setPreferredSize(new Dimension(120,25));
 		btnLamLai.setBackground(Color.RED);
 		btnLamLai.setForeground(Color.WHITE);
+		resBtnSearch.add(btnTimKiem); resBtnSearch.add(btnLamLai);
 		
 		timkiemPanel.add(timkiemTenLabel); timkiemPanel.add(timkiemTenText);
 		timkiemPanel.add(timkiemTrangThaiLabel); timkiemPanel.add(timkiemTrangThaiText);
-		timkiemPanel.add(btnTimKiem); timkiemPanel.add(btnLamLai);
+		timkiemPanel.add(resBtnSearch);
 //		Danh sách hồ sơ
 		danhsachPanel=new JPanel();
 		danhsachPanel.setBackground(Color.WHITE);
@@ -212,14 +165,14 @@ public class HoSoFrame extends JFrame implements ActionListener, MouseListener, 
 		danhsachCenterPanel=new JPanel();
 		danhsachCenterPanel.setLayout(new BoxLayout(danhsachCenterPanel, BoxLayout.PAGE_AXIS));
 		danhsachCenterPanel.setBackground(Color.WHITE);
-		String[] colName= {"Mã hồ sơ","Trạng thái","Tên ứng viên","Nhà tuyển dụng","Tin tuyển dụng","Hành động","Tìm việc làm"};
+		String[] colName= {"Mã hồ sơ","Trạng thái","Tên ứng viên","Nhà tuyển dụng","Tin tuyển dụng","Hành động"};
 		Object[][] data = {
-			    {1, "Chờ", "Minh Đạt", "Amazon", "abc",null, null},
-			    {2, "Chờ", "Thắng Đạt", "Facebook", "xyz",null, null}
+			    {1, "Chờ", "Minh Đạt", "Amazon", "abc",null},
+			    {2, "Chờ", "Thắng Đạt", "Facebook", "xyz",null}
 			};
 		modelTableHoSo= new DefaultTableModel(data, colName){
 			boolean[] canEdit = new boolean [] {
-	                false, false, false, false, false, true, true
+	                false, false, false, false, false, true
 	            };
 			
             @Override
@@ -233,7 +186,7 @@ public class HoSoFrame extends JFrame implements ActionListener, MouseListener, 
 		tableHoSo.setRowHeight(30);
 		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
 		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
-		for(int i=0;i<tableHoSo.getColumnCount()-2;i++) {
+		for(int i=0;i<tableHoSo.getColumnCount()-1;i++) {
 			tableHoSo.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);			
 		}
 		tableHoSo.setAutoCreateRowSorter(true);
@@ -258,8 +211,6 @@ public class HoSoFrame extends JFrame implements ActionListener, MouseListener, 
 		centerPanelHoSo.add(timkiemPanel, BorderLayout.NORTH);
 		centerPanelHoSo.add(danhsachPanel, BorderLayout.CENTER);
 		
-		
-		hosoPanel.add(northPanelHoSo, BorderLayout.NORTH);
 		hosoPanel.add(centerPanelHoSo, BorderLayout.CENTER);
 	}
 	
@@ -308,17 +259,18 @@ public class HoSoFrame extends JFrame implements ActionListener, MouseListener, 
 			}
 
 			@Override
-			public void onTimViecLam(int row) {
+			public void onViewDetail(int row) {
 				// TODO Auto-generated method stub
-				JOptionPane.showMessageDialog(rootPane, "Chức năng tìm việc làm đang hoàn thiện");
+				
 			}
 		};
 		
 		tableHoSo.getColumnModel().getColumn(5).setCellRenderer(new TableCellRendererUpdateDelete());
 		tableHoSo.getColumnModel().getColumn(5).setCellEditor(new TableCellEditorUpdateDelete(event));
-		
-		tableHoSo.getColumnModel().getColumn(6).setCellRenderer(new TableCellRendererTimViecLam());
-		tableHoSo.getColumnModel().getColumn(6).setCellEditor(new TableCellEditorTimViecLam(event));
+	}
+	
+	public JPanel getPanel() {
+		return this.hosoPanel;
 	}
 	
 //	Trạng thái text chuột không nằm trong ô

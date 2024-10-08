@@ -76,27 +76,14 @@ public class TaiKhoanFrame extends JFrame implements ActionListener, MouseListen
 	Icon iconBtnSave;
 	
 	public TaiKhoanFrame(String userName) {
-		setTitle("Tài khoản");
-		setExtendedState(JFrame.MAXIMIZED_BOTH);
-		setLocationRelativeTo(null);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setLayout(new BorderLayout());
-		
 		this.userName=userName;
 		this.parent=this;
-		
-//		Tạo menu bar bên trái
-		initLeft();
 		
 //		Tạo component bên phải
 		initComponent();
 
 //		Thêm update và delete vào table
 		addTableActionEvent();
-		
-//		Thêm vào frame
-		add(leftPanel, BorderLayout.WEST);
-		add(taikhoanPanel, BorderLayout.CENTER);
 		
 //		Thêm sự kiện
 		addActionListener();
@@ -105,47 +92,10 @@ public class TaiKhoanFrame extends JFrame implements ActionListener, MouseListen
 		
 	}
 	
-	public void initLeft() {
-		leftPanel=new JPanel();
-		leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
-		leftPanel.setBackground(Color.WHITE);
-		
-		vaitroLeftLabel=new JLabel("ADMIN", SwingConstants.CENTER);
-		vaitroLeftLabel.setFont(new Font("Segoe UI",0,16));
-		vaitroLeftLabel.setPreferredSize(new Dimension(getWidth(), 50));
-		
-		JPanel res= new JPanel();
-		res.setPreferredSize(new Dimension(getWidth(),400));
-		res.setBackground(Color.WHITE);
-		
-		Navbar nav=new Navbar(this);
-		
-		menuPanel=new JPanel(); 
-		menuPanel.setLayout(new BorderLayout()); menuPanel.setBackground(Color.WHITE);
-		menuPanel.add(vaitroLeftLabel, BorderLayout.NORTH);
-		menuPanel.add(nav, BorderLayout.CENTER);
-		menuPanel.add(res, BorderLayout.SOUTH);
-		
-		leftPanel.add(menuPanel);
-	}
-	
 	public void initComponent() {
 		taikhoanPanel=new JPanel(); 
 		taikhoanPanel.setLayout(new BorderLayout(5,5));
 		taikhoanPanel.setBackground(new Color(220, 220, 220));
-		
-//		Hiển thị tài khoản
-		northPanelTaiKhoan=new JPanel();
-		northPanelTaiKhoan.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 10));
-		northPanelTaiKhoan.setBackground(new Color(220, 220, 220));
-		
-		userLabel=new JLabel();
-		userLabel.setFont(new Font("Segoe UI",0,16));
-		userLabel.setText("Welcome "+userName);
-		iconUserLabel=new JLabel();
-		iconUserLabel.setIcon(new ImageIcon(getClass().getResource("/image/user.png")));
-		
-		northPanelTaiKhoan.add(userLabel); northPanelTaiKhoan.add(iconUserLabel);
 		
 //		Hiển thị tìm kiếm và danh sách tài khoản
 		centerPanelTaiKhoan=new JPanel();
@@ -197,7 +147,7 @@ public class TaiKhoanFrame extends JFrame implements ActionListener, MouseListen
 		danhsachCenterPanel=new JPanel();
 		danhsachCenterPanel.setLayout(new BoxLayout(danhsachCenterPanel, BoxLayout.PAGE_AXIS));
 		danhsachCenterPanel.setBackground(Color.WHITE);
-		String[] colName= {"Mã tài khoản","Tên đăng nhập", "Tên ứng viên", "Vai trò","Hành động"};
+		String[] colName= {"Mã tài khoản","Tên đăng nhập", "Tên nhân viên", "Vai trò","Hành động"};
 		Object[][] data = {
 			    {1, "MinhDat", "Minh Đạt", "Admin", null},
 			    {2, "ThangDat", "Thắng Đạt", "Nhân viên", null}
@@ -243,8 +193,6 @@ public class TaiKhoanFrame extends JFrame implements ActionListener, MouseListen
 		centerPanelTaiKhoan.add(timkiemPanel, BorderLayout.NORTH);
 		centerPanelTaiKhoan.add(danhsachPanel, BorderLayout.CENTER);
 		
-		
-		taikhoanPanel.add(northPanelTaiKhoan, BorderLayout.NORTH);
 		taikhoanPanel.add(centerPanelTaiKhoan, BorderLayout.CENTER);
 	}
 	
@@ -290,9 +238,9 @@ public class TaiKhoanFrame extends JFrame implements ActionListener, MouseListen
 				// TODO Auto-generated method stub
 				
 			}
-
+			
 			@Override
-			public void onTimViecLam(int row) {
+			public void onViewDetail(int row) {
 				// TODO Auto-generated method stub
 				
 			}
@@ -300,6 +248,10 @@ public class TaiKhoanFrame extends JFrame implements ActionListener, MouseListen
 		
 		tableTaiKhoan.getColumnModel().getColumn(4).setCellRenderer(new TableCellRendererUpdateDelete());
 		tableTaiKhoan.getColumnModel().getColumn(4).setCellEditor(new TableCellEditorUpdateDelete(event));
+	}
+	
+	public JPanel getPanel() {
+		return this.taikhoanPanel;
 	}
 	
 //	Trạng thái text chuột không nằm trong ô

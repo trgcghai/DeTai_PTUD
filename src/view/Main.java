@@ -16,11 +16,11 @@ public class Main {
 //		
 //		new UngVienTestFrame("MinhDat").setVisible(true);
 		
-		new HopDongFrame("Minh Dat").setVisible(true);
+//		new HopDongFrame("Minh Dat").setVisible(true);
 		
 //============================================================================================
 //		new LoginFrame().setVisible(true);
-//		new MainFrame("MinhDat").setVisible(true);
+		new MainFrame("MinhDat").setVisible(true);
 		
 //		new NhanVienFrame("MinhDat").setVisible(true);
 //		Nhân viên chưa có tài khoản mới sử dụng chức năng cấp tài khoản
@@ -36,6 +36,10 @@ public class Main {
 //		new NhaTuyenDungFrame("MinhDat").setVisible(true);
 		
 //		new TinTuyenDungFrame("MinhDat").setVisible(true);
+		
+//		new HopDongFrame("Minh Dat").setVisible(true);
+		
+//		new TimViecLamFrame("MinhDat").setVisible(true);
 //============================================================================================		
 
 //		new ThongKeTinTuyenDungFrame("MinhDat").setVisible(true);

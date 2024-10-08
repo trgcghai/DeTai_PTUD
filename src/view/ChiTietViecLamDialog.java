@@ -2,6 +2,7 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -36,7 +37,7 @@ import entity.constraint.NganhNghe;
 import entity.constraint.TrangThai;
 import entity.constraint.TrinhDo;
 
-public class TaoSuaTinTuyenDungDialog extends JDialog{
+public class ChiTietViecLamDialog extends JDialog{
 	
 	JPanel inforTinTuyenDungPanel, btnPanel;
 	JLabel idLabel, tenLabel, hinhthucLabel, startLabel, endLabel, trinhdoLabel, diachiLabel,tieudeLabel,trangthaiLabel, motaLabel,
@@ -48,12 +49,12 @@ public class TaoSuaTinTuyenDungDialog extends JDialog{
 	JDatePickerImpl startText, endText;
 	JTextArea motaText;
 	JScrollPane scrollMoTa;
-	JButton btnThem, btnHuy;
+	JButton btnUngTuyen, btnHuy;
 	GridBagConstraints gbc;
 	
-	public TaoSuaTinTuyenDungDialog(Frame parent, boolean modal) {
+	public ChiTietViecLamDialog(Frame parent, boolean modal) {
 		super(parent, modal);
-		setTitle("Tạo tin tuyển dụng");
+		setTitle("Xem chi tiết việc làm");
 		setResizable(false);
 		setSize(800,680);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -63,13 +64,6 @@ public class TaoSuaTinTuyenDungDialog extends JDialog{
 		initComponent();
 	}
 	
-	public TaoSuaTinTuyenDungDialog(Frame parent, boolean modal, boolean check) {
-		this(parent, modal);
-		setTitle("Cập nhật tin tuyển dụng");
-		
-		btnThem.setText("Cập nhật");
-	}
-	
 	public void initComponent() {
 		inforTinTuyenDungPanel=new JPanel(); 
 		inforTinTuyenDungPanel.setBackground(Color.WHITE);
@@ -77,7 +71,7 @@ public class TaoSuaTinTuyenDungDialog extends JDialog{
 		inforTinTuyenDungPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		gbc= new GridBagConstraints();
 		
-//		Thông tin tin tuyển dụng
+//		Thông tin việc làm
 		gbc.gridx=0; gbc.gridy=0; gbc.insets=new Insets(5, 10, 5, 10); gbc.anchor=GridBagConstraints.WEST;
 		idLabel=new JLabel("Mã tin tuyển dụng"); idLabel.setFont(new Font("Segoe UI",0,16));
 		inforTinTuyenDungPanel.add(idLabel, gbc);
@@ -108,6 +102,7 @@ public class TaoSuaTinTuyenDungDialog extends JDialog{
 		inforTinTuyenDungPanel.add(tieudeLabel,gbc);
 		gbc.gridx=0; gbc.gridy=3; gbc.gridwidth=2;
 		tieudeText=new JTextField(23); tieudeText.setFont(new Font("Segoe UI",0,16));
+		tieudeText.setEditable(false);
 		inforTinTuyenDungPanel.add(tieudeText,gbc);
 		
 		gbc.gridx=2; gbc.gridy=2; gbc.gridwidth=1;
@@ -139,6 +134,7 @@ public class TaoSuaTinTuyenDungDialog extends JDialog{
 		inforTinTuyenDungPanel.add(soluongLabel, gbc);
 		gbc.gridx=0; gbc.gridy=5;
 		soluongText=new JTextField(10); soluongText.setFont(new Font("Segoe UI",0,16));
+		soluongText.setEditable(false);
 		inforTinTuyenDungPanel.add(soluongText, gbc);
 		
 		gbc.gridx=1; gbc.gridy=4;
@@ -146,6 +142,7 @@ public class TaoSuaTinTuyenDungDialog extends JDialog{
 		inforTinTuyenDungPanel.add(luongLabel, gbc);
 		gbc.gridx=1; gbc.gridy=5;
 		luongText=new JTextField(11); luongText.setFont(new Font("Segoe UI",0,16));
+		luongText.setEditable(false);
 		inforTinTuyenDungPanel.add(luongText, gbc);
 		
 		gbc.gridx=2; gbc.gridy=4;
@@ -196,6 +193,7 @@ public class TaoSuaTinTuyenDungDialog extends JDialog{
 		motaText=new JTextArea(10, 48); motaText.setFont(new Font("Segoe UI",0,16));
 		motaText.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
 		motaText.setLineWrap(true);
+		motaText.setEditable(false);
 		scrollMoTa=new JScrollPane(motaText);
 		inforTinTuyenDungPanel.add(scrollMoTa, gbc);
 		
@@ -207,17 +205,17 @@ public class TaoSuaTinTuyenDungDialog extends JDialog{
 		btnPanel.setBackground(Color.WHITE);
 		btnPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 50));
 		
-		btnThem=new JButton("Tạo mới"); btnThem.setFont(new Font("Segoe UI",0,16));
-		btnThem.setPreferredSize(new Dimension(120,25));
-		btnThem.setBackground(new Color(0,102,102));
-		btnThem.setForeground(Color.WHITE);
+		btnUngTuyen=new JButton("Ứng tuyển"); btnUngTuyen.setFont(new Font("Segoe UI",0,16));
+		btnUngTuyen.setPreferredSize(new Dimension(120,25));
+		btnUngTuyen.setBackground(new Color(0,102,102));
+		btnUngTuyen.setForeground(Color.WHITE);
 		
 		btnHuy=new JButton("Hủy"); btnHuy.setFont(new Font("Segoe UI",0,16));
 		btnHuy.setPreferredSize(new Dimension(120,25));
 		btnHuy.setBackground(Color.WHITE);
 		btnHuy.setForeground(Color.BLACK);
 		
-		btnPanel.add(btnThem); btnPanel.add(btnHuy);
+		btnPanel.add(btnUngTuyen); btnPanel.add(btnHuy);
 		
 		add(btnPanel, BorderLayout.SOUTH);
 	}
