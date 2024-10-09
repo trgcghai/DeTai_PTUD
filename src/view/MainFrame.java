@@ -8,6 +8,8 @@ import javax.swing.table.DefaultTableModel;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
+import component.RoundPanel;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -20,8 +22,9 @@ public class MainFrame extends JFrame implements MouseListener{
 	
 //	Component
 	JPanel leftPanel,menuPanel,
-		mainPanel,northPanel, centerPanel, imgPanel;
+		mainPanel,northPanel;
 	JLabel userLabel, iconUserLabel, vaitroLeftLabel;
+	RoundPanel centerPanel, imgPanel;
 	
 	public MainFrame(String userName) {
 		setTitle("Dịch vụ tìm việc làm");
@@ -88,12 +91,12 @@ public class MainFrame extends JFrame implements MouseListener{
 		northPanel.add(userLabel); northPanel.add(iconUserLabel);
 		
 //		Hiển thị hình ảnh
-		centerPanel=new JPanel();
+		centerPanel=new RoundPanel();
 		centerPanel.setLayout(new BorderLayout(10, 10));
 		centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		centerPanel.setBackground(new Color(220, 220, 220));
 		
-		imgPanel=new JPanel(); imgPanel.setPreferredSize(new Dimension(1100, 700));
+		imgPanel=new RoundPanel(); imgPanel.setPreferredSize(new Dimension(1100, 700));
 		JLabel imgLabel=new JLabel();
 		ImageIcon imgIcon=new ImageIcon(getClass().getResource("/image/timvieclam.png"));
 		Image img=imgIcon.getImage().getScaledInstance(1600, 800, Image.SCALE_SMOOTH);
@@ -171,6 +174,12 @@ public class MainFrame extends JFrame implements MouseListener{
 				centerPanel.add(new TimViecLamFrame("MinhDat").getPanel());
 				
 				this.setTitle("Tìm việc làm");
+			}
+			else if(((JMenu)obj).getText().equals("Thống kê")) {
+				centerPanel.removeAll();
+				centerPanel.add(new ThongKeFrame("MinhDat").getPanel());
+				
+				this.setTitle("Thống kê");
 			}
 			centerPanel.revalidate();
 			centerPanel.repaint();

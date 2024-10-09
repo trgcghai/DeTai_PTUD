@@ -37,6 +37,7 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
+import component.RoundPanel;
 import controller.ComboBoxRenderer;
 import controller.Database;
 import controller.ExcelHelper;
@@ -68,8 +69,7 @@ public class NhaTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 	
 //	Component danh sách nhà tuyển dụng
 	JPanel leftPanel,menuPanel,
-		nhatuyendungPanel,northPanelNhaTuyenDung, centerPanelNhaTuyenDung, timkiemPanel,
-		danhsachPanel, danhsachNorthPanel, danhsachCenterPanel;
+		nhatuyendungPanel,northPanelNhaTuyenDung, centerPanelNhaTuyenDung;
 	JLabel userLabel, iconUserLabel,timkiemTenLabel, timkiemSDTLabel, titleNhaTuyenDung,vaitroLeftLabel;
 	JTextField timkiemTenText, timkiemSDTText;
 	JButton btnTimKiem, btnLamLai,btnThem,btnLuu;
@@ -77,6 +77,9 @@ public class NhaTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 	DefaultTableModel modelTableNhaTuyenDung;
 	JScrollPane scrollNhaTuyenDung;
 	Icon iconBtnAdd,iconBtnSave;
+	
+	RoundPanel timkiemPanel,
+	danhsachPanel, danhsachNorthPanel, danhsachCenterPanel;
 	
 	
 	public NhaTuyenDungFrame(String userName) {
@@ -106,7 +109,7 @@ public class NhaTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 		centerPanelNhaTuyenDung.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		centerPanelNhaTuyenDung.setBackground(new Color(220, 220, 220));
 //		Tìm kiếm nhà tuyển dụng
-		timkiemPanel=new JPanel();
+		timkiemPanel=new RoundPanel();
 		timkiemPanel.setBackground(Color.WHITE);
 		timkiemPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 15, 5));
 		
@@ -133,16 +136,16 @@ public class NhaTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 		timkiemPanel.add(timkiemSDTLabel); timkiemPanel.add(timkiemSDTText);
 		timkiemPanel.add(resBtnSearch);
 //		Danh sách nhà tuyển dụng
-		danhsachPanel=new JPanel();
+		danhsachPanel=new RoundPanel();
 		danhsachPanel.setBackground(Color.WHITE);
 		danhsachPanel.setLayout(new BorderLayout(10, 10));
 		
-		danhsachNorthPanel=new JPanel();
+		danhsachNorthPanel=new RoundPanel();
 		danhsachNorthPanel.setLayout(new BorderLayout(10,10));
 		danhsachNorthPanel.setBackground(Color.WHITE);
 		iconBtnAdd=new ImageIcon(getClass().getResource("/image/add.png"));
 		iconBtnSave=new ImageIcon(getClass().getResource("/image/save.png"));
-		JPanel resBtnThem=new JPanel();
+		RoundPanel resBtnThem=new RoundPanel();
 		resBtnThem.setBorder(BorderFactory.createEmptyBorder(10,10,0,20));
 		resBtnThem.setBackground(Color.WHITE);
 		btnThem=new JButton("Thêm mới", iconBtnAdd); btnThem.setFont(new Font("Segoe UI",0,16));
@@ -160,7 +163,7 @@ public class NhaTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 		danhsachNorthPanel.add(titleNhaTuyenDung, BorderLayout.WEST);
 		danhsachNorthPanel.add(resBtnThem, BorderLayout.EAST);
 		
-		danhsachCenterPanel=new JPanel();
+		danhsachCenterPanel=new RoundPanel();
 		danhsachCenterPanel.setLayout(new BoxLayout(danhsachCenterPanel, BoxLayout.PAGE_AXIS));
 		danhsachCenterPanel.setBackground(Color.WHITE);
 		String[] colName= {"Mã nhà tuyển dụng","Tên nhà tuyển dụng","Địa chỉ","Email", "Số điện thoại", "Hành động","Tin tuyển dụng"};
@@ -196,7 +199,7 @@ public class NhaTuyenDungFrame extends JFrame implements ActionListener, MouseLi
         sorter.sort();
 		scrollNhaTuyenDung=new JScrollPane(tableNhaTuyenDung);
 		scrollNhaTuyenDung.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
-		JPanel resScroll=new JPanel();
+		RoundPanel resScroll=new RoundPanel();
 		resScroll.setBorder(BorderFactory.createEmptyBorder(0,20,20,20));
 		resScroll.setLayout(new BoxLayout(resScroll, BoxLayout.PAGE_AXIS));
 		resScroll.setBackground(Color.WHITE);

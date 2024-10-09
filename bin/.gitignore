@@ -1,6 +1,2 @@
-/controller/
-/dao/
-/entity/
-/exception/
-/image/
+/component/
 /view/

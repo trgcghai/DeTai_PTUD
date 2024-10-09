@@ -37,6 +37,7 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
+import component.RoundPanel;
 import controller.ComboBoxRenderer;
 import controller.Database;
 import controller.ExcelHelper;
@@ -66,8 +67,7 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 	
 //	Component danh sách ứng viên
 	JPanel leftPanel,menuPanel,
-		ungvienPanel,northPanelUngVien, centerPanelUngVien, timkiemPanel,
-		danhsachPanel, danhsachNorthPanel, danhsachCenterPanel;
+		ungvienPanel,northPanelUngVien, centerPanelUngVien;
 	JLabel userLabel, iconUserLabel,timkiemTenLabel, timkiemSDTLabel, titleNhanVien,vaitroLeftLabel;
 	JTextField timkiemTenText, timkiemSDTText;
 	JButton btnTimKiem, btnLamLai,btnThem,btnLuu;
@@ -75,6 +75,9 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 	DefaultTableModel modelTableUngVien;
 	JScrollPane scrollUngVien;
 	Icon iconBtnAdd,iconBtnSave;
+	
+	RoundPanel timkiemPanel,
+	danhsachPanel, danhsachNorthPanel, danhsachCenterPanel;
 	
 	
 	public UngVienFrame(String userName) {
@@ -105,7 +108,7 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 		centerPanelUngVien.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		centerPanelUngVien.setBackground(new Color(220, 220, 220));
 //		Tìm kiếm ứng viên
-		timkiemPanel=new JPanel();
+		timkiemPanel=new RoundPanel();
 		timkiemPanel.setBackground(Color.WHITE);
 		timkiemPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 15, 5));
 		
@@ -132,16 +135,16 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 		timkiemPanel.add(timkiemSDTLabel); timkiemPanel.add(timkiemSDTText);
 		timkiemPanel.add(resBtnSearch);
 //		Danh sách ứng viên
-		danhsachPanel=new JPanel();
+		danhsachPanel=new RoundPanel();
 		danhsachPanel.setBackground(Color.WHITE);
 		danhsachPanel.setLayout(new BorderLayout(10, 10));
 		
-		danhsachNorthPanel=new JPanel();
+		danhsachNorthPanel=new RoundPanel();
 		danhsachNorthPanel.setLayout(new BorderLayout(10,10));
 		danhsachNorthPanel.setBackground(Color.WHITE);
 		iconBtnAdd=new ImageIcon(getClass().getResource("/image/add.png"));
 		iconBtnSave=new ImageIcon(getClass().getResource("/image/save.png"));
-		JPanel resBtnThem=new JPanel();
+		RoundPanel resBtnThem=new RoundPanel();
 		resBtnThem.setBorder(BorderFactory.createEmptyBorder(10,10,0,20));
 		resBtnThem.setBackground(Color.WHITE);
 		btnThem=new JButton("Thêm mới", iconBtnAdd); btnThem.setFont(new Font("Segoe UI",0,16));
@@ -159,7 +162,7 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 		danhsachNorthPanel.add(titleNhanVien, BorderLayout.WEST);
 		danhsachNorthPanel.add(resBtnThem, BorderLayout.EAST);
 		
-		danhsachCenterPanel=new JPanel();
+		danhsachCenterPanel=new RoundPanel();
 		danhsachCenterPanel.setLayout(new BoxLayout(danhsachCenterPanel, BoxLayout.PAGE_AXIS));
 		danhsachCenterPanel.setBackground(Color.WHITE);
 		String[] colName= {"Mã ứng viên","Tên ứng viên","Số điện thoại","Email","Hành động","Hồ sơ"};
@@ -195,7 +198,7 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
         sorter.sort();
 		scrollUngVien=new JScrollPane(tableUngVien);
 		scrollUngVien.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
-		JPanel resScroll=new JPanel();
+		RoundPanel resScroll=new RoundPanel();
 		resScroll.setBorder(BorderFactory.createEmptyBorder(0,20,20,20));
 		resScroll.setLayout(new BoxLayout(resScroll, BoxLayout.PAGE_AXIS));
 		resScroll.setBackground(Color.WHITE);
