@@ -37,6 +37,7 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
+import component.RoundPanel;
 import controller.ComboBoxRenderer;
 import controller.Database;
 import controller.ExcelHelper;
@@ -68,8 +69,7 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 	
 //	Component danh sách tin tuyển dụng
 	JPanel leftPanel,menuPanel,
-		tintuyendungPanel,northPanelTinTuyenDung, centerPanelTinTuyenDung, timkiemPanel,
-		danhsachPanel, danhsachNorthPanel, danhsachCenterPanel;
+		tintuyendungPanel,northPanelTinTuyenDung, centerPanelTinTuyenDung;
 	JLabel userLabel, iconUserLabel,timkiemTenLabel, timkiemLuongLabel, timkiemNTDLabel, timkiemTrinhDoLabel, 
 		titleHoSo,vaitroLeftLabel;
 	JTextField timkiemTenText, timkiemLuongText;
@@ -79,6 +79,9 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 	JScrollPane scrollTinTuyenDung;
 	JComboBox timkiemNTDText, timkiemTrinhDoText;
 	Icon iconBtnSave;
+	
+	RoundPanel timkiemPanel,
+	danhsachPanel, danhsachNorthPanel, danhsachCenterPanel;
 	
 	
 	public TinTuyenDungFrame(String userName) {
@@ -109,11 +112,11 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 		centerPanelTinTuyenDung.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		centerPanelTinTuyenDung.setBackground(new Color(220, 220, 220));
 //		Tìm kiếm tin tuyển dụng
-		timkiemPanel=new JPanel();
+		timkiemPanel=new RoundPanel();
 		timkiemPanel.setBackground(Color.WHITE);
 		timkiemPanel.setLayout(new BorderLayout(5,5));
 		
-		JPanel resSearch=new JPanel(); resSearch.setLayout(new GridBagLayout());
+		RoundPanel resSearch=new RoundPanel(); resSearch.setLayout(new GridBagLayout());
 		resSearch.setBackground(Color.WHITE);
 		GridBagConstraints gbc= new GridBagConstraints();
 		gbc.gridx=0; gbc.gridy=0; gbc.insets=new Insets(5, 10, 5, 10); gbc.anchor=GridBagConstraints.EAST;
@@ -150,7 +153,7 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 		timkiemTrinhDoText.setPreferredSize(new Dimension(213,26));
 		resSearch.add(timkiemTrinhDoText, gbc);
 		
-		JPanel resBtnSearch=new JPanel(); resBtnSearch.setLayout(new BorderLayout(0,5));
+		RoundPanel resBtnSearch=new RoundPanel(); resBtnSearch.setLayout(new BorderLayout(0,5));
 		resBtnSearch.setBorder(BorderFactory.createEmptyBorder(10,10,10,23));
 		resBtnSearch.setBackground(Color.WHITE);
 		btnTimKiem=new JButton("Tìm kiếm"); btnTimKiem.setFont(new Font("Segoe UI",0,16));
@@ -167,15 +170,15 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 		timkiemPanel.add(resBtnSearch, BorderLayout.EAST);
 		
 //		Danh sách tin tuyển dụng
-		danhsachPanel=new JPanel();
+		danhsachPanel=new RoundPanel();
 		danhsachPanel.setBackground(Color.WHITE);
 		danhsachPanel.setLayout(new BorderLayout(10, 10));
 		
-		danhsachNorthPanel=new JPanel();
+		danhsachNorthPanel=new RoundPanel();
 		danhsachNorthPanel.setLayout(new BorderLayout(10,10));
 		danhsachNorthPanel.setBackground(Color.WHITE);
 		iconBtnSave=new ImageIcon(getClass().getResource("/image/save.png"));
-		JPanel resBtn=new JPanel();
+		RoundPanel resBtn=new RoundPanel();
 		resBtn.setBorder(BorderFactory.createEmptyBorder(10,10,0,20));
 		resBtn.setBackground(Color.WHITE);
 		btnLuu=new JButton("Xuất Excel", iconBtnSave); btnLuu.setFont(new Font("Segoe UI",0,16));
@@ -189,7 +192,7 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 		danhsachNorthPanel.add(titleHoSo, BorderLayout.WEST);
 		danhsachNorthPanel.add(resBtn, BorderLayout.EAST);
 		
-		danhsachCenterPanel=new JPanel();
+		danhsachCenterPanel=new RoundPanel();
 		danhsachCenterPanel.setLayout(new BoxLayout(danhsachCenterPanel, BoxLayout.PAGE_AXIS));
 		danhsachCenterPanel.setBackground(Color.WHITE);
 		String[] colName= {"Mã tin tuyển dụng","Tiêu đề","Nhà tuyển dụng","Lương","Trình độ","Trạng thái","Hành động"};
@@ -225,7 +228,7 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
         sorter.sort();
 		scrollTinTuyenDung=new JScrollPane(tableTinTuyenDung);
 		scrollTinTuyenDung.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
-		JPanel resScroll=new JPanel();
+		RoundPanel resScroll=new RoundPanel();
 		resScroll.setBorder(BorderFactory.createEmptyBorder(0,20,20,20));
 		resScroll.setLayout(new BoxLayout(resScroll, BoxLayout.PAGE_AXIS));
 		resScroll.setBackground(Color.WHITE);

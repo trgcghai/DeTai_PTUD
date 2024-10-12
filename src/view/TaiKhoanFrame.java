@@ -37,6 +37,7 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
+import component.RoundPanel;
 import controller.ComboBoxRenderer;
 import controller.Database;
 import controller.ExcelHelper;
@@ -65,8 +66,7 @@ public class TaiKhoanFrame extends JFrame implements ActionListener, MouseListen
 	
 //	Component danh sách tài khoản
 	JPanel leftPanel,menuPanel,
-		taikhoanPanel,northPanelTaiKhoan, centerPanelTaiKhoan, timkiemPanel,
-		danhsachPanel, danhsachNorthPanel, danhsachCenterPanel;
+		taikhoanPanel,northPanelTaiKhoan, centerPanelTaiKhoan;
 	JLabel userLabel, iconUserLabel,timkiemTenLabel, titleTaiKhoan,vaitroLeftLabel;
 	JTextField timkiemTenText;
 	JButton btnTimKiem, btnLamLai,btnLuu;
@@ -74,6 +74,9 @@ public class TaiKhoanFrame extends JFrame implements ActionListener, MouseListen
 	DefaultTableModel modelTableTaiKhoan;
 	JScrollPane scrollTaiKhoan;
 	Icon iconBtnSave;
+	
+	RoundPanel timkiemPanel,
+	danhsachPanel, danhsachNorthPanel, danhsachCenterPanel;
 	
 	public TaiKhoanFrame(String userName) {
 		this.userName=userName;
@@ -103,7 +106,7 @@ public class TaiKhoanFrame extends JFrame implements ActionListener, MouseListen
 		centerPanelTaiKhoan.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		centerPanelTaiKhoan.setBackground(new Color(220, 220, 220));
 //		Tìm kiếm tài khoản
-		timkiemPanel=new JPanel();
+		timkiemPanel=new RoundPanel();
 		timkiemPanel.setBackground(Color.WHITE);
 		timkiemPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 5));
 		
@@ -122,15 +125,15 @@ public class TaiKhoanFrame extends JFrame implements ActionListener, MouseListen
 		timkiemPanel.add(timkiemTenLabel); timkiemPanel.add(timkiemTenText);
 		timkiemPanel.add(btnTimKiem); timkiemPanel.add(btnLamLai);
 //		Danh sách tài khoản
-		danhsachPanel=new JPanel();
+		danhsachPanel=new RoundPanel();
 		danhsachPanel.setBackground(Color.WHITE);
 		danhsachPanel.setLayout(new BorderLayout(10, 10));
 		
-		danhsachNorthPanel=new JPanel();
+		danhsachNorthPanel=new RoundPanel();
 		danhsachNorthPanel.setLayout(new BorderLayout(10,10));
 		danhsachNorthPanel.setBackground(Color.WHITE);
 		iconBtnSave=new ImageIcon(getClass().getResource("/image/save.png"));
-		JPanel resBtn=new JPanel();
+		RoundPanel resBtn=new RoundPanel();
 		resBtn.setBorder(BorderFactory.createEmptyBorder(10,10,0,20));
 		resBtn.setBackground(Color.WHITE);
 		btnLuu=new JButton("Xuất Excel", iconBtnSave); btnLuu.setFont(new Font("Segoe UI",0,16));
@@ -144,7 +147,7 @@ public class TaiKhoanFrame extends JFrame implements ActionListener, MouseListen
 		danhsachNorthPanel.add(titleTaiKhoan, BorderLayout.WEST);
 		danhsachNorthPanel.add(resBtn, BorderLayout.EAST);
 		
-		danhsachCenterPanel=new JPanel();
+		danhsachCenterPanel=new RoundPanel();
 		danhsachCenterPanel.setLayout(new BoxLayout(danhsachCenterPanel, BoxLayout.PAGE_AXIS));
 		danhsachCenterPanel.setBackground(Color.WHITE);
 		String[] colName= {"Mã tài khoản","Tên đăng nhập", "Tên nhân viên", "Vai trò","Hành động"};
@@ -180,7 +183,7 @@ public class TaiKhoanFrame extends JFrame implements ActionListener, MouseListen
         sorter.sort();
 		scrollTaiKhoan=new JScrollPane(tableTaiKhoan);
 		scrollTaiKhoan.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
-		JPanel resScroll=new JPanel();
+		RoundPanel resScroll=new RoundPanel();
 		resScroll.setBorder(BorderFactory.createEmptyBorder(0,20,20,20));
 		resScroll.setLayout(new BoxLayout(resScroll, BoxLayout.PAGE_AXIS));
 		resScroll.setBackground(Color.WHITE);

@@ -37,6 +37,7 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
+import component.RoundPanel;
 import controller.ComboBoxRenderer;
 import controller.Database;
 import controller.ExcelHelper;
@@ -67,8 +68,7 @@ public class HoSoFrame extends JFrame implements ActionListener, MouseListener, 
 	
 //	Component danh sách hồ sơ
 	JPanel leftPanel,menuPanel,
-		hosoPanel,northPanelHoSo, centerPanelHoSo, timkiemPanel,
-		danhsachPanel, danhsachNorthPanel, danhsachCenterPanel;
+		hosoPanel,northPanelHoSo, centerPanelHoSo;
 	JLabel userLabel, iconUserLabel,timkiemTenLabel, timkiemTrangThaiLabel, titleHoSo,vaitroLeftLabel;
 	JTextField timkiemTenText;
 	JButton btnTimKiem, btnLamLai, btnLuu;
@@ -77,6 +77,9 @@ public class HoSoFrame extends JFrame implements ActionListener, MouseListener, 
 	JScrollPane scrollHoSo;
 	JComboBox timkiemTrangThaiText;
 	Icon iconBtnSave;
+	
+	RoundPanel timkiemPanel,
+	danhsachPanel, danhsachNorthPanel, danhsachCenterPanel;
 	
 	
 	public HoSoFrame(String userName) {
@@ -107,7 +110,7 @@ public class HoSoFrame extends JFrame implements ActionListener, MouseListener, 
 		centerPanelHoSo.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		centerPanelHoSo.setBackground(new Color(220, 220, 220));
 //		Tìm kiếm hồ sơ
-		timkiemPanel=new JPanel();
+		timkiemPanel=new RoundPanel();
 		timkiemPanel.setBackground(Color.WHITE);
 		timkiemPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 15, 5));
 		
@@ -140,15 +143,15 @@ public class HoSoFrame extends JFrame implements ActionListener, MouseListener, 
 		timkiemPanel.add(timkiemTrangThaiLabel); timkiemPanel.add(timkiemTrangThaiText);
 		timkiemPanel.add(resBtnSearch);
 //		Danh sách hồ sơ
-		danhsachPanel=new JPanel();
+		danhsachPanel=new RoundPanel();
 		danhsachPanel.setBackground(Color.WHITE);
 		danhsachPanel.setLayout(new BorderLayout(10, 10));
 		
-		danhsachNorthPanel=new JPanel();
+		danhsachNorthPanel=new RoundPanel();
 		danhsachNorthPanel.setLayout(new BorderLayout(10,10));
 		danhsachNorthPanel.setBackground(Color.WHITE);
 		iconBtnSave=new ImageIcon(getClass().getResource("/image/save.png"));
-		JPanel resBtn=new JPanel();
+		RoundPanel resBtn=new RoundPanel();
 		resBtn.setBorder(BorderFactory.createEmptyBorder(10,10,0,20));
 		resBtn.setBackground(Color.WHITE);
 		btnLuu=new JButton("Xuất Excel", iconBtnSave); btnLuu.setFont(new Font("Segoe UI",0,16));
@@ -162,7 +165,7 @@ public class HoSoFrame extends JFrame implements ActionListener, MouseListener, 
 		danhsachNorthPanel.add(titleHoSo, BorderLayout.WEST);
 		danhsachNorthPanel.add(resBtn, BorderLayout.EAST);
 		
-		danhsachCenterPanel=new JPanel();
+		danhsachCenterPanel=new RoundPanel();
 		danhsachCenterPanel.setLayout(new BoxLayout(danhsachCenterPanel, BoxLayout.PAGE_AXIS));
 		danhsachCenterPanel.setBackground(Color.WHITE);
 		String[] colName= {"Mã hồ sơ","Trạng thái","Tên ứng viên","Nhà tuyển dụng","Tin tuyển dụng","Hành động"};
@@ -198,7 +201,7 @@ public class HoSoFrame extends JFrame implements ActionListener, MouseListener, 
         sorter.sort();
 		scrollHoSo=new JScrollPane(tableHoSo);
 		scrollHoSo.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
-		JPanel resScroll=new JPanel();
+		RoundPanel resScroll=new RoundPanel();
 		resScroll.setBorder(BorderFactory.createEmptyBorder(0,20,20,20));
 		resScroll.setLayout(new BoxLayout(resScroll, BoxLayout.PAGE_AXIS));
 		resScroll.setBackground(Color.WHITE);
