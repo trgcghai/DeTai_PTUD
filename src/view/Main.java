@@ -25,7 +25,7 @@ public class Main {
 //		new NhanVienFrame("MinhDat").setVisible(true);
 //		Nhân viên chưa có tài khoản mới sử dụng chức năng cấp tài khoản
 		
-		new TaiKhoanFrame("MinhDat").setVisible(true);
+//		new TaiKhoanFrame("MinhDat").setVisible(true); 
 		
 //		new UngVienFrame("MinhDat").setVisible(true);
 		
