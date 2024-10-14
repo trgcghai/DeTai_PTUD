@@ -59,6 +59,18 @@ public class ChiTietHoSoDialog extends JDialog{
 		initComponent();
 	}
 	
+	public ChiTietHoSoDialog(Frame parent, boolean modal) {
+		super(parent, modal);
+		setTitle("Xem chi tiết hồ sơ");
+		setResizable(false);
+		setSize(800,680);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		setLayout(new BorderLayout());
+		setLocationRelativeTo(null);
+		
+		initComponent();
+	}
+	
 	public void initComponent() {
 		inforUngVienPanel=new JPanel(); 
 		inforUngVienPanel.setBackground(Color.WHITE);
