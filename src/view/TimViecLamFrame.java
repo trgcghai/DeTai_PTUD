@@ -102,6 +102,13 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 		
 	}
 	
+	public JLabel createLabel(String title, boolean isBordered) {
+		JLabel label = new JLabel(title);
+		label.setFont(new Font("Segoe UI",1,16));
+		if (isBordered) label.setBorder(BorderFactory.createEmptyBorder(10,20,0,10));
+		return label;
+	}
+	
 	public void initComponent() {
 		timviecPanel=new JPanel(); 
 		timviecPanel.setLayout(new BorderLayout(5,5));
@@ -117,7 +124,7 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 		danhsachTTDPanel=new RoundPanel();
 		danhsachTTDPanel.setBackground(Color.WHITE);
 		danhsachTTDPanel.setLayout(new BorderLayout(10, 10));
-		danhsachTTDPanel.setPreferredSize(new Dimension(getWidth(),340));
+		danhsachTTDPanel.setPreferredSize(new Dimension(670,getHeight()));
 		
 		danhsachTTDNorthPanel=new RoundPanel();
 		danhsachTTDNorthPanel.setLayout(new BorderLayout(10,10));
@@ -141,14 +148,14 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 		danhsachTTDCenterPanel=new RoundPanel();
 		danhsachTTDCenterPanel.setLayout(new BoxLayout(danhsachTTDCenterPanel, BoxLayout.PAGE_AXIS));
 		danhsachTTDCenterPanel.setBackground(Color.WHITE);
-		String[] colName= {"Mã tin tuyển dụng","Tiêu đề","Nhà tuyển dụng","Trình độ","Lương","Hình thức làm việc", "Hành động"};
+		String[] colName= {"Tiêu đề","Trình độ","Lương", "Hành động"};
 		Object[][] data = {
-			    {1, "Technical Project Manager","Facebook", "Đại học","1000","Part time",null},
-			    {2, "Manual Tester","Amazon", "Cao đẳng", "500","Full time",null}
+			    {"Technical Project Manager","Đại học","1000",null},
+			    {"Manual Tester","Cao đẳng", "500",null}
 			};
 		modelTableTinTuyenDung= new DefaultTableModel(data, colName){
 			boolean[] canEdit = new boolean [] {
-	                false, false, false, false, false, false, true
+	                false, false, false, true
 	            };
 			
             @Override
@@ -188,7 +195,7 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 		danhsachHoSoPanel=new RoundPanel();
 		danhsachHoSoPanel.setBackground(Color.WHITE);
 		danhsachHoSoPanel.setLayout(new BorderLayout(10, 10));
-		danhsachHoSoPanel.setPreferredSize(new Dimension(getWidth(),340));
+		danhsachHoSoPanel.setPreferredSize(new Dimension(670,getHeight()));
 		
 		danhsachHoSoNorthPanel=new RoundPanel();
 		danhsachHoSoNorthPanel.setLayout(new BorderLayout(10,10));
@@ -196,13 +203,18 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 		RoundPanel resUngVien=new RoundPanel();
 		resUngVien.setBorder(BorderFactory.createEmptyBorder(10,10,0,15));
 		resUngVien.setBackground(Color.WHITE);
+		
+//		ungvienLabel = createLabel("Ứng viên", false);
 		ungvienLabel=new JLabel("Ứng viên");
 		ungvienLabel.setFont(new Font("Segoe UI",1,16));
+		
 		ungvienCombo=new JComboBox();
 		ungvienCombo.setFont(new Font("Segoe UI",0,16));
 		ungvienCombo.setPreferredSize(new Dimension(200,25));
 		ungvienCombo.setRenderer(new ComboBoxRenderer("Chọn ứng viên"));
 		resUngVien.add(ungvienLabel); resUngVien.add(ungvienCombo);
+		
+//		titleHoSo = createLabel("Danh sách hồ sơ ứng viên", true);
 		titleHoSo=new JLabel("Danh sách hồ sơ ứng viên");
 		titleHoSo.setFont(new Font("Segoe UI",1,16));
 		titleHoSo.setBorder(BorderFactory.createEmptyBorder(10,20,0,10));
@@ -212,14 +224,14 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 		danhsachHoSoCenterPanel=new RoundPanel();
 		danhsachHoSoCenterPanel.setLayout(new BoxLayout(danhsachHoSoCenterPanel, BoxLayout.PAGE_AXIS));
 		danhsachHoSoCenterPanel.setBackground(Color.WHITE);
-		String[] col= {"Mã hồ sơ","Trạng thái","Tên ứng viên","Trình độ","Ngành nghề", "Hành động"};
+		String[] col= {"Trạng thái","Tên ứng viên","Trình độ", "Hành động"};
 		Object[][] datas = {
-			    {1, "Chưa nộp","Minh Đạt", "Đại học", "Công nghệ thông tin", null},
-			    {2, "Chưa nộp","Thắng Đạt", "Cao đẳng", "Kiểm toán", null}
+			    {"Chưa nộp","Minh Đạt", "Đại học", null},
+			    {"Chưa nộp","Thắng Đạt", "Cao đẳng", null}
 			};
 		modelTableHoSo= new DefaultTableModel(datas, col){
 			boolean[] canEdit = new boolean [] {
-	                false, false, false, false, false, true
+	                false, false, false, true
 	            };
 			
             @Override
@@ -255,8 +267,8 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 		danhsachHoSoPanel.add(danhsachHoSoNorthPanel, BorderLayout.NORTH);
 		danhsachHoSoPanel.add(danhsachHoSoCenterPanel, BorderLayout.CENTER);
 		
-		centerPanelTimViec.add(danhsachTTDPanel, BorderLayout.SOUTH);
-		centerPanelTimViec.add(danhsachHoSoPanel, BorderLayout.NORTH);
+		centerPanelTimViec.add(danhsachTTDPanel, BorderLayout.EAST);
+		centerPanelTimViec.add(danhsachHoSoPanel, BorderLayout.WEST);
 		
 		timviecPanel.add(centerPanelTimViec, BorderLayout.CENTER);
 	}
@@ -313,8 +325,8 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 			
 		};
 		
-		tableTinTuyenDung.getColumnModel().getColumn(6).setCellRenderer(new TableCellRendererDetail());
-		tableTinTuyenDung.getColumnModel().getColumn(6).setCellEditor(new TableCellEditorDetail(event));
+		tableTinTuyenDung.getColumnModel().getColumn(3).setCellRenderer(new TableCellRendererDetail());
+		tableTinTuyenDung.getColumnModel().getColumn(3).setCellEditor(new TableCellEditorDetail(event));
 	}
 	
 	public void addTableHoSoActionEvent() {
@@ -369,8 +381,8 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 			
 		};
 		
-		tableHoSo.getColumnModel().getColumn(5).setCellRenderer(new TableCellRendererDetail());
-		tableHoSo.getColumnModel().getColumn(5).setCellEditor(new TableCellEditorDetail(event));
+		tableHoSo.getColumnModel().getColumn(3).setCellRenderer(new TableCellRendererDetail());
+		tableHoSo.getColumnModel().getColumn(3).setCellEditor(new TableCellEditorDetail(event));
 	}
 	
 	
