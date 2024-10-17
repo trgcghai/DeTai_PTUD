@@ -37,6 +37,7 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
+import component.GradientRoundPanel;
 import component.RoundPanel;
 import controller.ComboBoxRenderer;
 import controller.Database;
@@ -80,7 +81,7 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 	JScrollPane scrollTinTuyenDung, scrollHoSo;
 	JComboBox nhatuyendungCombo, ungvienCombo;
 	
-	RoundPanel danhsachTTDPanel, danhsachTTDNorthPanel, danhsachTTDCenterPanel,
+	GradientRoundPanel danhsachTTDPanel, danhsachTTDNorthPanel, danhsachTTDCenterPanel,
 				danhsachHoSoPanel, danhsachHoSoNorthPanel, danhsachHoSoCenterPanel;
 	
 	
@@ -102,50 +103,46 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 		
 	}
 	
-	public JLabel createLabel(String title, boolean isBordered) {
-		JLabel label = new JLabel(title);
-		label.setFont(new Font("Segoe UI",1,16));
-		if (isBordered) label.setBorder(BorderFactory.createEmptyBorder(10,20,0,10));
-		return label;
-	}
-	
 	public void initComponent() {
 		timviecPanel=new JPanel(); 
-		timviecPanel.setLayout(new BorderLayout(5,5));
-		timviecPanel.setBackground(new Color(220, 220, 220));
+		timviecPanel.setLayout(new BorderLayout());
+		timviecPanel.setBackground(new Color(89, 145, 144));
 		
-//		Hiển thị danh sách tin tuyển dụng và danh sách hồ sơ ứng viên
+//		Hiển thị danh sách tin tuyển dụng, danh sách hồ sơ ứng viên
 		centerPanelTimViec=new JPanel();
-		centerPanelTimViec.setLayout(new BorderLayout(10, 10));
+		centerPanelTimViec.setLayout(new BorderLayout());
 		centerPanelTimViec.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		centerPanelTimViec.setBackground(new Color(220, 220, 220));
+		centerPanelTimViec.setBackground(new Color(89, 145, 144));
 		
 //		Danh sách tin tuyển dụng
-		danhsachTTDPanel=new RoundPanel();
-		danhsachTTDPanel.setBackground(Color.WHITE);
-		danhsachTTDPanel.setLayout(new BorderLayout(10, 10));
-		danhsachTTDPanel.setPreferredSize(new Dimension(670,getHeight()));
+		danhsachTTDPanel=new GradientRoundPanel();
+		danhsachTTDPanel.setLayout(new BorderLayout());
+		danhsachTTDPanel.setPreferredSize(new Dimension(660,getHeight()));
 		
-		danhsachTTDNorthPanel=new RoundPanel();
+		danhsachTTDNorthPanel=new GradientRoundPanel();
 		danhsachTTDNorthPanel.setLayout(new BorderLayout(10,10));
 		danhsachTTDNorthPanel.setBackground(Color.WHITE);
-		RoundPanel resNTD=new RoundPanel();
+		JPanel resNTD=new JPanel();
+		resNTD.setOpaque(false);
 		resNTD.setBorder(BorderFactory.createEmptyBorder(10,10,0,15));
-		resNTD.setBackground(Color.WHITE);
 		nhatuyendungLabel=new JLabel("Nhà tuyển dụng");
 		nhatuyendungLabel.setFont(new Font("Segoe UI",1,16));
+		nhatuyendungLabel.setForeground(Color.WHITE);
 		nhatuyendungCombo=new JComboBox();
 		nhatuyendungCombo.setFont(new Font("Segoe UI",0,16));
+		nhatuyendungCombo.setForeground(Color.WHITE);
+		nhatuyendungCombo.setBackground(new Color(89, 145, 144));
 		nhatuyendungCombo.setPreferredSize(new Dimension(200,25));
 		nhatuyendungCombo.setRenderer(new ComboBoxRenderer("Chọn nhà tuyển dụng"));
 		resNTD.add(nhatuyendungLabel); resNTD.add(nhatuyendungCombo);
 		titleTinTuyenDung=new JLabel("Danh sách tin tuyển dụng");
 		titleTinTuyenDung.setFont(new Font("Segoe UI",1,16));
+		titleTinTuyenDung.setForeground(Color.WHITE);
 		titleTinTuyenDung.setBorder(BorderFactory.createEmptyBorder(10,20,0,10));
 		danhsachTTDNorthPanel.add(titleTinTuyenDung, BorderLayout.WEST);
 		danhsachTTDNorthPanel.add(resNTD, BorderLayout.EAST);
 		
-		danhsachTTDCenterPanel=new RoundPanel();
+		danhsachTTDCenterPanel=new GradientRoundPanel();
 		danhsachTTDCenterPanel.setLayout(new BoxLayout(danhsachTTDCenterPanel, BoxLayout.PAGE_AXIS));
 		danhsachTTDCenterPanel.setBackground(Color.WHITE);
 		String[] colName= {"Tiêu đề","Trình độ","Lương", "Hành động"};
@@ -163,25 +160,10 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
                return canEdit[column];
             }
         };
-		tableTinTuyenDung=new JTable(modelTableTinTuyenDung);
-		tableTinTuyenDung.getTableHeader().setFont(new Font("Segoe UI",1,14));
-		tableTinTuyenDung.setFont(new Font("Segoe UI",0,16));
-		tableTinTuyenDung.setRowHeight(30);
-		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
-		for(int i=0;i<tableTinTuyenDung.getColumnCount()-1;i++) {
-			tableTinTuyenDung.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);			
-		}
-		tableTinTuyenDung.setAutoCreateRowSorter(true);
-		ArrayList<RowSorter.SortKey> list = new ArrayList<>();
-        DefaultRowSorter sorter = ((DefaultRowSorter)tableTinTuyenDung.getRowSorter());
-        sorter.setSortsOnUpdates(true);
-        list.add( new RowSorter.SortKey(0, SortOrder.ASCENDING));
-        sorter.setSortKeys(list);
-        sorter.sort();
+		tableTinTuyenDung=createTable(modelTableTinTuyenDung);
 		scrollTinTuyenDung=new JScrollPane(tableTinTuyenDung);
 		scrollTinTuyenDung.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
-		RoundPanel resScrollTinTuyenDung=new RoundPanel();
+		GradientRoundPanel resScrollTinTuyenDung=new GradientRoundPanel();
 		resScrollTinTuyenDung.setBorder(BorderFactory.createEmptyBorder(0,20,20,20));
 		resScrollTinTuyenDung.setLayout(new BoxLayout(resScrollTinTuyenDung, BoxLayout.PAGE_AXIS));
 		resScrollTinTuyenDung.setBackground(Color.WHITE);
@@ -192,36 +174,38 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 		danhsachTTDPanel.add(danhsachTTDCenterPanel, BorderLayout.CENTER);
 		
 //		Danh sách hồ sơ ứng viên
-		danhsachHoSoPanel=new RoundPanel();
-		danhsachHoSoPanel.setBackground(Color.WHITE);
-		danhsachHoSoPanel.setLayout(new BorderLayout(10, 10));
-		danhsachHoSoPanel.setPreferredSize(new Dimension(670,getHeight()));
+		danhsachHoSoPanel=new GradientRoundPanel();
+		danhsachHoSoPanel.setLayout(new BorderLayout());
+		danhsachHoSoPanel.setPreferredSize(new Dimension(660,getHeight()));
 		
-		danhsachHoSoNorthPanel=new RoundPanel();
+		danhsachHoSoNorthPanel=new GradientRoundPanel();
 		danhsachHoSoNorthPanel.setLayout(new BorderLayout(10,10));
 		danhsachHoSoNorthPanel.setBackground(Color.WHITE);
-		RoundPanel resUngVien=new RoundPanel();
+		JPanel resUngVien=new JPanel();
+		resUngVien.setOpaque(false);
 		resUngVien.setBorder(BorderFactory.createEmptyBorder(10,10,0,15));
 		resUngVien.setBackground(Color.WHITE);
 		
-//		ungvienLabel = createLabel("Ứng viên", false);
 		ungvienLabel=new JLabel("Ứng viên");
 		ungvienLabel.setFont(new Font("Segoe UI",1,16));
+		ungvienLabel.setForeground(Color.WHITE);
 		
 		ungvienCombo=new JComboBox();
+		ungvienCombo.setForeground(Color.WHITE);
+		ungvienCombo.setBackground(new Color(89, 145, 144));
 		ungvienCombo.setFont(new Font("Segoe UI",0,16));
 		ungvienCombo.setPreferredSize(new Dimension(200,25));
 		ungvienCombo.setRenderer(new ComboBoxRenderer("Chọn ứng viên"));
 		resUngVien.add(ungvienLabel); resUngVien.add(ungvienCombo);
 		
-//		titleHoSo = createLabel("Danh sách hồ sơ ứng viên", true);
-		titleHoSo=new JLabel("Danh sách hồ sơ ứng viên");
+		titleHoSo = new JLabel("Danh sách hồ sơ ứng viên");
 		titleHoSo.setFont(new Font("Segoe UI",1,16));
+		titleHoSo.setForeground(Color.WHITE);
 		titleHoSo.setBorder(BorderFactory.createEmptyBorder(10,20,0,10));
 		danhsachHoSoNorthPanel.add(titleHoSo, BorderLayout.WEST);
 		danhsachHoSoNorthPanel.add(resUngVien, BorderLayout.EAST);
 		
-		danhsachHoSoCenterPanel=new RoundPanel();
+		danhsachHoSoCenterPanel=new GradientRoundPanel();
 		danhsachHoSoCenterPanel.setLayout(new BoxLayout(danhsachHoSoCenterPanel, BoxLayout.PAGE_AXIS));
 		danhsachHoSoCenterPanel.setBackground(Color.WHITE);
 		String[] col= {"Trạng thái","Tên ứng viên","Trình độ", "Hành động"};
@@ -239,28 +223,12 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
                return canEdit[column];
             }
         };
-		tableHoSo=new JTable(modelTableHoSo);
-		tableHoSo.getTableHeader().setFont(new Font("Segoe UI",1,14));
-		tableHoSo.setFont(new Font("Segoe UI",0,16));
-		tableHoSo.setRowHeight(30);
-		DefaultTableCellRenderer centerRenderers = new DefaultTableCellRenderer();
-		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
-		for(int i=0;i<tableHoSo.getColumnCount()-1;i++) {
-			tableHoSo.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);			
-		}
-		tableHoSo.setAutoCreateRowSorter(true);
-		ArrayList<RowSorter.SortKey> lists = new ArrayList<>();
-        DefaultRowSorter sorters = ((DefaultRowSorter)tableHoSo.getRowSorter());
-        sorters.setSortsOnUpdates(true);
-        lists.add( new RowSorter.SortKey(0, SortOrder.ASCENDING));
-        sorters.setSortKeys(lists);
-        sorters.sort();
+		tableHoSo=createTable(modelTableHoSo);
 		scrollHoSo=new JScrollPane(tableHoSo);
 		scrollHoSo.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
-		RoundPanel resScrollHoSo=new RoundPanel();
+		GradientRoundPanel resScrollHoSo=new GradientRoundPanel();
 		resScrollHoSo.setBorder(BorderFactory.createEmptyBorder(0,20,20,20));
 		resScrollHoSo.setLayout(new BoxLayout(resScrollHoSo, BoxLayout.PAGE_AXIS));
-		resScrollHoSo.setBackground(Color.WHITE);
 		resScrollHoSo.add(scrollHoSo);
 		danhsachHoSoCenterPanel.add(resScrollHoSo);
 		
@@ -271,6 +239,27 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 		centerPanelTimViec.add(danhsachHoSoPanel, BorderLayout.WEST);
 		
 		timviecPanel.add(centerPanelTimViec, BorderLayout.CENTER);
+	}
+	
+	public JTable createTable(DefaultTableModel model) {
+		JTable table=new JTable(model);
+		table.getTableHeader().setFont(new Font("Segoe UI",1,14));
+		table.setFont(new Font("Segoe UI",0,16));
+		table.setRowHeight(30);
+		DefaultTableCellRenderer centerRenderers = new DefaultTableCellRenderer();
+		centerRenderers.setHorizontalAlignment( JLabel.CENTER );
+		for(int i=0;i<table.getColumnCount()-1;i++) {
+			table.getColumnModel().getColumn(i).setCellRenderer(centerRenderers);			
+		}
+		table.setAutoCreateRowSorter(true);
+		ArrayList<RowSorter.SortKey> lists = new ArrayList<>();
+        DefaultRowSorter sorters = ((DefaultRowSorter)table.getRowSorter());
+        sorters.setSortsOnUpdates(true);
+        lists.add( new RowSorter.SortKey(0, SortOrder.ASCENDING));
+        sorters.setSortKeys(lists);
+        sorters.sort();
+        
+		return table;
 	}
 	
 	public void addTableTTDActionEvent() {
@@ -395,7 +384,7 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 		Font font=text.getFont();
 		font=font.deriveFont(Font.ITALIC);
 		text.setFont(font);
-		text.setForeground(Color.GRAY);
+		text.setForeground(Color.WHITE);
 	}
 	
 //	Xóa trạng thái text chuột không nằm trong ô
@@ -403,7 +392,7 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 		Font font=text.getFont();
 		font=font.deriveFont(Font.PLAIN);
 		text.setFont(font);
-		text.setForeground(Color.BLACK);
+		text.setForeground(Color.WHITE);
 	}
 	
 //	Listener

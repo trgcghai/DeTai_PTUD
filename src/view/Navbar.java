@@ -3,19 +3,25 @@ package view;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Frame;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridLayout;
+import java.awt.RenderingHints;
+
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
+import component.GradientPanel;
+
 public class Navbar extends JMenuBar{
 
 //	Thanh menu
-	JPanel imgMain;
-	String userName;
 //	Nhân viên
 	JMenu menuNhanVien;
 //	Tài khoản
@@ -37,7 +43,7 @@ public class Navbar extends JMenuBar{
 //	JMenuItem itemTKNhanVien, itemTKCongTy, itemTKHoSo, itemTKTinTuyenDung;
 // 	Hệ thống
 	JMenu menuUser;
-	JMenuItem itemHome, itemLogout;
+	JMenu menuHome, menuLogout;
 	JPanel menuPanel;
 	
 	JFrame parent;
@@ -46,42 +52,19 @@ public class Navbar extends JMenuBar{
 		this.parent=(JFrame) parent;
 		
 		setLayout(new GridLayout(0, 1));
-		setBackground(Color.WHITE);
+		setForeground(Color.WHITE);
 		
-		menuNhanVien=new JMenu("Nhân viên");  
-		menuNhanVien.setFont(new Font("Segoe UI",0,16)); 
-		menuNhanVien.setIcon(new ImageIcon(getClass().getResource("/image/nhanvien.png")));
-		
-		menuTaiKhoan=new JMenu("Tài khoản"); menuTaiKhoan.setFont(new Font("Segoe UI",0,16));
-		menuTaiKhoan.setIcon(new ImageIcon(getClass().getResource("/image/taikhoan.png")));
-		
-		menuUngVien=new JMenu("Ứng viên");
-		menuUngVien.setFont(new Font("Segoe UI",0,16)); 
-		menuUngVien.setIcon(new ImageIcon(getClass().getResource("/image/ungvien.png")));
-		
-		menuHoSo=new JMenu("Hồ sơ");
-		menuHoSo.setFont(new Font("Segoe UI",0,16)); 
-		menuHoSo.setIcon(new ImageIcon(getClass().getResource("/image/hoso.png")));
-		
-		menuNhaTuyenDung=new JMenu("Nhà tuyển dụng");
-		menuNhaTuyenDung.setFont(new Font("Segoe UI",0,16));
-		menuNhaTuyenDung.setIcon(new ImageIcon(getClass().getResource("/image/nhatuyendung.png")));
-		
-		menuTinTuyenDung=new JMenu("Tin tuyển dụng");
-		menuTinTuyenDung.setFont(new Font("Segoe UI",0,16)); 
-		menuTinTuyenDung.setIcon(new ImageIcon(getClass().getResource("/image/tintuyendung.png")));
-		
-		menuHopDong=new JMenu("Hợp đồng");
-		menuHopDong.setFont(new Font("Segoe UI",0,16));
-		menuHopDong.setIcon(new ImageIcon(getClass().getResource("/image/hopdong.png")));
-		
-		menuTimViec=new JMenu("Tìm việc làm");
-		menuTimViec.setFont(new Font("Segoe UI",0,16));
-		menuTimViec.setIcon(new ImageIcon(getClass().getResource("/image/timviec16.png")));
-		
-		menuThongKe=new JMenu("Thống kê");
-		menuThongKe.setFont(new Font("Segoe UI",0,16));
-		menuThongKe.setIcon(new ImageIcon(getClass().getResource("/image/thongke.png")));
+		menuNhanVien=createMenu("Nhân viên", "nhanvien");  
+		menuTaiKhoan=createMenu("Tài khoản", "taikhoan");
+		menuUngVien=createMenu("Ứng viên", "ungvien");
+		menuHoSo=createMenu("Hồ sơ", "hoso");
+		menuNhaTuyenDung=createMenu("Nhà tuyển dụng", "nhatuyendung");
+		menuTinTuyenDung=createMenu("Tin tuyển dụng", "tintuyendung");
+		menuHopDong=createMenu("Hợp đồng", "hopdong");
+		menuTimViec=createMenu("Tìm việc làm", "timviec16");
+		menuThongKe=createMenu("Thống kê", "thongke");
+		menuHome=createMenu("Trang chủ", "home");
+		menuLogout=createMenu("Đăng xuất", "exit");
 		
 		add(menuNhanVien);
 		add(menuTaiKhoan);
@@ -93,6 +76,36 @@ public class Navbar extends JMenuBar{
 		add(menuTimViec);
 		add(menuThongKe);
 		
+		add(new JLabel(),"push");
+		add(new JLabel(),"push");
+		
+		add(menuHome);
+		add(menuLogout);
+		
+		
+	}
+	
+	@Override
+	protected void paintComponent(Graphics g) {
+		// TODO Auto-generated method stub
+		super.paintComponent(g);
+		Graphics2D g2d = (Graphics2D) g;
+	    g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+	    int w = getWidth(), h = getHeight();
+	    Color color1 = Color.decode("#259195");
+	    Color color2 = Color.decode("#ABC8CB");
+	    GradientPaint gp = new GradientPaint(0, 0, color1, w, h, color2);
+	    g2d.setPaint(gp);
+	    g2d.fillRect(0, 0, w, h);
+	}
+	
+	private JMenu createMenu(String title, String nameImg) {
+		JMenu menu=new JMenu(title);
+		menu.setFont(new Font("Segoe UI",1,16));
+		menu.setForeground(Color.WHITE);
+		menu.setIcon(new ImageIcon(getClass().getResource("/image/"+nameImg+".png")));
+		
+		return menu;
 	}
 
 }

@@ -28,6 +28,7 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
+import component.GradientPanel;
 import controller.ComboBoxRenderer;
 import controller.LabelDateFormatter;
 import entity.constraint.GioiTinh;
@@ -38,7 +39,7 @@ import entity.constraint.TrinhDo;
 
 public class TaoSuaTinTuyenDungDialog extends JDialog{
 	
-	JPanel inforTinTuyenDungPanel, btnPanel;
+	GradientPanel inforTinTuyenDungPanel, btnPanel;
 	JLabel idLabel, tenLabel, hinhthucLabel, startLabel, endLabel, trinhdoLabel, diachiLabel,tieudeLabel,trangthaiLabel, motaLabel,
 			soluongLabel, luongLabel, nganhngheLabel;
 	JTextField idText, tenText, diachiText, tieudeText,
@@ -71,7 +72,7 @@ public class TaoSuaTinTuyenDungDialog extends JDialog{
 	}
 	
 	public void initComponent() {
-		inforTinTuyenDungPanel=new JPanel(); 
+		inforTinTuyenDungPanel=new GradientPanel(Color.decode("#ABC8CB"), Color.decode("#7CBDBF")); 
 		inforTinTuyenDungPanel.setBackground(Color.WHITE);
 		inforTinTuyenDungPanel.setLayout(new GridBagLayout());
 		inforTinTuyenDungPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -202,7 +203,7 @@ public class TaoSuaTinTuyenDungDialog extends JDialog{
 		add(inforTinTuyenDungPanel, BorderLayout.CENTER);
 		
 //		Button
-		btnPanel=new JPanel(); 
+		btnPanel=new GradientPanel(Color.decode("#ABC8CB"), Color.decode("#7CBDBF")); 
 		btnPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		btnPanel.setBackground(Color.WHITE);
 		btnPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 50));

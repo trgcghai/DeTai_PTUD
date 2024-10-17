@@ -37,6 +37,7 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
+import component.GradientRoundPanel;
 import component.RoundPanel;
 import controller.ComboBoxRenderer;
 import controller.Database;
@@ -76,7 +77,7 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 	JScrollPane scrollUngVien;
 	Icon iconBtnAdd,iconBtnSave;
 	
-	RoundPanel timkiemPanel,
+	GradientRoundPanel timkiemPanel,
 	danhsachPanel, danhsachNorthPanel, danhsachCenterPanel;
 	
 	
@@ -106,21 +107,31 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 		centerPanelUngVien=new JPanel();
 		centerPanelUngVien.setLayout(new BorderLayout(10, 10));
 		centerPanelUngVien.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		centerPanelUngVien.setBackground(new Color(220, 220, 220));
+		centerPanelUngVien.setBackground(new Color(89, 145, 144));
 //		Tìm kiếm ứng viên
-		timkiemPanel=new RoundPanel();
+		timkiemPanel=new GradientRoundPanel();
 		timkiemPanel.setBackground(Color.WHITE);
 		timkiemPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 15, 5));
 		
-		timkiemTenLabel=new JLabel("Họ tên ứng viên:"); timkiemTenLabel.setFont(new Font("Segoe UI",0,16));
-		timkiemTenText=new JTextField(15); timkiemTenText.setFont(new Font("Segoe UI",0,16));
-		timkiemSDTLabel=new JLabel("Số điện thoại:"); timkiemSDTLabel.setFont(new Font("Segoe UI",0,16));
-		timkiemSDTText=new JTextField(15); timkiemSDTText.setFont(new Font("Segoe UI",0,16));
+		timkiemTenLabel=new JLabel("Họ tên ứng viên:");
+		timkiemTenLabel.setFont(new Font("Segoe UI",1,16));
+		timkiemTenLabel.setForeground(Color.WHITE);
+		timkiemTenText=new JTextField(15); 
+		timkiemTenText.setFont(new Font("Segoe UI",0,16));
+		timkiemTenText.setOpaque(false);
+		timkiemTenText.setForeground(Color.WHITE);
+		timkiemSDTLabel=new JLabel("Số điện thoại:"); 
+		timkiemSDTLabel.setFont(new Font("Segoe UI",1,16));
+		timkiemSDTLabel.setForeground(Color.WHITE);
+		timkiemSDTText=new JTextField(15); 
+		timkiemSDTText.setFont(new Font("Segoe UI",0,16));
+		timkiemSDTText.setOpaque(false);
+		timkiemSDTText.setForeground(Color.WHITE);
 		
 		JPanel resBtnSearch=new JPanel();
 		resBtnSearch.setPreferredSize(new Dimension(350, 35));
 		resBtnSearch.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 5));
-		resBtnSearch.setBackground(Color.WHITE);
+		resBtnSearch.setOpaque(false);
 		btnTimKiem=new JButton("Tìm kiếm"); btnTimKiem.setFont(new Font("Segoe UI",0,16));
 		btnTimKiem.setPreferredSize(new Dimension(120,25));
 		btnTimKiem.setBackground(new Color(0,102,102));
@@ -135,16 +146,15 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 		timkiemPanel.add(timkiemSDTLabel); timkiemPanel.add(timkiemSDTText);
 		timkiemPanel.add(resBtnSearch);
 //		Danh sách ứng viên
-		danhsachPanel=new RoundPanel();
-		danhsachPanel.setBackground(Color.WHITE);
+		danhsachPanel=new GradientRoundPanel();
 		danhsachPanel.setLayout(new BorderLayout(10, 10));
 		
-		danhsachNorthPanel=new RoundPanel();
+		danhsachNorthPanel=new GradientRoundPanel();
 		danhsachNorthPanel.setLayout(new BorderLayout(10,10));
-		danhsachNorthPanel.setBackground(Color.WHITE);
 		iconBtnAdd=new ImageIcon(getClass().getResource("/image/add.png"));
 		iconBtnSave=new ImageIcon(getClass().getResource("/image/save.png"));
-		RoundPanel resBtnThem=new RoundPanel();
+		JPanel resBtnThem=new JPanel();
+		resBtnThem.setOpaque(false);
 		resBtnThem.setBorder(BorderFactory.createEmptyBorder(10,10,0,20));
 		resBtnThem.setBackground(Color.WHITE);
 		btnThem=new JButton("Thêm mới", iconBtnAdd); btnThem.setFont(new Font("Segoe UI",0,16));
@@ -157,12 +167,13 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 		btnLuu.setForeground(Color.WHITE);
 		resBtnThem.add(btnThem); resBtnThem.add(btnLuu);
 		titleNhanVien=new JLabel("Danh sách ứng viên");
+		titleNhanVien.setForeground(Color.WHITE);
 		titleNhanVien.setFont(new Font("Segoe UI",1,16));
 		titleNhanVien.setBorder(BorderFactory.createEmptyBorder(10,20,0,10));
 		danhsachNorthPanel.add(titleNhanVien, BorderLayout.WEST);
 		danhsachNorthPanel.add(resBtnThem, BorderLayout.EAST);
 		
-		danhsachCenterPanel=new RoundPanel();
+		danhsachCenterPanel=new GradientRoundPanel();
 		danhsachCenterPanel.setLayout(new BoxLayout(danhsachCenterPanel, BoxLayout.PAGE_AXIS));
 		danhsachCenterPanel.setBackground(Color.WHITE);
 		String[] colName= {"Mã ứng viên","Tên ứng viên","Số điện thoại","Email","Hành động","Hồ sơ"};
@@ -198,7 +209,7 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
         sorter.sort();
 		scrollUngVien=new JScrollPane(tableUngVien);
 		scrollUngVien.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
-		RoundPanel resScroll=new RoundPanel();
+		GradientRoundPanel resScroll=new GradientRoundPanel();
 		resScroll.setBorder(BorderFactory.createEmptyBorder(0,20,20,20));
 		resScroll.setLayout(new BoxLayout(resScroll, BoxLayout.PAGE_AXIS));
 		resScroll.setBackground(Color.WHITE);
@@ -281,7 +292,7 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 		Font font=text.getFont();
 		font=font.deriveFont(Font.ITALIC);
 		text.setFont(font);
-		text.setForeground(Color.GRAY);
+		text.setForeground(Color.WHITE);
 	}
 	
 //	Xóa trạng thái text chuột không nằm trong ô
@@ -289,7 +300,7 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 		Font font=text.getFont();
 		font=font.deriveFont(Font.PLAIN);
 		text.setFont(font);
-		text.setForeground(Color.BLACK);
+		text.setForeground(Color.WHITE);
 	}
 	
 //	Listener

@@ -8,10 +8,13 @@ import javax.swing.table.DefaultTableModel;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
+import component.GradientPanel;
 import component.RoundPanel;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.RoundRectangle2D;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,10 +24,10 @@ public class MainFrame extends JFrame implements MouseListener{
 	Navbar nav;
 	
 //	Component
-	JPanel leftPanel,menuPanel,
-		mainPanel,northPanel;
+	JPanel leftPanel, menuPanel, mainPanel,northPanel,imgPanel;
 	JLabel userLabel, iconUserLabel, vaitroLeftLabel;
-	RoundPanel centerPanel, imgPanel;
+	RoundPanel centerPanel;
+//	GradientPanel menuPanel;
 	
 	public MainFrame(String userName) {
 		setTitle("Dịch vụ tìm việc làm");
@@ -51,23 +54,20 @@ public class MainFrame extends JFrame implements MouseListener{
 	public void initLeft() {
 		leftPanel=new JPanel();
 		leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
-		leftPanel.setBackground(Color.WHITE);
+		leftPanel.setBackground(new Color(89, 145, 144));
 		
 		vaitroLeftLabel=new JLabel("ADMIN", SwingConstants.CENTER);
-		vaitroLeftLabel.setFont(new Font("Segoe UI",0,16));
+		vaitroLeftLabel.setFont(new Font("Segoe UI",1,16));
+		vaitroLeftLabel.setForeground(Color.WHITE);
 		vaitroLeftLabel.setPreferredSize(new Dimension(getWidth(), 50));
-		
-		JPanel res= new JPanel();
-		res.setPreferredSize(new Dimension(getWidth(),400));
-		res.setBackground(Color.WHITE);
 		
 		nav=new Navbar(this);
 		
 		menuPanel=new JPanel(); 
-		menuPanel.setLayout(new BorderLayout()); menuPanel.setBackground(Color.WHITE);
+		menuPanel.setLayout(new BorderLayout());
+		menuPanel.setBackground(Color.decode("#259195"));
 		menuPanel.add(vaitroLeftLabel, BorderLayout.NORTH);
 		menuPanel.add(nav, BorderLayout.CENTER);
-		menuPanel.add(res, BorderLayout.SOUTH);
 		
 		leftPanel.add(menuPanel);
 	}
@@ -75,17 +75,15 @@ public class MainFrame extends JFrame implements MouseListener{
 	public void initComponent() {
 		mainPanel=new JPanel(); 
 		mainPanel.setLayout(new BorderLayout(5,5));
-//		mainPanel.setBackground(new Color(220, 220, 220));
 		mainPanel.setBackground(new Color(89, 145, 144));
 		
 //		Hiển thị tài khoản
 		northPanel=new JPanel();
 		northPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 10));
-		northPanel.setBackground(new Color(220, 220, 220));
 		northPanel.setBackground(new Color(89, 145, 144));
 		
 		userLabel=new JLabel();
-		userLabel.setFont(new Font("Segoe UI",0,16));
+		userLabel.setFont(new Font("Segoe UI",1,16));
 		userLabel.setText("Welcome "+userName);
 		userLabel.setForeground(Color.WHITE);
 		iconUserLabel=new JLabel();
@@ -97,10 +95,10 @@ public class MainFrame extends JFrame implements MouseListener{
 		centerPanel=new RoundPanel();
 		centerPanel.setLayout(new BorderLayout(10, 10));
 		centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		centerPanel.setBackground(new Color(220, 220, 220));
 		centerPanel.setBackground(new Color(89, 145, 144));
 		
-		imgPanel=new RoundPanel(); imgPanel.setPreferredSize(new Dimension(1100, 700));
+		imgPanel=new JPanel(); imgPanel.setPreferredSize(new Dimension(1100, 800));
+		imgPanel.setBackground(Color.WHITE);
 		JLabel imgLabel=new JLabel();
 		ImageIcon imgIcon=new ImageIcon(getClass().getResource("/image/timvieclam.png"));
 		Image img=imgIcon.getImage().getScaledInstance(1600, 800, Image.SCALE_SMOOTH);
@@ -111,6 +109,10 @@ public class MainFrame extends JFrame implements MouseListener{
 
 		mainPanel.add(northPanel, BorderLayout.NORTH);
 		mainPanel.add(centerPanel, BorderLayout.CENTER);
+	}
+	
+	public JPanel getPanel() {
+		return this.centerPanel;
 	}
 	
 	public void addMenuListener(Navbar nav) {
@@ -184,6 +186,16 @@ public class MainFrame extends JFrame implements MouseListener{
 				centerPanel.add(new ThongKeFrame("MinhDat").getPanel());
 				
 				this.setTitle("Thống kê");
+			}
+			else if(((JMenu)obj).getText().equals("Trang chủ")) {
+				centerPanel.removeAll();
+				centerPanel.add(new MainFrame("MinhDat").getPanel());
+				
+				this.setTitle("Dịch vụ tìm việc làm");
+			}
+			else if(((JMenu)obj).getText().equals("Đăng xuất")) {
+				this.dispose();
+				new LoginFrame().setVisible(true);
 			}
 			centerPanel.revalidate();
 			centerPanel.repaint();

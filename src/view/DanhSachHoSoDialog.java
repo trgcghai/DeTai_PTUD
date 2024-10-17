@@ -24,6 +24,7 @@ import javax.swing.SortOrder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
+import component.GradientPanel;
 import controller.actiontable.TableActionEvent;
 import controller.actiontable.TableCellEditorDetail;
 import controller.actiontable.TableCellEditorUpdateDelete;
@@ -33,7 +34,7 @@ import entity.constraint.TrangThai;
 
 public class DanhSachHoSoDialog extends JDialog {
 	
-	JPanel timkiemPanel, danhsachPanel, btnPanel;
+	GradientPanel timkiemPanel, danhsachPanel, btnPanel;
 	JLabel timkiemTrangThaiLabel, timkiemNTDLabel;
 	JComboBox timkiemTrangThaiText, timkiemNTDText;
 	JButton btnTimKiem, btnLamLai, btnHuy;
@@ -62,9 +63,9 @@ public class DanhSachHoSoDialog extends JDialog {
 	
 	public void initComponent() {
 //		Tìm kiếm hồ sơ
-		timkiemPanel=new JPanel();
-		timkiemPanel.setBackground(Color.WHITE);
-		timkiemPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 12, 5));
+		timkiemPanel=new GradientPanel(Color.decode("#ABC8CB"), Color.decode("#7CBDBF"));
+		timkiemPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 12, 0));
+		timkiemPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
 		
 		timkiemTrangThaiLabel=new JLabel("Trạng thái:"); timkiemTrangThaiLabel.setFont(new Font("Segoe UI",0,16));
 		timkiemTrangThaiText=new JComboBox(); 
@@ -81,6 +82,7 @@ public class DanhSachHoSoDialog extends JDialog {
 		timkiemNTDText.setPreferredSize(new Dimension(156,26));
 		
 		JPanel resBtnSearch=new JPanel();
+		resBtnSearch.setOpaque(false);
 		resBtnSearch.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 5));
 		resBtnSearch.setBackground(Color.WHITE);
 		btnTimKiem=new JButton("Tìm kiếm"); btnTimKiem.setFont(new Font("Segoe UI",0,16));
@@ -98,7 +100,8 @@ public class DanhSachHoSoDialog extends JDialog {
 		timkiemPanel.add(resBtnSearch);
 		
 //		Danh sách hồ sơ
-		danhsachPanel=new JPanel();
+		danhsachPanel=new GradientPanel(Color.decode("#ABC8CB"), Color.decode("#7CBDBF"));
+		danhsachPanel.setBorder(BorderFactory.createEmptyBorder(13, 0, 0, 0));
 		danhsachPanel.setLayout(new BoxLayout(danhsachPanel, BoxLayout.PAGE_AXIS));
 		danhsachPanel.setBackground(Color.WHITE);
 		String[] colName= {"Mã hồ sơ","Trạng thái","Nhà tuyển dụng","Tin tuyển dụng","Hành động"};
@@ -135,16 +138,16 @@ public class DanhSachHoSoDialog extends JDialog {
 		scrollHoSo=new JScrollPane(tableHoSo);
 		scrollHoSo.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
 		JPanel resScroll=new JPanel();
+		resScroll.setOpaque(false);
 		resScroll.setBorder(BorderFactory.createEmptyBorder(0,20,20,20));
 		resScroll.setLayout(new BoxLayout(resScroll, BoxLayout.PAGE_AXIS));
-		resScroll.setBackground(Color.WHITE);
 		resScroll.add(scrollHoSo);
 		danhsachPanel.add(resScroll);
 		
 //		Các nút chức năng
-		btnPanel=new JPanel();
-		btnPanel.setLayout(new FlowLayout(FlowLayout.RIGHT,20,5));
-		btnPanel.setBackground(Color.WHITE);
+		btnPanel=new GradientPanel(Color.decode("#ABC8CB"), Color.decode("#7CBDBF"));
+		btnPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 20, 0));
+		btnPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
 		btnHuy=new JButton("Hủy"); btnHuy.setFont(new Font("Segoe UI",0,16));
 		btnHuy.setPreferredSize(new Dimension(100,30));
 		btnHuy.setBackground(Color.RED);
@@ -154,6 +157,7 @@ public class DanhSachHoSoDialog extends JDialog {
 		add(timkiemPanel, BorderLayout.NORTH);
 		add(danhsachPanel, BorderLayout.CENTER);
 		add(btnPanel, BorderLayout.SOUTH);
+		
 	}
 	
 	public void addTableActionEvent() {
