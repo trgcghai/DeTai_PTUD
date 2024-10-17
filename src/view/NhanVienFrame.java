@@ -97,13 +97,15 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
 	public void initComponent() {
 		nhanvienPanel=new JPanel(); 
 		nhanvienPanel.setLayout(new BorderLayout(5,5));
-		nhanvienPanel.setBackground(new Color(220, 220, 220));
+//		nhanvienPanel.setBackground(new Color(220, 220, 220));
+		nhanvienPanel.setBackground(new Color(89, 145, 144));
 		
 //		Hiển thị tìm kiếm và danh sách nhân viên
 		centerPanelNhanVien=new JPanel();
 		centerPanelNhanVien.setLayout(new BorderLayout(10, 10));
 		centerPanelNhanVien.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		centerPanelNhanVien.setBackground(new Color(220, 220, 220));
+//		centerPanelNhanVien.setBackground(new Color(220, 220, 220));
+		centerPanelNhanVien.setBackground(new Color(89, 145, 144));
 //		Tìm kiếm nhân viên
 		timkiemPanel=new RoundPanel();
 		timkiemPanel.setBackground(Color.WHITE);

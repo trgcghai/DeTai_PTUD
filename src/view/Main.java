@@ -21,6 +21,7 @@ public class Main {
 //============================================================================================
 //		new LoginFrame().setVisible(true);
 		new MainFrame("MinhDat").setVisible(true);
+<<<<<<< HEAD
 		
 //		new NhanVienFrame("MinhDat").setVisible(true);
 //		Nhân viên chưa có tài khoản mới sử dụng chức năng cấp tài khoản
@@ -40,6 +41,8 @@ public class Main {
 //		new HopDongFrame("Minh Dat").setVisible(true);
 		
 //		new TimViecLamFrame("MinhDat").setVisible(true);
+=======
+>>>>>>> 3a0d6be6cedb88ea07a35498070d84e2df045ad8
 //============================================================================================		
 
 //		new ThongKeTinTuyenDungFrame("MinhDat").setVisible(true);

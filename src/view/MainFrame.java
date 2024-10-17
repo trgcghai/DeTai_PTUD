@@ -75,16 +75,19 @@ public class MainFrame extends JFrame implements MouseListener{
 	public void initComponent() {
 		mainPanel=new JPanel(); 
 		mainPanel.setLayout(new BorderLayout(5,5));
-		mainPanel.setBackground(new Color(220, 220, 220));
+//		mainPanel.setBackground(new Color(220, 220, 220));
+		mainPanel.setBackground(new Color(89, 145, 144));
 		
 //		Hiển thị tài khoản
 		northPanel=new JPanel();
 		northPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 10));
 		northPanel.setBackground(new Color(220, 220, 220));
+		northPanel.setBackground(new Color(89, 145, 144));
 		
 		userLabel=new JLabel();
 		userLabel.setFont(new Font("Segoe UI",0,16));
 		userLabel.setText("Welcome "+userName);
+		userLabel.setForeground(Color.WHITE);
 		iconUserLabel=new JLabel();
 		iconUserLabel.setIcon(new ImageIcon(getClass().getResource("/image/user.png")));
 		
@@ -95,6 +98,7 @@ public class MainFrame extends JFrame implements MouseListener{
 		centerPanel.setLayout(new BorderLayout(10, 10));
 		centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		centerPanel.setBackground(new Color(220, 220, 220));
+		centerPanel.setBackground(new Color(89, 145, 144));
 		
 		imgPanel=new RoundPanel(); imgPanel.setPreferredSize(new Dimension(1100, 700));
 		JLabel imgLabel=new JLabel();
