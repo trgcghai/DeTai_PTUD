@@ -2,29 +2,37 @@ package entity;
 
 import java.time.LocalDate;
 
-public class NhanVien {
-	private String maNV;
-	private String tenNV;
+public class UngVien {
+	private String maUV;
+	private String tenUV;
+	private String email;
 	private LocalDate ngaySinh;
 	private String diaChi;
 	private String gioiTinh;
 	private String soDienThoai;
-	private LocalDate ngayVaoLam;
 
-	public String getMaNV() {
-		return maNV;
+	public String getMaUV() {
+		return maUV;
 	}
 
-	public void setMaNV(String maNV) {
-		this.maNV = maNV;
+	public void setMaUV(String maUV) {
+		this.maUV = maUV;
 	}
 
-	public String getTenNV() {
-		return tenNV;
+	public String getTenUV() {
+		return tenUV;
 	}
 
-	public void setTenNV(String tenNV) {
-		this.tenNV = tenNV;
+	public void setTenUV(String tenUV) {
+		this.tenUV = tenUV;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public LocalDate getNgaySinh() {
@@ -59,19 +67,11 @@ public class NhanVien {
 		this.soDienThoai = soDienThoai;
 	}
 
-	public LocalDate getNgayVaoLam() {
-		return ngayVaoLam;
-	}
-
-	public void setNgayVaoLam(LocalDate ngayVaoLam) {
-		this.ngayVaoLam = ngayVaoLam;
-	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((maNV == null) ? 0 : maNV.hashCode());
+		result = prime * result + ((maUV == null) ? 0 : maUV.hashCode());
 		return result;
 	}
 
@@ -83,39 +83,39 @@ public class NhanVien {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		NhanVien other = (NhanVien) obj;
-		if (maNV == null) {
-			if (other.maNV != null)
+		UngVien other = (UngVien) obj;
+		if (maUV == null) {
+			if (other.maUV != null)
 				return false;
-		} else if (!maNV.equals(other.maNV))
+		} else if (!maUV.equals(other.maUV))
 			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "NhanVien [maNV=" + maNV + ", tenNV=" + tenNV + ", ngaySinh=" + ngaySinh + ", diaChi=" + diaChi
-				+ ", gioiTinh=" + gioiTinh + ", soDienThoai=" + soDienThoai + ", ngayVaoLam=" + ngayVaoLam + "]";
+		return "UngVien [maUV=" + maUV + ", tenUV=" + tenUV + ", email=" + email + ", ngaySinh=" + ngaySinh
+				+ ", diaChi=" + diaChi + ", gioiTinh=" + gioiTinh + ", soDienThoai=" + soDienThoai + "]";
 	}
 
-	public NhanVien() {
+	public UngVien() {
 		super();
 	}
 
-	public NhanVien(String maNV, String tenNV, LocalDate ngaySinh, String diaChi, String gioiTinh, String soDienThoai,
-			LocalDate ngayVaoLam) {
+	public UngVien(String maUV, String tenUV, String email, LocalDate ngaySinh, String diaChi, String gioiTinh,
+			String soDienThoai) {
 		super();
-		this.maNV = maNV;
-		this.tenNV = tenNV;
+		this.maUV = maUV;
+		this.tenUV = tenUV;
+		this.email = email;
 		this.ngaySinh = ngaySinh;
 		this.diaChi = diaChi;
 		this.gioiTinh = gioiTinh;
 		this.soDienThoai = soDienThoai;
-		this.ngayVaoLam = ngayVaoLam;
 	}
 
-	public NhanVien(String maNV) {
+	public UngVien(String maUV) {
 		super();
-		this.maNV = maNV;
+		this.maUV = maUV;
 	}
 }

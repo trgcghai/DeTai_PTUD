@@ -1,66 +1,58 @@
 package entity;
 
-import java.util.Objects;
-
-import entity.constraint.VaiTro;
-
 public class TaiKhoan {
-	private int maTK;
+	private String maTk;
 	private String email;
-	private String matkhau;
-	private VaiTro vaitro;
-	
-	public TaiKhoan() {
-		
+	private String matKhau;
+	private String vaiTro;
+	private NhanVien nhanVien;
+
+	public String getMaTk() {
+		return maTk;
 	}
-	
-	public TaiKhoan(int maTK) {
-		this.maTK=maTK;
+
+	public void setMaTk(String maTk) {
+		this.maTk = maTk;
 	}
-	
-	public TaiKhoan(String email, String matkhau) {
-		this.email=email;
-		this.matkhau=matkhau;
-	}
-	
-	public TaiKhoan(int maTK, String email, String matkhau, VaiTro vaitro) {
-		this.maTK=maTK;
-		this.email=email;
-		this.matkhau=matkhau;
-		this.vaitro=vaitro;
-	}
-	
-	public int getMaTK() {
-		return maTK;
-	}
-	public void setMaTK(int maTK) {
-		this.maTK = maTK;
-	}
-	
+
 	public String getEmail() {
 		return email;
 	}
+
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	
-	public String getMatkhau() {
-		return matkhau;
+
+	public String getMatKhau() {
+		return matKhau;
 	}
-	public void setMatkhau(String matkhau) {
-		this.matkhau = matkhau;
+
+	public void setMatKhau(String matKhau) {
+		this.matKhau = matKhau;
 	}
-	
-	public VaiTro getVaitro() {
-		return vaitro;
+
+	public String getVaiTro() {
+		return vaiTro;
 	}
-	public void setVaitro(VaiTro vaitro) {
-		this.vaitro = vaitro;
+
+	public void setVaiTro(String vaiTro) {
+		this.vaiTro = vaiTro;
+	}
+
+	public NhanVien getNhanVien() {
+		return nhanVien;
+	}
+
+	public void setNhanVien(NhanVien nhanVien) {
+		this.nhanVien = nhanVien;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(email, matkhau);
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((maTk == null) ? 0 : maTk.hashCode());
+		return result;
 	}
 
 	@Override
@@ -72,7 +64,30 @@ public class TaiKhoan {
 		if (getClass() != obj.getClass())
 			return false;
 		TaiKhoan other = (TaiKhoan) obj;
-		return Objects.equals(email, other.email) && Objects.equals(matkhau, other.matkhau);
+		if (maTk == null) {
+			if (other.maTk != null)
+				return false;
+		} else if (!maTk.equals(other.maTk))
+			return false;
+		return true;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "TaiKhoan [maTk=" + maTk + ", email=" + email + ", matKhau=" + matKhau + ", vaiTro=" + vaiTro
+				+ ", nhanVien=" + nhanVien + "]";
+	}
+
+	public TaiKhoan() {
+		super();
+	}
+
+	public TaiKhoan(String maTk, String email, String matKhau, String vaiTro, NhanVien nhanVien) {
+		super();
+		this.maTk = maTk;
+		this.email = email;
+		this.matKhau = matKhau;
+		this.vaiTro = vaiTro;
+		this.nhanVien = nhanVien;
+	}
 }
