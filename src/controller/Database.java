@@ -16,7 +16,7 @@ public class Database {
 	}
 	
 	public void connect() {
-		String url="jdbc:sqlserver://localhost:1433;databasename=TimViecLam";
+		String url="jdbc:sqlserver://localhost:1433;databasename=DVTimViecLam";
 		String user="sa";
 		String pass="13122003";
 		

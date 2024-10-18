@@ -1,7 +1,8 @@
-package controller;
+package component;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -13,7 +14,7 @@ public class ComboBoxRenderer extends JLabel implements ListCellRenderer {
     public ComboBoxRenderer(String title){
         this.title = title;
     }
-
+    
     @Override
     public Component getListCellRendererComponent(JList list, Object value,
             int index, boolean isSelected, boolean hasFocus){

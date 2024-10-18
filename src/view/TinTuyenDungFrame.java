@@ -38,9 +38,9 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
+import component.ComboBoxRenderer;
 import component.GradientRoundPanel;
 import component.RoundPanel;
-import controller.ComboBoxRenderer;
 import controller.Database;
 import controller.ExcelHelper;
 import controller.FilterImp;
@@ -56,7 +56,6 @@ import dao.NhanVien_DAO;
 import entity.TaiKhoan;
 import entity.constraint.TrangThai;
 import entity.constraint.TrinhDo;
-import entity.Customer;
 import entity.NhanVien;
 import exception.checkBirthday;
 import exception.checkDateOfWork;

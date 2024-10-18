@@ -9,6 +9,9 @@ import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.Properties;
 
@@ -17,6 +20,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -24,12 +28,19 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
+import component.ComboBoxRenderer;
 import component.GradientPanel;
+import controller.FilterImp;
 import controller.LabelDateFormatter;
+import dao.TaiKhoan_DAO;
+import entity.NhanVien;
+import entity.TaiKhoan;
 import entity.constraint.GioiTinh;
 import entity.constraint.VaiTro;
+import exception.checkUserEmail;
+import exception.checkUserPass;
 
-public class CapSuaTaiKhoanDialog extends JDialog {
+public class CapSuaTaiKhoanDialog extends JDialog implements ActionListener{
 	
 	GradientPanel inforNhanVienPanel, btnPanel;
 	JLabel idLabel, tenLabel, sdtLabel, dateLabel, gioitinhLabel, diachiLabel, dateWorkLabel, vaitroLabel,
@@ -40,8 +51,14 @@ public class CapSuaTaiKhoanDialog extends JDialog {
 	JDatePickerImpl dateText, dateWorkText;
 	JButton btnThem, btnHuy;
 	GridBagConstraints gbc;
+	
+	private int idMax=0;
+	private NhanVien nv;
+	private TaiKhoan tk;
+	private TaiKhoan_DAO taikhoanDAO;
+	private Frame parent;
 
-	public CapSuaTaiKhoanDialog(Frame parent, boolean modal) {
+	public CapSuaTaiKhoanDialog(Frame parent, boolean modal, NhanVien nv) {
 		super(parent, modal);
 		setTitle("Cấp tài khoản nhân viên");
 		setResizable(false);
@@ -50,13 +67,31 @@ public class CapSuaTaiKhoanDialog extends JDialog {
 		setLayout(new BorderLayout());
 		setLocationRelativeTo(null);
 		
+		this.nv=nv;
+		this.parent=parent;
+		taikhoanDAO=new TaiKhoan_DAO();
+		for(TaiKhoan tk: taikhoanDAO.getDsTaiKhoan()) {
+			int numberID=Integer.parseInt(tk.getMaTk().substring(2, tk.getMaTk().length()));
+			if(numberID > idMax) {
+				idMax=numberID;
+			}
+		}
+		
 		initComponent();
+	
+		addActionListener();
+		
+		loadDataNhanVien();
 	}
 	
-	public CapSuaTaiKhoanDialog(Frame parent, boolean modal, boolean check) {
-		this(parent, modal);
+	public CapSuaTaiKhoanDialog(Frame parent, boolean modal, NhanVien nv, TaiKhoan tk) {
+		this(parent, modal, nv);
 		setTitle("Cập nhật tài khoản nhân viên");
 		btnThem.setText("Cập nhật");
+		
+		this.tk=tk;
+		
+		loadDataTaiKhoan();
 	}
 	
 	public void initComponent() {
@@ -105,6 +140,7 @@ public class CapSuaTaiKhoanDialog extends JDialog {
 		JDatePanelImpl panelDate=new JDatePanelImpl(modelDate, p);
 		dateText=new JDatePickerImpl(panelDate, new LabelDateFormatter());
 		dateText.setPreferredSize(new Dimension(150,25));
+		dateText.getComponent(1).setEnabled(false);
 		modelDate.setValue(new Date());
 		inforNhanVienPanel.add(dateText, gbc);
 		
@@ -144,6 +180,7 @@ public class CapSuaTaiKhoanDialog extends JDialog {
 		JDatePanelImpl panelDateWork=new JDatePanelImpl(modelDateWork, p);
 		dateWorkText=new JDatePickerImpl(panelDateWork, new LabelDateFormatter());
 		dateWorkText.setPreferredSize(new Dimension(150,25));
+		dateWorkText.getComponent(1).setEnabled(false);
 		modelDateWork.setValue(new Date());
 		inforNhanVienPanel.add(dateWorkText,gbc);
 		
@@ -184,4 +221,105 @@ public class CapSuaTaiKhoanDialog extends JDialog {
 		add(btnPanel, BorderLayout.SOUTH);
 	}
 
+	public void loadDataNhanVien() {
+		idText.setText((idMax+1)<10?("TK0"+(idMax+1)):("TK"+(idMax+1)));
+		tenText.setText(nv.getTenNV());
+		modelDate.setValue(Date.from(nv.getNgaySinh().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+		modelDateWork.setValue(Date.from(nv.getNgayVaoLam().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+		
+		for(int i=0;i< gioitinhText.getItemCount();i++) {
+			if(gioitinhText.getItemAt(i).toString().equals(nv.getGioiTinh().getValue())) {
+				gioitinhText.setSelectedIndex(i);
+				break;
+			}
+		}
+		
+		sdtText.setText(nv.getSoDienThoai());
+		diachiText.setText(nv.getDiaChi());
+	}
+	
+	public void loadDataTaiKhoan() {
+		idText.setText(tk.getMaTk());
+		tendnText.setText(tk.getEmail());
+		matkhauText.setText(tk.getMatKhau());
+		
+		for(int i=0;i<vaitroText.getItemCount();i++) {
+			if(vaitroText.getItemAt(i).toString().equalsIgnoreCase(tk.getVaiTro().getValue())) {
+				vaitroText.setSelectedIndex(i);
+				break;
+			}
+		}
+	}
+	
+	public void them() {
+		String id=idText.getText();
+		String tendn=tendnText.getText();
+		String matkhau=matkhauText.getText();
+		String vaitro=vaitroText.getSelectedItem().toString();
+		NhanVien nhanvien=nv;
+		
+		if(!tendn.equals("") && !matkhau.equals("")) {
+			var check=new FilterImp();
+			try {
+				if(check.checkUserEmail(tendn) && check.checkUserPass(matkhau)) {
+					VaiTro vt=null;
+					for(VaiTro v: VaiTro.class.getEnumConstants()) {
+						if(v.getValue().equalsIgnoreCase(vaitro)) {
+							vt=v;
+							break;
+						}
+					}
+					
+					if(vt==VaiTro.CHUACO) {
+						JOptionPane.showMessageDialog(rootPane, "Chọn vai trò cho nhân viên");
+					}
+					else {
+						TaiKhoan tk=new TaiKhoan(id, tendn, matkhau, vt, nhanvien);
+						if(btnThem.getText().equalsIgnoreCase("Cấp tài khoản")) {
+							taikhoanDAO.create(tk);
+							JOptionPane.showMessageDialog(rootPane, "Cấp tài khoản thành công");
+							((NhanVienFrame)parent).updateTable();
+						}
+						else {
+							taikhoanDAO.update(tk);
+							JOptionPane.showMessageDialog(rootPane, "Cập nhật tài khoản thành công");
+							((TaiKhoanFrame)parent).updateTable();
+						}
+						this.dispose();
+					}
+					
+				}
+			} catch (checkUserEmail | checkUserPass e) {
+				// TODO Auto-generated catch block
+				JOptionPane.showMessageDialog(rootPane, e.getMessage());
+			}
+		}
+		else {
+			JOptionPane.showMessageDialog(rootPane, "Nhập đủ thông tin");
+		}
+	}
+	
+	public void huy() {
+		vaitroText.setSelectedIndex(0);
+		tendnText.setText("");
+		matkhauText.setText("");
+	}
+	
+	public void addActionListener() {
+		btnThem.addActionListener(this);
+		btnHuy.addActionListener(this);
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		var obj=e.getSource();
+		if(obj.equals(btnThem)) {
+			them();
+		}
+		else if(obj.equals(btnHuy)) {
+			huy();
+		}
+	}
+	
 }

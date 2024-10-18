@@ -9,6 +9,11 @@ import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.Properties;
 
@@ -17,6 +22,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -25,11 +31,18 @@ import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
 import component.GradientPanel;
+import controller.FilterImp;
 import controller.LabelDateFormatter;
+import dao.NhanVien_DAO;
+import entity.NhanVien;
 import entity.constraint.GioiTinh;
 import entity.constraint.VaiTro;
+import exception.checkBirthday;
+import exception.checkDateOfWork;
+import exception.checkName;
+import exception.checkPhone;
 
-public class ThemSuaNhanVienDialog extends JDialog {
+public class ThemSuaNhanVienDialog extends JDialog implements ActionListener{
 	
 	GradientPanel inforNhanVienPanel, btnPanel;
 	JLabel idLabel, tenLabel, sdtLabel, dateLabel, gioitinhLabel, diachiLabel, dateWorkLabel, vaitroLabel;
@@ -39,6 +52,11 @@ public class ThemSuaNhanVienDialog extends JDialog {
 	JDatePickerImpl dateText, dateWorkText;
 	JButton btnThem, btnHuy;
 	GridBagConstraints gbc;
+	
+	private int idMax=0;
+	private NhanVien nv;
+	private NhanVienFrame parent;
+	private NhanVien_DAO nhanvienDAO;
 
 	public ThemSuaNhanVienDialog(Frame parent, boolean modal) {
 		super(parent, modal);
@@ -49,14 +67,29 @@ public class ThemSuaNhanVienDialog extends JDialog {
 		setLayout(new BorderLayout());
 		setLocationRelativeTo(null);
 		
+		this.parent=(NhanVienFrame) parent;
+		nhanvienDAO=new NhanVien_DAO();
+		for(NhanVien nv: nhanvienDAO.getDSNhanVien()) {
+			int numberID=Integer.parseInt(nv.getMaNV().substring(2, nv.getMaNV().length()));
+			if(numberID > idMax) {
+				idMax=numberID;
+			}
+		}
+		
 		initComponentThem();
+		
+		addActionListener();
+		
+		idText.setText((idMax+1)<10?("NV0"+(idMax+1)):("NV"+(idMax+1)));
 	}
 	
-	public ThemSuaNhanVienDialog(Frame parent, boolean modal, boolean check) {
+	public ThemSuaNhanVienDialog(Frame parent, boolean modal, NhanVien nv) {
 		this(parent, modal);
+		this.nv=nv;
 		setTitle("Cập nhật nhân viên");
 		
 		initComponentSua();
+		loadDataNhanVien();
 	}
 	
 	public void initComponentThem() {
@@ -167,5 +200,110 @@ public class ThemSuaNhanVienDialog extends JDialog {
 		inforNhanVienPanel.add(vaitroText, gbc);
 		
 		btnThem.setText("Cập nhật");
+	}
+	
+	public void addActionListener() {
+		btnThem.addActionListener(this);
+		btnHuy.addActionListener(this);
+	}
+	
+	public void them() {
+		SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd");
+		
+		String id=idText.getText();
+		String ten=tenText.getText();
+		String sdt=sdtText.getText();
+		String diachi=diachiText.getText();
+		String ngaysinh = format.format(modelDate.getValue());
+		String gioitinh=gioitinhText.getSelectedItem().toString();
+		String ngayvaolam=format.format(modelDateWork.getValue());
+
+		if(!ten.equals("") && !sdt.equals("") && !diachi.equals("")) {
+			var check=new FilterImp();
+			try {
+				if(check.checkName(ten) && check.checkPhone(sdt) 
+						&& check.checkBirthday(LocalDate.parse(ngaysinh)) && check.checkDateOfWork(LocalDate.parse(ngayvaolam))) {
+					GioiTinh g=null;
+					for(GioiTinh i: GioiTinh.class.getEnumConstants()) {
+						if(i.getValue().equalsIgnoreCase(gioitinh)) {
+							g=i;
+							break;
+						}
+					}
+					
+					NhanVien nv=new NhanVien(id, ten, LocalDate.parse(ngaysinh), diachi, g, 
+							sdt,LocalDate.parse(ngayvaolam));
+					if(btnThem.getText().equalsIgnoreCase("Thêm mới")) {
+						nhanvienDAO.create(nv);
+						JOptionPane.showMessageDialog(rootPane, "Thêm nhân viên thành công");						
+					}
+					else {
+						nhanvienDAO.update(nv);
+						JOptionPane.showMessageDialog(rootPane, "Cập nhật nhân viên thành công");
+					}
+					this.dispose();
+					parent.updateTable();
+				}
+			} catch (checkName | checkPhone | checkBirthday | checkDateOfWork e) {
+				// TODO Auto-generated catch block
+				JOptionPane.showMessageDialog(rootPane, e.getMessage());
+			}
+		}
+		else {
+			JOptionPane.showMessageDialog(rootPane, "Nhập đủ thông tin nhân viên");
+		}
+	}
+	
+	public void huy() {
+		tenText.setText("");
+		sdtText.setText("");
+		diachiText.setText("");
+		gioitinhText.setSelectedIndex(0);
+		modelDate.setValue(new Date());
+		modelDateWork.setValue(new Date());
+	}
+	
+	public void loadDataNhanVien() {
+		idText.setText(nv.getMaNV());
+		tenText.setText(nv.getTenNV());
+		sdtText.setText(nv.getSoDienThoai());
+		diachiText.setText(nv.getDiaChi());
+		
+		for(int i=0;i< gioitinhText.getItemCount();i++) {
+			if(gioitinhText.getItemAt(i).toString().equals(nv.getGioiTinh().getValue())) {
+				gioitinhText.setSelectedIndex(i);
+				break;
+			}
+		}
+		
+		modelDate.setValue(Date.from(nv.getNgaySinh().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+		modelDateWork.setValue(Date.from(nv.getNgayVaoLam().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+
+		VaiTro vaitro=null;
+		for(VaiTro v: VaiTro.class.getEnumConstants()) {
+			if(v.toString().equalsIgnoreCase(nhanvienDAO.getVaiTro(nv.getMaNV()))) {
+				vaitro=v;
+			}
+		}
+		for(int i=0;i<vaitroText.getItemCount();i++) {
+			if(vaitroText.getItemAt(i).toString().equalsIgnoreCase(vaitro.getValue())) {
+				vaitroText.setSelectedIndex(i);
+				break;
+			}
+		}
+		vaitroText.setEnabled(false);
+		vaitroText.setFont(new Font("Segoe UI",1,16));
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		var obj=e.getSource();
+		if(obj.equals(btnThem)) {
+			them();
+		}
+		else if(obj.equals(btnHuy)) {
+			huy();
+		}
 	}
 }

@@ -26,7 +26,7 @@ public class LoginFrame extends JFrame implements ActionListener {
 	JPasswordField passText;
 	JButton btnLogin, btnSignup;
 	
-	private TaiKhoan_DAO listUser;
+	private TaiKhoan_DAO listTaiKhoan;
 	
 	public LoginFrame() {
 		setTitle("Đăng nhập");
@@ -38,14 +38,11 @@ public class LoginFrame extends JFrame implements ActionListener {
 		initComponent();
 		addActionListener();
 		
-//		listUser=new TaiKhoan_DAO();
-//		
-//		Database.getInstance().connect();
-//		loadUser();
+		listTaiKhoan=new TaiKhoan_DAO();
 		
-//		for(TaiKhoan tk: listUser.getListTaiKhoan()) {
-//			System.out.println(tk.getMaTK()+" "+tk.getEmail()+" "+tk.getMatkhau()+" "+tk.getVaitro());
-//		}
+		Database.getInstance().connect();
+		loadUser();
+		
 	}
 	
 	public void initComponent() {
@@ -146,9 +143,12 @@ public class LoginFrame extends JFrame implements ActionListener {
 		try {
 			if(check.checkUserEmail(userName) && check.checkUserPass(pass)) {
 				TaiKhoan user=new TaiKhoan(userName,pass);
-				if(listUser.getListTaiKhoan().contains(user)) {
+				if(listTaiKhoan.getListTaiKhoan().contains(user)) {
 					String tenNV=userName.split("@")[0];
-					new MainFrame(tenNV).setVisible(true);
+					
+					int index=listTaiKhoan.getListTaiKhoan().indexOf(user);
+					String vaitro=listTaiKhoan.getListTaiKhoan().get(index).getVaiTro();
+					new MainFrame(tenNV, vaitro).setVisible(true);
 					this.dispose();
 				}
 				else {
@@ -166,6 +166,6 @@ public class LoginFrame extends JFrame implements ActionListener {
 	}
 	
 	public void loadUser() {
-		listUser.setListTaiKhoan(listUser.getAllTaiKhoan());
+		listTaiKhoan.setListTaiKhoan(listTaiKhoan.getDsTaiKhoan());
 	}
 }

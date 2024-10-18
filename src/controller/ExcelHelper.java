@@ -27,7 +27,7 @@ public class ExcelHelper {
 		}
 	}
 	
-	public void exportData(JFrame frame, JTable table) {
+	public void exportData(JFrame frame, JTable table, int col) {
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.showSaveDialog(frame);
 		File saveFile = fileChooser.getSelectedFile();
@@ -36,7 +36,7 @@ public class ExcelHelper {
 			Workbook wb = new XSSFWorkbook();
 			Sheet sheet = wb.createSheet();
 			Row rowCol = sheet.createRow(0);
-			for (int i = 0; i < table.getColumnCount(); i++) {
+			for (int i = 0; i < table.getColumnCount()-col; i++) {
 				Cell cell = rowCol.createCell(i);
 				cell.setCellValue(table.getColumnName(i));
 			}

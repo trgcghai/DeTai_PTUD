@@ -46,10 +46,10 @@ public class Navbar extends JMenuBar{
 	JMenu menuHome, menuLogout;
 	JPanel menuPanel;
 	
-	JFrame parent;
+	MainFrame parent;
 	
 	public Navbar(Frame parent) {
-		this.parent=(JFrame) parent;
+		this.parent=(MainFrame) parent;
 		
 		setLayout(new GridLayout(0, 1));
 		setForeground(Color.WHITE);
@@ -66,15 +66,22 @@ public class Navbar extends JMenuBar{
 		menuHome=createMenu("Trang chủ", "home");
 		menuLogout=createMenu("Đăng xuất", "exit");
 		
-		add(menuNhanVien);
-		add(menuTaiKhoan);
+		if(this.parent.getVaiTro().equalsIgnoreCase("Admin")) {
+			add(menuNhanVien);
+			add(menuTaiKhoan);
+			add(menuThongKe);
+		}
+		
 		add(menuUngVien);
 		add(menuHoSo);
 		add(menuNhaTuyenDung);
 		add(menuTinTuyenDung);
 		add(menuHopDong);
 		add(menuTimViec);
-		add(menuThongKe);
+		
+		if(this.parent.getVaiTro().equalsIgnoreCase("Admin")) {
+			add(menuThongKe);
+		}
 		
 		add(new JLabel(),"push");
 		add(new JLabel(),"push");

@@ -27,8 +27,8 @@ public class NhaTuyenDung_DAO {
 				String tenNTD = rs.getString(2);
 				String email = rs.getString(3);
 				String logo = rs.getString(4);
-				String soDienThoai = rs.getString(5);
-				String diaChi = rs.getString(6);
+				String diaChi = rs.getString(5);
+				String soDienThoai = rs.getString(6);
 				
 				list.add(new NhaTuyenDung(maNTD, tenNTD, email, logo, soDienThoai, diaChi));
 			}
@@ -52,8 +52,8 @@ public class NhaTuyenDung_DAO {
 				String tenNTD = rs.getString(2);
 				String email = rs.getString(3);
 				String logo = rs.getString(4);
-				String soDienThoai = rs.getString(5);
-				String diaChi = rs.getString(6);
+				String diaChi = rs.getString(5);
+				String soDienThoai = rs.getString(6);
 				
 				list.add(new NhaTuyenDung(maNTD, tenNTD, email, logo, soDienThoai, diaChi));
 			}

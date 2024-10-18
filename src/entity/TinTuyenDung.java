@@ -15,7 +15,6 @@ public class TinTuyenDung {
 	private String hinhThuc;
 	private boolean trangThai;
 	private NhaTuyenDung nhaTuyenDung;
-	private String congViecMaCV;
 
 	public String getMaTTD() {
 		return maTTD;
@@ -113,14 +112,6 @@ public class TinTuyenDung {
 		this.nhaTuyenDung = nhaTuyenDung;
 	}
 
-	public String getCongViecMaCV() {
-		return congViecMaCV;
-	}
-
-	public void setCongViecMaCV(String congViecMaCV) {
-		this.congViecMaCV = congViecMaCV;
-	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -151,12 +142,12 @@ public class TinTuyenDung {
 		return "TinTuyenDung [maTTD=" + maTTD + ", tieuDe=" + tieuDe + ", moTa=" + moTa + ", ngayDangTin=" + ngayDangTin
 				+ ", ngayHetHan=" + ngayHetHan + ", trinhDo=" + trinhDo + ", soLuong=" + soLuong + ", luong=" + luong
 				+ ", nganhNghe=" + nganhNghe + ", hinhThuc=" + hinhThuc + ", trangThai=" + trangThai + ", nhaTuyenDung="
-				+ nhaTuyenDung + ", congViecMaCV=" + congViecMaCV + "]";
+				+ nhaTuyenDung + ", congViecMaCV=" + "]";
 	}
 
 	public TinTuyenDung(String maTTD, String tieuDe, String moTa, LocalDate ngayDangTin, LocalDate ngayHetHan,
 			String trinhDo, int soLuong, double luong, String nganhNghe, String hinhThuc, boolean trangThai,
-			NhaTuyenDung nhaTuyenDung, String congViecMaCV) {
+			NhaTuyenDung nhaTuyenDung) {
 		super();
 		this.maTTD = maTTD;
 		this.tieuDe = tieuDe;
@@ -170,7 +161,6 @@ public class TinTuyenDung {
 		this.hinhThuc = hinhThuc;
 		this.trangThai = trangThai;
 		this.nhaTuyenDung = nhaTuyenDung;
-		this.congViecMaCV = congViecMaCV;
 	}
 
 	public TinTuyenDung() {

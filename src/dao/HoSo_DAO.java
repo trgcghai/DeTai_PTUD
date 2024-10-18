@@ -29,8 +29,8 @@ public class HoSo_DAO {
 				String maHS = rs.getString(1);
 				String moTa = rs.getString(2);
 				String trangThai = rs.getNString(3);
-				UngVien ungVien = new UngVien(rs.getString(4));
-				TinTuyenDung tinTuyenDung = new TinTuyenDung(rs.getString(5));
+				TinTuyenDung tinTuyenDung = new TinTuyenDung(rs.getString(4));
+				UngVien ungVien = new UngVien(rs.getString(5));
 				NhanVien nhanVien = new NhanVien(rs.getString(6));
 				
 				list.add(new HoSo(maHS, moTa, trangThai, ungVien, tinTuyenDung, nhanVien));
@@ -54,8 +54,8 @@ public class HoSo_DAO {
 				String maHS = rs.getString(1);
 				String moTa = rs.getString(2);
 				String trangThai = rs.getNString(3);
-				UngVien ungVien = new UngVien(rs.getString(4));
-				TinTuyenDung tinTuyenDung = new TinTuyenDung(rs.getString(5));
+				TinTuyenDung tinTuyenDung = new TinTuyenDung(rs.getString(4));
+				UngVien ungVien = new UngVien(rs.getString(5));
 				NhanVien nhanVien = new NhanVien(rs.getString(6));
 				
 				list.add(new HoSo(maHS, moTa, trangThai, ungVien, tinTuyenDung, nhanVien));
@@ -79,8 +79,8 @@ public class HoSo_DAO {
 				String maHS = rs.getString(1);
 				String moTa = rs.getString(2);
 				String trangThai = rs.getNString(3);
-				UngVien ungVien = new UngVien(rs.getString(4));
-				TinTuyenDung tinTuyenDung = new TinTuyenDung(rs.getString(5));
+				TinTuyenDung tinTuyenDung = new TinTuyenDung(rs.getString(4));
+				UngVien ungVien = new UngVien(rs.getString(5));
 				NhanVien nhanVien = new NhanVien(rs.getString(6));
 				
 				list.add(new HoSo(maHS, moTa, trangThai, ungVien, tinTuyenDung, nhanVien));
@@ -104,8 +104,8 @@ public class HoSo_DAO {
 				String maHS = rs.getString(1);
 				String moTa = rs.getString(2);
 				String trangThai = rs.getNString(3);
-				UngVien ungVien = new UngVien(rs.getString(4));
-				TinTuyenDung tinTuyenDung = new TinTuyenDung(rs.getString(5));
+				TinTuyenDung tinTuyenDung = new TinTuyenDung(rs.getString(4));
+				UngVien ungVien = new UngVien(rs.getString(5));
 				NhanVien nhanVien = new NhanVien(rs.getString(6));
 				
 				list.add(new HoSo(maHS, moTa, trangThai, ungVien, tinTuyenDung, nhanVien));

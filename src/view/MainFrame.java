@@ -10,6 +10,7 @@ import org.jdatepicker.impl.UtilDateModel;
 
 import component.GradientPanel;
 import component.RoundPanel;
+import entity.constraint.VaiTro;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 
 public class MainFrame extends JFrame implements MouseListener{
 	String userName;
+	String vaitro;
 	Navbar nav;
 	
 //	Component
@@ -29,7 +31,7 @@ public class MainFrame extends JFrame implements MouseListener{
 	RoundPanel centerPanel;
 //	GradientPanel menuPanel;
 	
-	public MainFrame(String userName) {
+	public MainFrame(String userName, String vaitro) {
 		setTitle("Dịch vụ tìm việc làm");
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
 		setLocationRelativeTo(null);
@@ -37,6 +39,7 @@ public class MainFrame extends JFrame implements MouseListener{
 		setLayout(new BorderLayout());
 		
 		this.userName=userName;
+		this.vaitro=vaitro;
 
 //		Tạo menu bar bên trái
 		initLeft();
@@ -56,10 +59,17 @@ public class MainFrame extends JFrame implements MouseListener{
 		leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
 		leftPanel.setBackground(new Color(89, 145, 144));
 		
-		vaitroLeftLabel=new JLabel("ADMIN", SwingConstants.CENTER);
+		vaitroLeftLabel=new JLabel("", SwingConstants.CENTER);
 		vaitroLeftLabel.setFont(new Font("Segoe UI",1,16));
 		vaitroLeftLabel.setForeground(Color.WHITE);
 		vaitroLeftLabel.setPreferredSize(new Dimension(getWidth(), 50));
+		VaiTro[] vaitros=VaiTro.class.getEnumConstants();
+		for(VaiTro v: vaitros) {
+			if(v.toString().equalsIgnoreCase(vaitro)) {
+				vaitroLeftLabel.setText(v.getValue());
+				break;
+			}
+		}
 		
 		nav=new Navbar(this);
 		
@@ -115,6 +125,10 @@ public class MainFrame extends JFrame implements MouseListener{
 		return this.centerPanel;
 	}
 	
+	public String getVaiTro() {
+		return vaitro;
+	}
+	
 	public void addMenuListener(Navbar nav) {
 		for(Component c: nav.getComponents()) {
 			if(c.getClass().equals(JMenu.class)) {
@@ -135,7 +149,7 @@ public class MainFrame extends JFrame implements MouseListener{
 		if(obj.getClass().equals(JMenu.class)) {
 			if(((JMenu)obj).getText().equals("Nhân viên")) {
 				centerPanel.removeAll();
-				centerPanel.add(new NhanVienFrame("MinhDat").getPanel());
+				centerPanel.add(new NhanVienFrame().getPanel());
 				
 				this.setTitle("Nhân viên");
 			}
@@ -189,7 +203,7 @@ public class MainFrame extends JFrame implements MouseListener{
 			}
 			else if(((JMenu)obj).getText().equals("Trang chủ")) {
 				centerPanel.removeAll();
-				centerPanel.add(new MainFrame("MinhDat").getPanel());
+				centerPanel.add(new MainFrame(userName, vaitro).getPanel());
 				
 				this.setTitle("Dịch vụ tìm việc làm");
 			}

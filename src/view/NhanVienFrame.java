@@ -38,10 +38,10 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
+import component.ComboBoxRenderer;
 import component.GradientPanel;
 import component.GradientRoundPanel;
 import component.RoundPanel;
-import controller.ComboBoxRenderer;
 import controller.Database;
 import controller.ExcelHelper;
 import controller.FilterImp;
@@ -53,7 +53,7 @@ import controller.actiontable.TableCellRendererUpdateDelete;
 import dao.TaiKhoan_DAO;
 import dao.NhanVien_DAO;
 import entity.TaiKhoan;
-import entity.Customer;
+import entity.constraint.VaiTro;
 import entity.NhanVien;
 import exception.checkBirthday;
 import exception.checkDateOfWork;
@@ -64,7 +64,6 @@ import exception.checkUserPass;
 
 public class NhanVienFrame extends JFrame implements ActionListener, MouseListener, FocusListener {
 
-	String userName;
 	NhanVienFrame parent;
 	
 //	Component danh sách nhân viên
@@ -80,8 +79,9 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
 	
 	GradientRoundPanel timkiemPanel, danhsachPanel, danhsachNorthPanel, danhsachCenterPanel;
 	
-	public NhanVienFrame(String userName) {
-		this.userName=userName;
+	private NhanVien_DAO nhanvienDAO;
+	
+	public NhanVienFrame() {
 		this.parent=this;
 		
 //		Tạo component bên phải
@@ -93,10 +93,16 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
 //		Thêm sự kiện
 		addActionListener();
 		addMouseListener();
-		addFocusListener();		
+		addFocusListener();	
+		
+		Database.getInstance().connect();
+		
+		nhanvienDAO=new NhanVien_DAO();
+				
+		loadData();
+		loadDataTable();
 	}
 	
-//	
 	public void initComponent() {
 		nhanvienPanel=new JPanel(); 
 		nhanvienPanel.setLayout(new BorderLayout(5,5));
@@ -221,13 +227,20 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
 			@Override
 			public void onUpdate(int row) {
 				// TODO Auto-generated method stub
-				new ThemSuaNhanVienDialog(parent, rootPaneCheckingEnabled, true).setVisible(true);
+				NhanVien nv=nhanvienDAO.getNhanVien(tableNhanVien.getValueAt(row, 0).toString());
+				new ThemSuaNhanVienDialog(parent, rootPaneCheckingEnabled, nv).setVisible(true);
 			}
 			
 			@Override
 			public void onDelete(int row) {
 				// TODO Auto-generated method stub
-				JOptionPane.showMessageDialog(rootPane, "Chức năng xóa nhân viên đang hoàn thiện");
+				NhanVien nv=nhanvienDAO.getNhanVien(tableNhanVien.getValueAt(row, 0).toString());
+				int check=JOptionPane.showConfirmDialog(rootPane, "Có chắc chắn xóa?");
+				if(check==JOptionPane.OK_OPTION) {
+					nhanvienDAO.delete(nv.getMaNV());
+					JOptionPane.showMessageDialog(rootPane, "Xóa nhân viên thành công");
+					updateTable();
+				}
 			}
 
 			@Override
@@ -245,7 +258,13 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
 			@Override
 			public void onCreateTaiKhoan(int row) {
 				// TODO Auto-generated method stub
-				new CapSuaTaiKhoanDialog(parent, rootPaneCheckingEnabled).setVisible(true);
+				NhanVien nv=nhanvienDAO.getNhanVien(tableNhanVien.getValueAt(row, 0).toString());
+				if(nhanvienDAO.getVaiTro(nv.getMaNV()).equalsIgnoreCase("ChuaCo")) {
+					new CapSuaTaiKhoanDialog(parent, rootPaneCheckingEnabled, nv).setVisible(true);					
+				}
+				else {
+					JOptionPane.showMessageDialog(rootPane, "Nhân viên đã có tài khoản");
+				}
 			}
 
 			@Override
@@ -278,12 +297,85 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
 		return this.nhanvienPanel;
 	}
 	
+//	Lấy dữ liệu từ sql
+	public void loadData() {
+		nhanvienDAO.setListNhanVien(nhanvienDAO.getDSNhanVien());
+	}
+	
+//	Load dữ liệu lên bảng
+	public void loadDataTable() {
+		modelTableNhanVien.setRowCount(0);
+		DateTimeFormatter format=DateTimeFormatter.ofPattern("dd-MM-yyyy");
+		for(NhanVien i: nhanvienDAO.getListNhanVien()) {
+			String vaitro=null;
+			VaiTro[] vaitros=VaiTro.class.getEnumConstants();
+			for(VaiTro v: vaitros) {
+				if(v.toString().equalsIgnoreCase(nhanvienDAO.getVaiTro(i.getMaNV()))) {
+					vaitro=v.getValue();
+					break;
+				}
+			}
+			Object[] obj=new Object[] {
+					i.getMaNV(), i.getTenNV(), i.getSoDienThoai(),
+					format.format(i.getNgayVaoLam()), vaitro, null, null
+			};
+			modelTableNhanVien.addRow(obj);
+		}
+
+	}
+	
+//	Load lại dữ liệu bảng khi cập nhật nhân viên
+	public void updateTable() {
+		loadData();
+		loadDataTable();
+	}
+	
+//	option tìm kiếm
+//	1: tìm kiếm nhân viên theo tên
+//	2: tìm kiếm nhân viên theo số điện thoại
+//	3: tìm kiếm nhân viên theo tên và số điện thoại
+//	Tìm kiếm nhân viên
+	public void timkiemNhanVien() {
+		if(!timkiemTenText.getText().equals("Nhập dữ liệu")
+			&& timkiemSDTText.getText().equals("Nhập dữ liệu")) {
+			nhanvienDAO.getListNhanVien().clear();
+			String key=timkiemTenText.getText().trim();
+			nhanvienDAO.setListNhanVien(nhanvienDAO.getNhanVienBy(key,1));
+			loadDataTable();
+			JOptionPane.showMessageDialog(rootPane, "Tìm thấy "+nhanvienDAO.getListNhanVien().size()+" nhân viên");
+		}
+		else if(timkiemTenText.getText().equals("Nhập dữ liệu")
+				&& !timkiemSDTText.getText().equals("Nhập dữ liệu")) {
+			nhanvienDAO.getListNhanVien().clear();
+			String key=timkiemSDTText.getText().trim();
+			nhanvienDAO.setListNhanVien(nhanvienDAO.getNhanVienBy(key,2));
+			loadDataTable();
+			JOptionPane.showMessageDialog(rootPane, "Tìm thấy "+nhanvienDAO.getListNhanVien().size()+" nhân viên");
+		}
+		else if(!timkiemTenText.getText().equals("Nhập dữ liệu")
+				&& !timkiemSDTText.getText().equals("Nhập dữ liệu")) {
+			nhanvienDAO.getListNhanVien().clear();
+			String key=timkiemTenText.getText().trim()+"/"+timkiemSDTText.getText().trim();
+			nhanvienDAO.setListNhanVien(nhanvienDAO.getNhanVienBy(key,3));
+			loadDataTable();
+			JOptionPane.showMessageDialog(rootPane, "Tìm thấy "+nhanvienDAO.getListNhanVien().size()+" nhân viên");
+		}
+		else {
+			JOptionPane.showMessageDialog(rootPane, "Nhập tên hoặc số điện thoại nhân viên để tìm kiếm");
+		}
+
+		addPlaceHolder(timkiemTenText);
+		addPlaceHolder(timkiemSDTText);
+	}
+
+	
 //	Trạng thái text chuột không nằm trong ô
 	public void addPlaceHolder(JTextField text) {
 		Font font=text.getFont();
 		font=font.deriveFont(Font.ITALIC);
 		text.setFont(font);
 		text.setForeground(Color.WHITE);
+		text.setText("Nhập dữ liệu");
 	}
 	
 //	Xóa trạng thái text chuột không nằm trong ô
@@ -305,6 +397,9 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
 	
 	public void addActionListener() {
 		btnThem.addActionListener(this);
+		btnLuu.addActionListener(this);
+		btnTimKiem.addActionListener(this);
+		btnLamLai.addActionListener(this);
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -313,6 +408,20 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
 		
 		if(obj.equals(btnThem)) {
 			new ThemSuaNhanVienDialog(this, rootPaneCheckingEnabled).setVisible(true);
+		}
+		else if(obj.equals(btnLuu)) {
+			ExcelHelper excel = new ExcelHelper();
+			excel.exportData(this, tableNhanVien, 2);
+		}
+		else if(obj.equals(btnTimKiem)) {
+			timkiemNhanVien();
+		}
+		else if(obj.equals(btnLamLai)) {
+			addPlaceHolder(timkiemTenText);
+			addPlaceHolder(timkiemSDTText);
+			
+			nhanvienDAO.setListNhanVien(nhanvienDAO.getDSNhanVien());
+			loadDataTable();
 		}
 	}
 	
@@ -323,7 +432,9 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
-
+		int row=tableNhanVien.getSelectedRow();
+		if(row > -1) {
+		}
 	}
 
 	@Override

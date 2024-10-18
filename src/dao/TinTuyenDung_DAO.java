@@ -33,13 +33,12 @@ public class TinTuyenDung_DAO {
 				int soLuong = rs.getInt(7);
 				double luong = rs.getDouble(8);
 				String nganhNghe = rs.getString(9);
-				String hinhThuc = rs.getString(10);
-				boolean trangThai = rs.getBoolean(11);
+				boolean trangThai = rs.getBoolean(10);
+				String hinhThuc = rs.getString(11);
 				NhaTuyenDung nhaTuyenDung = new NhaTuyenDung(rs.getString(12));
-				String congViecMaCV = rs.getString(13);
 				
 				list.add(new TinTuyenDung(maTTD, tieuDe, moTa, ngayDangTin, ngayHetHan, trinhDo, 
-						soLuong, luong, nganhNghe, hinhThuc, trangThai, nhaTuyenDung, congViecMaCV));
+						soLuong, luong, nganhNghe, hinhThuc, trangThai, nhaTuyenDung));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -66,13 +65,12 @@ public class TinTuyenDung_DAO {
 				int soLuong = rs.getInt(7);
 				double luong = rs.getDouble(8);
 				String nganhNghe = rs.getString(9);
-				String hinhThuc = rs.getString(10);
-				boolean trangThai = rs.getBoolean(11);
+				boolean trangThai = rs.getBoolean(10);
+				String hinhThuc = rs.getString(11);
 				NhaTuyenDung nhaTuyenDung = new NhaTuyenDung(rs.getString(12));
-				String congViecMaCV = rs.getString(13);
 				
 				list.add(new TinTuyenDung(maTTD, tieuDe, moTa, ngayDangTin, ngayHetHan, trinhDo, 
-						soLuong, luong, nganhNghe, hinhThuc, trangThai, nhaTuyenDung, congViecMaCV));
+						soLuong, luong, nganhNghe, hinhThuc, trangThai, nhaTuyenDung));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -99,13 +97,12 @@ public class TinTuyenDung_DAO {
 				int soLuong = rs.getInt(7);
 				double luong = rs.getDouble(8);
 				String nganhNghe = rs.getString(9);
-				String hinhThuc = rs.getString(10);
-				boolean trangThai = rs.getBoolean(11);
+				boolean trangThai = rs.getBoolean(10);
+				String hinhThuc = rs.getString(11);
 				NhaTuyenDung nhaTuyenDung = new NhaTuyenDung(rs.getString(12));
-				String congViecMaCV = rs.getString(13);
 				
 				list.add(new TinTuyenDung(maTTD, tieuDe, moTa, ngayDangTin, ngayHetHan, trinhDo, 
-						soLuong, luong, nganhNghe, hinhThuc, trangThai, nhaTuyenDung, congViecMaCV));
+						soLuong, luong, nganhNghe, hinhThuc, trangThai, nhaTuyenDung));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

@@ -48,14 +48,14 @@ public class FilterImp implements Filter{
 	public boolean checkUserPass(String pass) throws exception.checkUserPass {
 		// TODO Auto-generated method stub
 		if(pass!="" || pass!=null) {
-			String regex="^[a-zA-Z0-9]{6,}$";
+			String regex="^[a-zA-Z0-9]{3,}$";
 			Pattern pattern= Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
 			Matcher matcher=pattern.matcher(pass);
 			if(matcher.matches()) {
 				return true;
 			}
 			else {
-				throw new checkUserPass(pass, "Mật khẩu ít nhất 6 ký tự");
+				throw new checkUserPass(pass, "Mật khẩu ít nhất 3 ký tự");
 			}
 		}
 		else {

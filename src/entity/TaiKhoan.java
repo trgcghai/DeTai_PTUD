@@ -1,10 +1,14 @@
 package entity;
 
+import java.util.Objects;
+
+import entity.constraint.VaiTro;
+
 public class TaiKhoan {
 	private String maTk;
 	private String email;
 	private String matKhau;
-	private String vaiTro;
+	private VaiTro vaiTro;
 	private NhanVien nhanVien;
 
 	public String getMaTk() {
@@ -31,11 +35,11 @@ public class TaiKhoan {
 		this.matKhau = matKhau;
 	}
 
-	public String getVaiTro() {
+	public VaiTro getVaiTro() {
 		return vaiTro;
 	}
 
-	public void setVaiTro(String vaiTro) {
+	public void setVaiTro(VaiTro vaiTro) {
 		this.vaiTro = vaiTro;
 	}
 
@@ -49,10 +53,7 @@ public class TaiKhoan {
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((maTk == null) ? 0 : maTk.hashCode());
-		return result;
+		return Objects.hash(email, matKhau);
 	}
 
 	@Override
@@ -64,12 +65,7 @@ public class TaiKhoan {
 		if (getClass() != obj.getClass())
 			return false;
 		TaiKhoan other = (TaiKhoan) obj;
-		if (maTk == null) {
-			if (other.maTk != null)
-				return false;
-		} else if (!maTk.equals(other.maTk))
-			return false;
-		return true;
+		return Objects.equals(email, other.email) && Objects.equals(matKhau, other.matKhau);
 	}
 
 	@Override
@@ -82,12 +78,18 @@ public class TaiKhoan {
 		super();
 	}
 
-	public TaiKhoan(String maTk, String email, String matKhau, String vaiTro, NhanVien nhanVien) {
+	public TaiKhoan(String maTk, String email, String matKhau, VaiTro vaiTro, NhanVien nhanVien) {
 		super();
 		this.maTk = maTk;
 		this.email = email;
 		this.matKhau = matKhau;
 		this.vaiTro = vaiTro;
 		this.nhanVien = nhanVien;
+	}
+	
+	public TaiKhoan(String email, String matKhau) {
+		super();
+		this.email = email;
+		this.matKhau = matKhau;
 	}
 }

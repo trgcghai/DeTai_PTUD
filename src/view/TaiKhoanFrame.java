@@ -37,9 +37,9 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
+import component.ComboBoxRenderer;
 import component.GradientRoundPanel;
 import component.RoundPanel;
-import controller.ComboBoxRenderer;
 import controller.Database;
 import controller.ExcelHelper;
 import controller.FilterImp;
@@ -51,7 +51,7 @@ import controller.actiontable.TableCellRendererUpdateDelete;
 import dao.TaiKhoan_DAO;
 import dao.NhanVien_DAO;
 import entity.TaiKhoan;
-import entity.Customer;
+import entity.constraint.VaiTro;
 import entity.NhanVien;
 import exception.checkBirthday;
 import exception.checkDateOfWork;
@@ -79,6 +79,9 @@ public class TaiKhoanFrame extends JFrame implements ActionListener, MouseListen
 	GradientRoundPanel timkiemPanel,
 	danhsachPanel, danhsachNorthPanel, danhsachCenterPanel;
 	
+	private TaiKhoan_DAO taikhoanDAO;
+	private NhanVien_DAO nhanvienDAO;
+	
 	public TaiKhoanFrame(String userName) {
 		this.userName=userName;
 		this.parent=this;
@@ -93,6 +96,14 @@ public class TaiKhoanFrame extends JFrame implements ActionListener, MouseListen
 		addActionListener();
 		addMouseListener();
 		addFocusListener();
+		
+		Database.getInstance().connect();
+		
+		taikhoanDAO=new TaiKhoan_DAO();
+		nhanvienDAO=new NhanVien_DAO();
+				
+		loadData();
+		loadDataTable();
 		
 	}
 	
@@ -212,13 +223,21 @@ public class TaiKhoanFrame extends JFrame implements ActionListener, MouseListen
 			@Override
 			public void onUpdate(int row) {
 				// TODO Auto-generated method stub
-				new CapSuaTaiKhoanDialog(parent, rootPaneCheckingEnabled, true).setVisible(true);;
+				NhanVien nhanvien=nhanvienDAO.getNhanVienByTaiKhoan(tableTaiKhoan.getValueAt(row, 0).toString());
+				TaiKhoan taikhoan=taikhoanDAO.getTaiKhoanByID(tableTaiKhoan.getValueAt(row, 0).toString());
+				new CapSuaTaiKhoanDialog(parent, rootPaneCheckingEnabled, nhanvien, taikhoan).setVisible(true);;
 			}
 			
 			@Override
 			public void onDelete(int row) {
 				// TODO Auto-generated method stub
-				JOptionPane.showMessageDialog(rootPane, "Chức năng xóa tài khoản đang hoàn thiện");
+				TaiKhoan taikhoan=taikhoanDAO.getTaiKhoanByID(tableTaiKhoan.getValueAt(row, 0).toString());
+				int check=JOptionPane.showConfirmDialog(rootPane, "Có chắc chắn xóa?");
+				if(check==JOptionPane.OK_OPTION) {
+					taikhoanDAO.delete(taikhoan);
+					JOptionPane.showMessageDialog(rootPane, "Xóa tài khoản thành công");
+					updateTable();
+				}
 			}
 
 			@Override
@@ -265,12 +284,38 @@ public class TaiKhoanFrame extends JFrame implements ActionListener, MouseListen
 		return this.taikhoanPanel;
 	}
 	
+//	Lấy dữ liệu từ sql
+	public void loadData() {
+		taikhoanDAO.setListTaiKhoan(taikhoanDAO.getDsTaiKhoan());
+	}
+	
+//	Load dữ liệu lên bảng
+	public void loadDataTable() {
+		modelTableTaiKhoan.setRowCount(0);
+		for(TaiKhoan i: taikhoanDAO.getListTaiKhoan()) {
+			NhanVien nhanvien=nhanvienDAO.getNhanVien(i.getNhanVien().getMaNV());
+			Object[] obj=new Object[] {
+					i.getMaTk(), i.getEmail(), nhanvien.getTenNV(),
+					i.getVaiTro().getValue(), null
+			};
+			modelTableTaiKhoan.addRow(obj);
+		}
+
+	}
+	
+//	Load lại dữ liệu bảng khi cập nhật tài khoản
+	public void updateTable() {
+		loadData();
+		loadDataTable();
+	}
+	
 //	Trạng thái text chuột không nằm trong ô
 	public void addPlaceHolder(JTextField text) {
 		Font font=text.getFont();
 		font=font.deriveFont(Font.ITALIC);
 		text.setFont(font);
 		text.setForeground(Color.WHITE);
+		text.setText("Nhập dữ liệu");
 	}
 	
 //	Xóa trạng thái text chuột không nằm trong ô
@@ -281,6 +326,21 @@ public class TaiKhoanFrame extends JFrame implements ActionListener, MouseListen
 		text.setForeground(Color.WHITE);
 	}
 	
+	public void timkiem() {
+		if(!timkiemTenText.getText().equals("Nhập dữ liệu")) {
+				taikhoanDAO.getListTaiKhoan().clear();
+				String key=timkiemTenText.getText().trim();
+				taikhoanDAO.setListTaiKhoan(taikhoanDAO.getTaiKhoan(key));
+				loadDataTable();
+				JOptionPane.showMessageDialog(rootPane, "Tìm thấy "+taikhoanDAO.getListTaiKhoan().size()+" tài khoản");
+		}
+		else {
+			JOptionPane.showMessageDialog(rootPane, "Nhập thông tin để tìm kiếm");
+		}
+		
+		addPlaceHolder(timkiemTenText);
+	}
+	
 //	Listener
 	public void addFocusListener() {
 		timkiemTenText.addFocusListener(this);
@@ -289,11 +349,26 @@ public class TaiKhoanFrame extends JFrame implements ActionListener, MouseListen
 	}
 	
 	public void addActionListener() {
-		
+		btnTimKiem.addActionListener(this);
+		btnLamLai.addActionListener(this);
+		btnLuu.addActionListener(this);
 	}
 
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
+		var obj=e.getSource();
+		if(obj.equals(btnTimKiem)) {
+			timkiem();
+		}
+		else if(obj.equals(btnLamLai)) {
+			addPlaceHolder(timkiemTenText);
+			
+			updateTable();
+		}
+		else if(obj.equals(btnLuu)) {
+			ExcelHelper excel = new ExcelHelper();
+			excel.exportData(this, tableTaiKhoan, 1);
+		}
 	}
 	
 	public void addMouseListener() {
