@@ -24,12 +24,13 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
+import component.GradientPanel;
 import controller.LabelDateFormatter;
 import entity.constraint.GioiTinh;
 
 public class ThemSuaUngVienDialog extends JDialog {
 	
-	JPanel inforUngVienPanel, btnPanel;
+	GradientPanel inforUngVienPanel, btnPanel;
 	JLabel idLabel, tenLabel, sdtLabel, dateLabel, gioitinhLabel, diachiLabel,emailLabel;
 	JTextField idText, tenText, sdtText, diachiText, emailText;
 	JComboBox gioitinhText;
@@ -56,7 +57,7 @@ public class ThemSuaUngVienDialog extends JDialog {
 	}
 	
 	public void initComponent() {
-		inforUngVienPanel=new JPanel(); 
+		inforUngVienPanel=new GradientPanel(Color.decode("#ABC8CB"), Color.decode("#7CBDBF")); 
 		inforUngVienPanel.setBackground(Color.WHITE);
 		inforUngVienPanel.setLayout(new GridBagLayout());
 		inforUngVienPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -127,7 +128,7 @@ public class ThemSuaUngVienDialog extends JDialog {
 		add(inforUngVienPanel, BorderLayout.CENTER);
 		
 //		Button
-		btnPanel=new JPanel(); 
+		btnPanel=new GradientPanel(Color.decode("#ABC8CB"), Color.decode("#7CBDBF")); 
 		btnPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		btnPanel.setBackground(Color.WHITE);
 		btnPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 35));

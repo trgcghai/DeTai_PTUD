@@ -25,12 +25,14 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
+import component.GradientPanel;
 import controller.LabelDateFormatter;
 import entity.constraint.GioiTinh;
 
 public class ThemSuaNhaTuyenDungDialog extends JDialog {
 	
-	JPanel inforNhaTuyenDungPanel, btnPanel, logoPanel;
+	JPanel logoPanel;
+	GradientPanel inforNhaTuyenDungPanel, btnPanel;
 	JLabel idLabel, tenLabel, sdtLabel, dateLabel, gioitinhLabel, diachiLabel,emailLabel;
 	JTextField idText, tenText, sdtText, diachiText, emailText;
 	JComboBox gioitinhText;
@@ -57,14 +59,15 @@ public class ThemSuaNhaTuyenDungDialog extends JDialog {
 	}
 	
 	public void initComponent() {
-		inforNhaTuyenDungPanel=new JPanel(); 
+		inforNhaTuyenDungPanel=new GradientPanel(Color.decode("#ABC8CB"), Color.decode("#7CBDBF")); 
 		inforNhaTuyenDungPanel.setBackground(Color.WHITE);
 		inforNhaTuyenDungPanel.setLayout(new GridBagLayout());
 		inforNhaTuyenDungPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		GridBagConstraints gbc= new GridBagConstraints();
 		
 //		Thông tin nhà tuyển dụng
-		JPanel resId=new JPanel(); 
+		JPanel resId=new JPanel();
+		resId.setOpaque(false);
 		resId.setLayout(new BorderLayout(0,10)); resId.setBackground(Color.WHITE);
 		gbc.gridx=0; gbc.gridy=0; gbc.insets=new Insets(5, 10, 5, 10); gbc.anchor=GridBagConstraints.WEST;
 		idLabel=new JLabel("Mã nhà tuyển dụng"); idLabel.setFont(new Font("Segoe UI",0,16));
@@ -76,6 +79,7 @@ public class ThemSuaNhaTuyenDungDialog extends JDialog {
 		
 		gbc.gridx=1; gbc.gridy=0; gbc.gridheight=2;
 		logoPanel=new JPanel();
+		logoPanel.setOpaque(false);
 		logoPanel.setBorder(new TitledBorder(BorderFactory.createLineBorder(new Color(0,191,165)), "Logo",
 				TitledBorder.LEADING, TitledBorder.TOP, new Font("Segoe UI",0,15)));
 		logoPanel.setPreferredSize(new Dimension(100, 100));
@@ -121,7 +125,7 @@ public class ThemSuaNhaTuyenDungDialog extends JDialog {
 		add(inforNhaTuyenDungPanel, BorderLayout.CENTER);
 		
 //		Button
-		btnPanel=new JPanel(); 
+		btnPanel=new GradientPanel(Color.decode("#ABC8CB"), Color.decode("#7CBDBF")); 
 		btnPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		btnPanel.setBackground(Color.WHITE);
 		btnPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 20));

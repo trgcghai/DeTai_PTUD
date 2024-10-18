@@ -37,6 +37,7 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
+import component.GradientRoundPanel;
 import component.RoundPanel;
 import controller.ComboBoxRenderer;
 import controller.Database;
@@ -53,6 +54,8 @@ import controller.actiontable.TableCellRendererViewCreateHoSo;
 import dao.TaiKhoan_DAO;
 import dao.NhanVien_DAO;
 import entity.TaiKhoan;
+import entity.constraint.HinhThucLamViec;
+import entity.constraint.NganhNghe;
 import entity.constraint.TrangThai;
 import entity.constraint.TrinhDo;
 import entity.Customer;
@@ -69,24 +72,21 @@ public class HopDongFrame extends JFrame implements ActionListener, MouseListene
 	String userName;
 	HopDongFrame parent;
 	
-//	Component danh sách hợp đồng
+//	Component hợp đồng
 	JPanel leftPanel,menuPanel,
-		hopdongPanel,northPanelHopDong, centerPanelHopDong, ngaylapPanel;
-	JLabel userLabel, iconUserLabel,timkiemTenLabel, timkiemNTDLabel,
-		titleHopDong,vaitroLeftLabel, ngaylapLabel, startLabel, endLabel;
-	JTextField timkiemTenText;
-	JButton btnTimKiem, btnLamLai, btnLuu;
-	JTable tableHopDong;
-	DefaultTableModel modelTableHopDong;
-	JScrollPane scrollHopDong;
-	JComboBox timkiemNTDText, timkiemTrinhDoText;
-	Icon iconBtnSave;
-	UtilDateModel modelDateStart, modelDateEnd;
-	JDatePanelImpl panelStart, panelEnd;
-	JDatePickerImpl startText, endText;
+		timviecPanel, centerPanelTimViec;
+	JLabel titleTinTuyenDung, titleHoSo, titleHopDong, nhatuyendungLabel, ungvienLabel,
+		ngaybatdauLabel, ngayketthucLabel;
+	JTable tableTinTuyenDung, tableHoSo, tableHopDong;
+	DefaultTableModel modelTableTinTuyenDung, modelTableHoSo, modelTableHopDong;
+	JScrollPane scrollTinTuyenDung, scrollHoSo, scrollHopDong;
+	JComboBox nhatuyendungCombo, ungvienCombo;
+	UtilDateModel modelDateBatDau, modelDateKetThuc;
+	JDatePickerImpl batdauText, ketthucText;
 	
-	RoundPanel timkiemPanel,
-	danhsachPanel, danhsachNorthPanel, danhsachCenterPanel;
+	GradientRoundPanel danhsachTTDPanel, danhsachTTDNorthPanel, danhsachTTDCenterPanel,
+				danhsachHopDongPanel, danhsachHopDongNorthPanel, danhsachHopDongCenterPanel,
+				danhsachHoSoPanel, danhsachHoSoNorthPanel, danhsachHoSoCenterPanel;
 	
 	
 	public HopDongFrame(String userName) {
@@ -97,7 +97,9 @@ public class HopDongFrame extends JFrame implements ActionListener, MouseListene
 		initComponent();
 		
 //		Thêm update và delete vào table
-		addTableActionEvent();
+		addTableTTDActionEvent();
+		addTableHoSoActionEvent();
+		addTableHopDongActionEvent();
 		
 //		Thêm sự kiện
 		addActionListener();
@@ -106,119 +108,67 @@ public class HopDongFrame extends JFrame implements ActionListener, MouseListene
 		
 	}
 	
+	public JLabel createLabel(String title, boolean isBordered) {
+		JLabel label = new JLabel(title);
+		label.setFont(new Font("Segoe UI",1,16));
+		if (isBordered) label.setBorder(BorderFactory.createEmptyBorder(10,20,0,10));
+		return label;
+	}
+	
 	public void initComponent() {
-		hopdongPanel=new JPanel(); 
-		hopdongPanel.setLayout(new BorderLayout(5,5));
-		hopdongPanel.setBackground(new Color(220, 220, 220));
+		timviecPanel=new JPanel(); 
+		timviecPanel.setLayout(new BorderLayout(5,5));
+		timviecPanel.setBackground(new Color(89, 145, 144));
 		
-//		Hiển thị tìm kiếm và danh sách tin tuyển dụng
-		centerPanelHopDong=new JPanel();
-		centerPanelHopDong.setLayout(new BorderLayout(10, 10));
-		centerPanelHopDong.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		centerPanelHopDong.setBackground(new Color(220, 220, 220));
-//		Tìm kiếm tin tuyển dụng
-		timkiemPanel=new RoundPanel();
-		timkiemPanel.setBackground(Color.WHITE);
-		timkiemPanel.setLayout(new BorderLayout(5,5));
+//		Hiển thị danh sách tin tuyển dụng, danh sách hồ sơ ứng viên và hợp đồng
+		centerPanelTimViec=new JPanel();
+		centerPanelTimViec.setLayout(new BorderLayout(10, 10));
+		centerPanelTimViec.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		centerPanelTimViec.setBackground(new Color(89, 145, 144));
 		
-		RoundPanel resSearch=new RoundPanel(); resSearch.setLayout(new GridBagLayout());
-		resSearch.setBackground(Color.WHITE);
-		GridBagConstraints gbc= new GridBagConstraints();
-		gbc.gridx=0; gbc.gridy=0; gbc.insets=new Insets(5, 10, 5, 10); gbc.anchor=GridBagConstraints.EAST;
-		timkiemTenLabel=new JLabel("Tên ứng viên:"); timkiemTenLabel.setFont(new Font("Segoe UI",0,16));
-		resSearch.add(timkiemTenLabel, gbc);
-		gbc.gridx=1; gbc.gridy=0; gbc.anchor=GridBagConstraints.WEST; gbc.gridwidth=2;
-		timkiemTenText=new JTextField(15); timkiemTenText.setFont(new Font("Segoe UI",0,16));
-		resSearch.add(timkiemTenText, gbc);
+		JPanel panelCenter=new JPanel();
+		panelCenter.setLayout(new BorderLayout());
+		panelCenter.setBackground(new Color(89, 145, 144));
+//		Danh sách tin tuyển dụng
+		danhsachTTDPanel=new GradientRoundPanel();
+		danhsachTTDPanel.setBackground(Color.WHITE);
+		danhsachTTDPanel.setLayout(new BorderLayout(10, 10));
+		danhsachTTDPanel.setPreferredSize(new Dimension(660,700));
 		
-		gbc.gridx=3; gbc.gridy=0; gbc.anchor=GridBagConstraints.EAST;  gbc.gridwidth=1;
-		timkiemNTDLabel=new JLabel("Nhà tuyển dụng:"); timkiemNTDLabel.setFont(new Font("Segoe UI",0,16));
-		resSearch.add(timkiemNTDLabel, gbc);
-		gbc.gridx=4; gbc.gridy=0; gbc.anchor=GridBagConstraints.WEST;
-		timkiemNTDText=new JComboBox(); timkiemNTDText.setFont(new Font("Segoe UI",0,16));
-		timkiemNTDText.setPreferredSize(new Dimension(213,26));
-		resSearch.add(timkiemNTDText, gbc);
+		danhsachTTDNorthPanel=new GradientRoundPanel();
+		danhsachTTDNorthPanel.setLayout(new BorderLayout(10,10));
+		danhsachTTDNorthPanel.setBackground(Color.WHITE);
+		JPanel resNTD=new JPanel();
+		resNTD.setOpaque(false);
+		resNTD.setBorder(BorderFactory.createEmptyBorder(10,10,0,15));
+		nhatuyendungLabel=new JLabel("Nhà tuyển dụng");
+		nhatuyendungLabel.setFont(new Font("Segoe UI",1,16));
+		nhatuyendungLabel.setForeground(Color.WHITE);
+		nhatuyendungCombo=new JComboBox();
+		nhatuyendungCombo.setFont(new Font("Segoe UI",0,16));
+		nhatuyendungCombo.setForeground(Color.WHITE);
+		nhatuyendungCombo.setBackground(new Color(89, 145, 144));
+		nhatuyendungCombo.setPreferredSize(new Dimension(200,25));
+		nhatuyendungCombo.setRenderer(new ComboBoxRenderer("Chọn nhà tuyển dụng"));
+		resNTD.add(nhatuyendungLabel); resNTD.add(nhatuyendungCombo);
+		titleTinTuyenDung=new JLabel("Danh sách tin tuyển dụng");
+		titleTinTuyenDung.setFont(new Font("Segoe UI",1,16));
+		titleTinTuyenDung.setForeground(Color.WHITE);
+		titleTinTuyenDung.setBorder(BorderFactory.createEmptyBorder(10,20,0,10));
+		danhsachTTDNorthPanel.add(titleTinTuyenDung, BorderLayout.WEST);
+		danhsachTTDNorthPanel.add(resNTD, BorderLayout.EAST);
 		
-		gbc.gridx=0; gbc.gridy=1; gbc.anchor=GridBagConstraints.EAST;
-		ngaylapLabel=new JLabel("Ngày lập:"); ngaylapLabel.setFont(new Font("Segoe UI",0,16));
-		resSearch.add(ngaylapLabel, gbc);
-		
-		gbc.gridx=1; gbc.gridy=1; gbc.anchor=GridBagConstraints.EAST;
-		startLabel=new JLabel("Bắt đầu"); startLabel.setFont(new Font("Segoe UI",0,16));
-		resSearch.add(startLabel, gbc);
-		gbc.gridx=2; gbc.gridy=1; gbc.anchor=GridBagConstraints.WEST;
-		modelDateStart=new UtilDateModel();
-		modelDateStart.setSelected(true);
-		Properties p=new Properties();
-		p.put("text.day", "Day"); p.put("text.month", "Month"); p.put("text.year","Year");
-		panelStart=new JDatePanelImpl(modelDateStart, p);
-		startText=new JDatePickerImpl(panelStart, new LabelDateFormatter());
-		startText.setPreferredSize(new Dimension(140, 24));
-		resSearch.add(startText, gbc);
-		
-		gbc.gridx=3; gbc.gridy=1; gbc.anchor=GridBagConstraints.EAST;
-		endLabel=new JLabel("Kết thúc"); endLabel.setFont(new Font("Segoe UI",0,16));
-		resSearch.add(endLabel, gbc);
-		gbc.gridx=4; gbc.gridy=1; gbc.anchor=GridBagConstraints.WEST;
-		modelDateEnd=new UtilDateModel();
-		modelDateEnd.setSelected(true);
-		Properties q=new Properties();
-		q.put("text.day", "Day"); q.put("text.month", "Month"); q.put("text.year","Year");
-		panelEnd=new JDatePanelImpl(modelDateEnd, q);
-		endText=new JDatePickerImpl(panelEnd, new LabelDateFormatter());
-		endText.setPreferredSize(new Dimension(140, 24));
-		resSearch.add(endText, gbc);
-		
-		RoundPanel resBtnSearch=new RoundPanel(); resBtnSearch.setLayout(new BorderLayout(0,5));
-		resBtnSearch.setBorder(BorderFactory.createEmptyBorder(10,10,10,23));
-		resBtnSearch.setBackground(Color.WHITE);
-		btnTimKiem=new JButton("Tìm kiếm"); btnTimKiem.setFont(new Font("Segoe UI",0,16));
-		btnTimKiem.setPreferredSize(new Dimension(120,25));
-		btnTimKiem.setBackground(new Color(0,102,102));
-		btnTimKiem.setForeground(Color.WHITE);
-		btnLamLai=new JButton("Làm lại"); btnLamLai.setFont(new Font("Segoe UI",0,16));
-		btnLamLai.setPreferredSize(new Dimension(120,25));
-		btnLamLai.setBackground(Color.RED);
-		btnLamLai.setForeground(Color.WHITE);
-		resBtnSearch.add(btnTimKiem, BorderLayout.NORTH); resBtnSearch.add(btnLamLai, BorderLayout.SOUTH);
-		
-		timkiemPanel.add(resSearch, BorderLayout.CENTER);
-		timkiemPanel.add(resBtnSearch, BorderLayout.EAST);
-		
-//		Danh sách hợp đồng
-		danhsachPanel=new RoundPanel();
-		danhsachPanel.setBackground(Color.WHITE);
-		danhsachPanel.setLayout(new BorderLayout(10, 10));
-		
-		danhsachNorthPanel=new RoundPanel();
-		danhsachNorthPanel.setLayout(new BorderLayout(10,10));
-		danhsachNorthPanel.setBackground(Color.WHITE);
-		iconBtnSave=new ImageIcon(getClass().getResource("/image/save.png"));
-		RoundPanel resBtn=new RoundPanel();
-		resBtn.setBorder(BorderFactory.createEmptyBorder(10,10,0,20));
-		resBtn.setBackground(Color.WHITE);
-		btnLuu=new JButton("Xuất Excel", iconBtnSave); btnLuu.setFont(new Font("Segoe UI",0,16));
-		btnLuu.setPreferredSize(new Dimension(140,30));
-		btnLuu.setBackground(new Color(51,51,255));
-		btnLuu.setForeground(Color.WHITE);
-		resBtn.add(btnLuu);
-		titleHopDong=new JLabel("Danh sách hợp đồng");
-		titleHopDong.setFont(new Font("Segoe UI",1,16));
-		titleHopDong.setBorder(BorderFactory.createEmptyBorder(10,20,0,10));
-		danhsachNorthPanel.add(titleHopDong, BorderLayout.WEST);
-		danhsachNorthPanel.add(resBtn, BorderLayout.EAST);
-		
-		danhsachCenterPanel=new RoundPanel();
-		danhsachCenterPanel.setLayout(new BoxLayout(danhsachCenterPanel, BoxLayout.PAGE_AXIS));
-		danhsachCenterPanel.setBackground(Color.WHITE);
-		String[] colName= {"Mã hợp đồng","Tên ứng viên","Số điện thoại","Nhà tuyển dụng","Phí dịch vụ","Ngày lập","Hành động"};
+		danhsachTTDCenterPanel=new GradientRoundPanel();
+		danhsachTTDCenterPanel.setLayout(new BoxLayout(danhsachTTDCenterPanel, BoxLayout.PAGE_AXIS));
+		danhsachTTDCenterPanel.setBackground(Color.WHITE);
+		String[] colName= {"Tiêu đề","Trình độ","Lương", "Hành động"};
 		Object[][] data = {
-			    {1, "Minh Đạt", "0123456789", "Facebook", "1000", "15/12/2023",null},
-			    {2, "Thắng Đạt", "0987654321", "Amazon", "1000", "15/12/2024",null}
+			    {"Technical Project Manager","Đại học","1000",null},
+			    {"Manual Tester","Cao đẳng", "500",null}
 			};
-		modelTableHopDong= new DefaultTableModel(data, colName){
+		modelTableTinTuyenDung= new DefaultTableModel(data, colName){
 			boolean[] canEdit = new boolean [] {
-	                false, false, false, false, false, false, true
+	                false, false, false, true
 	            };
 			
             @Override
@@ -226,41 +176,301 @@ public class HopDongFrame extends JFrame implements ActionListener, MouseListene
                return canEdit[column];
             }
         };
-		tableHopDong=new JTable(modelTableHopDong);
-		tableHopDong.getTableHeader().setFont(new Font("Segoe UI",1,14));
-		tableHopDong.setFont(new Font("Segoe UI",0,16));
-		tableHopDong.setRowHeight(30);
-		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
-		for(int i=0;i<tableHopDong.getColumnCount()-1;i++) {
-			tableHopDong.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);			
-		}
-		tableHopDong.setAutoCreateRowSorter(true);
-		ArrayList<RowSorter.SortKey> list = new ArrayList<>();
-        DefaultRowSorter sorter = ((DefaultRowSorter)tableHopDong.getRowSorter());
-        sorter.setSortsOnUpdates(true);
-        list.add( new RowSorter.SortKey(0, SortOrder.ASCENDING));
-        sorter.setSortKeys(list);
-        sorter.sort();
+		tableTinTuyenDung=createTable(modelTableTinTuyenDung);
+		scrollTinTuyenDung=new JScrollPane(tableTinTuyenDung);
+		scrollTinTuyenDung.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
+		GradientRoundPanel resScrollTinTuyenDung=new GradientRoundPanel();
+		resScrollTinTuyenDung.setBorder(BorderFactory.createEmptyBorder(0,20,20,20));
+		resScrollTinTuyenDung.setLayout(new BoxLayout(resScrollTinTuyenDung, BoxLayout.PAGE_AXIS));
+		resScrollTinTuyenDung.setBackground(Color.WHITE);
+		resScrollTinTuyenDung.add(scrollTinTuyenDung);
+		danhsachTTDCenterPanel.add(resScrollTinTuyenDung);
+		
+		danhsachTTDPanel.add(danhsachTTDNorthPanel, BorderLayout.NORTH);
+		danhsachTTDPanel.add(danhsachTTDCenterPanel, BorderLayout.CENTER);
+		
+//		Danh sách hợp đồng
+		danhsachHopDongPanel=new GradientRoundPanel();
+		danhsachHopDongPanel.setBackground(Color.WHITE);
+		danhsachHopDongPanel.setLayout(new BorderLayout(10, 10));
+		danhsachHopDongPanel.setPreferredSize(new Dimension(getWidth(),400));
+		
+		danhsachHopDongNorthPanel=new GradientRoundPanel();
+		danhsachHopDongNorthPanel.setLayout(new BorderLayout(10,10));
+		danhsachHopDongNorthPanel.setBackground(Color.WHITE);
+		
+		JPanel resHD=new JPanel();
+		resHD.setOpaque(false);
+		resHD.setBorder(BorderFactory.createEmptyBorder(10,10,0,15));
+		
+		ngaybatdauLabel=new JLabel("Bắt đầu từ");
+		ngaybatdauLabel.setFont(new Font("Segoe UI",1,16));
+		ngaybatdauLabel.setForeground(Color.WHITE);
+		modelDateBatDau = new UtilDateModel();
+		modelDateBatDau.setSelected(true);
+		Properties p=new Properties();
+		p.put("text.day", "Day"); p.put("text.month", "Month"); p.put("text.year","Year");
+		JDatePanelImpl panelBatDau=new JDatePanelImpl(modelDateBatDau, p);
+		batdauText = new JDatePickerImpl(panelBatDau,new LabelDateFormatter());
+		batdauText.setPreferredSize(new Dimension(200, 25));
+		
+		ngayketthucLabel=new JLabel("Kết thúc vào");
+		ngayketthucLabel.setFont(new Font("Segoe UI",1,16));
+		ngayketthucLabel.setForeground(Color.WHITE);
+		modelDateKetThuc = new UtilDateModel();
+		modelDateKetThuc.setSelected(true);
+		Properties q=new Properties();
+		q.put("text.day", "Day"); q.put("text.month", "Month"); q.put("text.year","Year");
+		JDatePanelImpl panelKetThuc=new JDatePanelImpl(modelDateKetThuc, q);
+		ketthucText = new JDatePickerImpl(panelBatDau,new LabelDateFormatter());
+		ketthucText.setPreferredSize(new Dimension(200, 25));
+		
+		resHD.add(ngaybatdauLabel); resHD.add(batdauText);
+		resHD.add(ngayketthucLabel); resHD.add(ketthucText);
+		
+		titleHopDong=new JLabel("Danh sách hợp đồng");
+		titleHopDong.setFont(new Font("Segoe UI",1,16));
+		titleHopDong.setForeground(Color.WHITE);
+		titleHopDong.setBorder(BorderFactory.createEmptyBorder(10,20,0,10));
+		danhsachHopDongNorthPanel.add(titleHopDong, BorderLayout.WEST);
+		danhsachHopDongNorthPanel.add(resHD, BorderLayout.EAST);
+//		
+		danhsachHopDongCenterPanel=new GradientRoundPanel();
+		danhsachHopDongCenterPanel.setLayout(new BoxLayout(danhsachHopDongCenterPanel, BoxLayout.PAGE_AXIS));
+		String[] column= {"Tiêu đề","Lương", "Tên ứng viên", "Ngày lập", "Hành động"};
+		Object[][] dt = {
+			    {"Technical Project Manager","1000", "Minh Đạt", "13/12/2022", null},
+			    {"Manual Tester", "500", "Thắng Đạt", "13/01/2024", null}
+			};
+		modelTableHopDong= new DefaultTableModel(dt, column){
+			boolean[] canEdit = new boolean [] {
+	                false, false, false, false, true
+	            };
+			
+            @Override
+            public boolean isCellEditable(int row, int column) {
+               return canEdit[column];
+            }
+        };
+		tableHopDong=createTable(modelTableHopDong);
 		scrollHopDong=new JScrollPane(tableHopDong);
 		scrollHopDong.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
-		RoundPanel resScroll=new RoundPanel();
-		resScroll.setBorder(BorderFactory.createEmptyBorder(0,20,20,20));
-		resScroll.setLayout(new BoxLayout(resScroll, BoxLayout.PAGE_AXIS));
-		resScroll.setBackground(Color.WHITE);
-		resScroll.add(scrollHopDong);
-		danhsachCenterPanel.add(resScroll);
+		GradientRoundPanel resScrollHopDong=new GradientRoundPanel();
+		resScrollHopDong.setBorder(BorderFactory.createEmptyBorder(0,20,20,20));
+		resScrollHopDong.setLayout(new BoxLayout(resScrollHopDong, BoxLayout.PAGE_AXIS));
+		resScrollHopDong.setBackground(Color.WHITE);
+		resScrollHopDong.add(scrollHopDong);
+		danhsachHopDongCenterPanel.add(resScrollHopDong);
 		
-		danhsachPanel.add(danhsachNorthPanel, BorderLayout.NORTH);
-		danhsachPanel.add(danhsachCenterPanel, BorderLayout.CENTER);
+		danhsachHopDongPanel.add(danhsachHopDongNorthPanel, BorderLayout.NORTH);
+		danhsachHopDongPanel.add(danhsachHopDongCenterPanel, BorderLayout.CENTER);
 		
-		centerPanelHopDong.add(timkiemPanel, BorderLayout.NORTH);
-		centerPanelHopDong.add(danhsachPanel, BorderLayout.CENTER);
+//		Danh sách hồ sơ ứng viên
+		danhsachHoSoPanel=new GradientRoundPanel();
+		danhsachHoSoPanel.setLayout(new BorderLayout(10, 10));
+		danhsachHoSoPanel.setPreferredSize(new Dimension(660, 700));
 		
-		hopdongPanel.add(centerPanelHopDong, BorderLayout.CENTER);
+		danhsachHoSoNorthPanel=new GradientRoundPanel();
+		danhsachHoSoNorthPanel.setLayout(new BorderLayout(10,10));
+		danhsachHoSoNorthPanel.setBackground(Color.WHITE);
+		JPanel resUngVien=new JPanel();
+		resUngVien.setOpaque(false);
+		resUngVien.setBorder(BorderFactory.createEmptyBorder(10,10,0,15));
+		resUngVien.setBackground(Color.WHITE);
+		
+		ungvienLabel=new JLabel("Ứng viên");
+		ungvienLabel.setFont(new Font("Segoe UI",1,16));
+		ungvienLabel.setForeground(Color.WHITE);
+		
+		ungvienCombo=new JComboBox();
+		ungvienCombo.setForeground(Color.WHITE);
+		ungvienCombo.setBackground(new Color(89, 145, 144));
+		ungvienCombo.setFont(new Font("Segoe UI",0,16));
+		ungvienCombo.setPreferredSize(new Dimension(200,25));
+		ungvienCombo.setRenderer(new ComboBoxRenderer("Chọn ứng viên"));
+		resUngVien.add(ungvienLabel); resUngVien.add(ungvienCombo);
+		
+		titleHoSo = createLabel("Danh sách hồ sơ ứng viên", true);
+		titleHoSo.setFont(new Font("Segoe UI",1,16));
+		titleHoSo.setForeground(Color.WHITE);
+		titleHoSo.setBorder(BorderFactory.createEmptyBorder(10,20,0,10));
+		danhsachHoSoNorthPanel.add(titleHoSo, BorderLayout.WEST);
+		danhsachHoSoNorthPanel.add(resUngVien, BorderLayout.EAST);
+		
+		danhsachHoSoCenterPanel=new GradientRoundPanel();
+		danhsachHoSoCenterPanel.setLayout(new BoxLayout(danhsachHoSoCenterPanel, BoxLayout.PAGE_AXIS));
+		danhsachHoSoCenterPanel.setBackground(Color.WHITE);
+		String[] col= {"Trạng thái","Tên ứng viên","Trình độ", "Hành động"};
+		Object[][] datas = {
+			    {"Chưa nộp","Minh Đạt", "Đại học", null},
+			    {"Chưa nộp","Thắng Đạt", "Cao đẳng", null}
+			};
+		modelTableHoSo= new DefaultTableModel(datas, col){
+			boolean[] canEdit = new boolean [] {
+	                false, false, false, true
+	            };
+			
+            @Override
+            public boolean isCellEditable(int row, int column) {
+               return canEdit[column];
+            }
+        };
+		tableHoSo=createTable(modelTableHoSo);
+		scrollHoSo=new JScrollPane(tableHoSo);
+		scrollHoSo.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
+		GradientRoundPanel resScrollHoSo=new GradientRoundPanel();
+		resScrollHoSo.setBorder(BorderFactory.createEmptyBorder(0,20,20,20));
+		resScrollHoSo.setLayout(new BoxLayout(resScrollHoSo, BoxLayout.PAGE_AXIS));
+		resScrollHoSo.add(scrollHoSo);
+		danhsachHoSoCenterPanel.add(resScrollHoSo);
+		
+		danhsachHoSoPanel.add(danhsachHoSoNorthPanel, BorderLayout.NORTH);
+		danhsachHoSoPanel.add(danhsachHoSoCenterPanel, BorderLayout.CENTER);
+		
+		
+		panelCenter.add(danhsachHoSoPanel, BorderLayout.WEST);
+		panelCenter.add(danhsachTTDPanel, BorderLayout.EAST);
+		
+		centerPanelTimViec.add(panelCenter, BorderLayout.CENTER);
+		centerPanelTimViec.add(danhsachHopDongPanel, BorderLayout.SOUTH);
+		
+		timviecPanel.add(centerPanelTimViec, BorderLayout.CENTER);
 	}
 	
-	public void addTableActionEvent() {
+	public JTable createTable(DefaultTableModel model) {
+		JTable table=new JTable(model);
+		table.getTableHeader().setFont(new Font("Segoe UI",1,14));
+		table.setFont(new Font("Segoe UI",0,16));
+		table.setRowHeight(30);
+		DefaultTableCellRenderer centerRenderers = new DefaultTableCellRenderer();
+		centerRenderers.setHorizontalAlignment( JLabel.CENTER );
+		for(int i=0;i<table.getColumnCount()-1;i++) {
+			table.getColumnModel().getColumn(i).setCellRenderer(centerRenderers);			
+		}
+		table.setAutoCreateRowSorter(true);
+		ArrayList<RowSorter.SortKey> lists = new ArrayList<>();
+        DefaultRowSorter sorters = ((DefaultRowSorter)table.getRowSorter());
+        sorters.setSortsOnUpdates(true);
+        lists.add( new RowSorter.SortKey(0, SortOrder.ASCENDING));
+        sorters.setSortKeys(lists);
+        sorters.sort();
+        
+		return table;
+	}
+	
+	public void addTableTTDActionEvent() {
+		TableActionEvent event=new TableActionEvent() {
+			@Override
+			public void onUpdate(int row) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onDelete(int row) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onViewHoSo(int row) {
+				// TODO Auto-generated method stub
+			
+			}
+
+			@Override
+			public void onCreateHoSo(int row) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onCreateTaiKhoan(int row) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onViewTinTuyenDung(int row) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onCreateTinTuyenDung(int row) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onViewDetail(int row) {
+				// TODO Auto-generated method stub
+				new ChiTietViecLamDialog(parent, rootPaneCheckingEnabled, true).setVisible(true);
+			}
+			
+		};
+		
+		tableTinTuyenDung.getColumnModel().getColumn(3).setCellRenderer(new TableCellRendererDetail());
+		tableTinTuyenDung.getColumnModel().getColumn(3).setCellEditor(new TableCellEditorDetail(event));
+	}
+	
+	public void addTableHoSoActionEvent() {
+		TableActionEvent event=new TableActionEvent() {
+			@Override
+			public void onUpdate(int row) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onDelete(int row) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onViewHoSo(int row) {
+				// TODO Auto-generated method stub
+			
+			}
+
+			@Override
+			public void onCreateHoSo(int row) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onCreateTaiKhoan(int row) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onViewTinTuyenDung(int row) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onCreateTinTuyenDung(int row) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onViewDetail(int row) {
+				// TODO Auto-generated method stub
+				new ChiTietHoSoDialog(parent, rootPaneCheckingEnabled).setVisible(true);
+			}
+			
+		};
+		
+		tableHoSo.getColumnModel().getColumn(3).setCellRenderer(new TableCellRendererDetail());
+		tableHoSo.getColumnModel().getColumn(3).setCellEditor(new TableCellEditorDetail(event));
+	}
+	
+	public void addTableHopDongActionEvent() {
 		TableActionEvent event=new TableActionEvent() {
 			@Override
 			public void onUpdate(int row) {
@@ -309,14 +519,16 @@ public class HopDongFrame extends JFrame implements ActionListener, MouseListene
 				// TODO Auto-generated method stub
 				new ChiTietHopDongDialog(parent, rootPaneCheckingEnabled).setVisible(true);
 			}
+			
 		};
 		
-		tableHopDong.getColumnModel().getColumn(6).setCellRenderer(new TableCellRendererDetail());
-		tableHopDong.getColumnModel().getColumn(6).setCellEditor(new TableCellEditorDetail(event));
+		tableHopDong.getColumnModel().getColumn(4).setCellRenderer(new TableCellRendererDetail());
+		tableHopDong.getColumnModel().getColumn(4).setCellEditor(new TableCellEditorDetail(event));
 	}
 	
+	
 	public JPanel getPanel() {
-		return this.hopdongPanel;
+		return this.timviecPanel;
 	}
 	
 //	Trạng thái text chuột không nằm trong ô
@@ -324,7 +536,7 @@ public class HopDongFrame extends JFrame implements ActionListener, MouseListene
 		Font font=text.getFont();
 		font=font.deriveFont(Font.ITALIC);
 		text.setFont(font);
-		text.setForeground(Color.GRAY);
+		text.setForeground(Color.WHITE);
 	}
 	
 //	Xóa trạng thái text chuột không nằm trong ô
@@ -332,14 +544,12 @@ public class HopDongFrame extends JFrame implements ActionListener, MouseListene
 		Font font=text.getFont();
 		font=font.deriveFont(Font.PLAIN);
 		text.setFont(font);
-		text.setForeground(Color.BLACK);
+		text.setForeground(Color.WHITE);
 	}
 	
 //	Listener
 	public void addFocusListener() {
-		timkiemTenText.addFocusListener(this);
-		
-		addPlaceHolder(timkiemTenText);
+
 	}
 	
 	public void addActionListener() {
@@ -352,13 +562,14 @@ public class HopDongFrame extends JFrame implements ActionListener, MouseListene
 	}
 	
 	public void addMouseListener() {
-		
+		tableHoSo.addMouseListener(this);
+		tableTinTuyenDung.addMouseListener(this);
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
@@ -388,27 +599,11 @@ public class HopDongFrame extends JFrame implements ActionListener, MouseListene
 	@Override
 	public void focusGained(FocusEvent e) {
 		// TODO Auto-generated method stub
-		var obj=e.getSource();
-		if(obj.equals(timkiemTenText)) {
-			if(timkiemTenText.getText().equals("Nhập dữ liệu")) {
-				timkiemTenText.setText(null);
-				timkiemTenText.requestFocus();
-				
-				removePlaceHolder(timkiemTenText);
-			}
-		}
 	}
 
 	@Override
 	public void focusLost(FocusEvent e) {
 		// TODO Auto-generated method stub
-		var obj=e.getSource();
-		if(obj.equals(timkiemTenText)) {
-			if(timkiemTenText.getText().length()==0) {
-				addPlaceHolder(timkiemTenText);
-				timkiemTenText.setText("Nhập dữ liệu");
-			}
-		}
 	}
 
 }

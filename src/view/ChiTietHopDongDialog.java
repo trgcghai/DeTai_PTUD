@@ -28,6 +28,7 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
+import component.GradientPanel;
 import controller.ComboBoxRenderer;
 import controller.LabelDateFormatter;
 import entity.constraint.GioiTinh;
@@ -38,7 +39,7 @@ import entity.constraint.TrinhDo;
 
 public class ChiTietHopDongDialog extends JDialog{
 	
-	JPanel inforHopDongPanel, btnPanel;
+	GradientPanel inforHopDongPanel, btnPanel;
 	JLabel idLabel, tenLabel, ngaylapLabel, tieudeLabel, phiLabel,
 			luongLabel, nhatuyendungLabel, sdtLabel, emailLabel, nhanvienLabel;
 	JTextField idText, tenText, tieudeText,
@@ -61,8 +62,7 @@ public class ChiTietHopDongDialog extends JDialog{
 	}
 	
 	public void initComponent() {
-		inforHopDongPanel=new JPanel(); 
-		inforHopDongPanel.setBackground(Color.WHITE);
+		inforHopDongPanel=new GradientPanel(Color.decode("#ABC8CB"), Color.decode("#7CBDBF")); 
 		inforHopDongPanel.setLayout(new GridBagLayout());
 		inforHopDongPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		gbc= new GridBagConstraints();
@@ -156,9 +156,8 @@ public class ChiTietHopDongDialog extends JDialog{
 		add(inforHopDongPanel, BorderLayout.CENTER);
 		
 //		Button
-		btnPanel=new JPanel(); 
+		btnPanel=new GradientPanel(Color.decode("#ABC8CB"), Color.decode("#7CBDBF")); 
 		btnPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-		btnPanel.setBackground(Color.WHITE);
 		btnPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 45));
 		
 		btnLuu=new JButton("In hợp đồng"); btnLuu.setFont(new Font("Segoe UI",0,16));

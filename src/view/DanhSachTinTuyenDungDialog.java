@@ -27,6 +27,7 @@ import javax.swing.SortOrder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
+import component.GradientPanel;
 import controller.actiontable.TableActionEvent;
 import controller.actiontable.TableCellEditorDetail;
 import controller.actiontable.TableCellEditorUpdateDelete;
@@ -36,7 +37,7 @@ import entity.constraint.TrangThai;
 
 public class DanhSachTinTuyenDungDialog extends JDialog implements FocusListener {
 	
-	JPanel timkiemPanel, danhsachPanel, btnPanel;
+	GradientPanel timkiemPanel, danhsachPanel, btnPanel;
 	JLabel timkiemTrangThaiLabel, timkiemTieudeLabel;
 	JTextField timkiemTieudeText;
 	JComboBox timkiemTrangThaiText;
@@ -68,21 +69,30 @@ public class DanhSachTinTuyenDungDialog extends JDialog implements FocusListener
 	
 	public void initComponent() {
 //		Tìm kiếm tin tuyển dụng
-		timkiemPanel=new JPanel();
-		timkiemPanel.setBackground(Color.WHITE);
-		timkiemPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 12, 5));
+		timkiemPanel=new GradientPanel(Color.decode("#ABC8CB"), Color.decode("#7CBDBF"));
+		timkiemPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 12, 0));
+		timkiemPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
 		
-		timkiemTieudeLabel=new JLabel("Tiêu đề:"); timkiemTieudeLabel.setFont(new Font("Segoe UI",0,16));
+		timkiemTieudeLabel=new JLabel("Tiêu đề:"); 
+		timkiemTieudeLabel.setFont(new Font("Segoe UI",1,16));
+		timkiemTieudeLabel.setForeground(Color.WHITE);
 		timkiemTieudeText=new JTextField(20); 
 		timkiemTieudeText.setFont(new Font("Segoe UI",0,16));
+		timkiemTieudeText.setForeground(Color.WHITE);
+		timkiemTieudeText.setOpaque(false);
 		
-		timkiemTrangThaiLabel=new JLabel("Trạng thái:"); timkiemTrangThaiLabel.setFont(new Font("Segoe UI",0,16));
+		timkiemTrangThaiLabel=new JLabel("Trạng thái:"); 
+		timkiemTrangThaiLabel.setFont(new Font("Segoe UI",1,16));
+		timkiemTrangThaiLabel.setForeground(Color.WHITE);
 		String[] trangthais= {"Khả dụng", "Không khả dụng"};
 		timkiemTrangThaiText=new JComboBox(trangthais); 
 		timkiemTrangThaiText.setFont(new Font("Segoe UI",0,16));
+		timkiemTrangThaiText.setForeground(Color.WHITE);
+		timkiemTrangThaiText.setBackground(new Color(89, 145, 144));
 		timkiemTrangThaiText.setPreferredSize(new Dimension(156,26));
 		
 		JPanel resBtnSearch=new JPanel();
+		resBtnSearch.setOpaque(false);
 		resBtnSearch.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 5));
 		resBtnSearch.setBackground(Color.WHITE);
 		btnTimKiem=new JButton("Tìm kiếm"); btnTimKiem.setFont(new Font("Segoe UI",0,16));
@@ -100,7 +110,8 @@ public class DanhSachTinTuyenDungDialog extends JDialog implements FocusListener
 		timkiemPanel.add(resBtnSearch);
 		
 //		Danh sách tin tuyển dụng
-		danhsachPanel=new JPanel();
+		danhsachPanel=new GradientPanel(Color.decode("#ABC8CB"), Color.decode("#7CBDBF"));
+		danhsachPanel.setBorder(BorderFactory.createEmptyBorder(13, 0, 0, 0));
 		danhsachPanel.setLayout(new BoxLayout(danhsachPanel, BoxLayout.PAGE_AXIS));
 		danhsachPanel.setBackground(Color.WHITE);
 		String[] colName= {"Mã tin tuyển dụng","Tiêu đề","Mức lương","Trình độ", "Trạng thái","Hành động"};
@@ -137,6 +148,7 @@ public class DanhSachTinTuyenDungDialog extends JDialog implements FocusListener
 		scrollHoSo=new JScrollPane(tableHoSo);
 		scrollHoSo.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
 		JPanel resScroll=new JPanel();
+		resScroll.setOpaque(false);
 		resScroll.setBorder(BorderFactory.createEmptyBorder(0,20,20,20));
 		resScroll.setLayout(new BoxLayout(resScroll, BoxLayout.PAGE_AXIS));
 		resScroll.setBackground(Color.WHITE);
@@ -144,9 +156,9 @@ public class DanhSachTinTuyenDungDialog extends JDialog implements FocusListener
 		danhsachPanel.add(resScroll);
 		
 //		Các nút chức năng
-		btnPanel=new JPanel();
-		btnPanel.setLayout(new FlowLayout(FlowLayout.RIGHT,20,5));
-		btnPanel.setBackground(Color.WHITE);
+		btnPanel=new GradientPanel(Color.decode("#ABC8CB"), Color.decode("#7CBDBF"));
+		btnPanel.setLayout(new FlowLayout(FlowLayout.RIGHT,20,0));
+		btnPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
 		btnHuy=new JButton("Hủy"); btnHuy.setFont(new Font("Segoe UI",0,16));
 		btnHuy.setPreferredSize(new Dimension(100,30));
 		btnHuy.setBackground(Color.RED);
@@ -218,7 +230,7 @@ public class DanhSachTinTuyenDungDialog extends JDialog implements FocusListener
 		Font font=text.getFont();
 		font=font.deriveFont(Font.ITALIC);
 		text.setFont(font);
-		text.setForeground(Color.GRAY);
+		text.setForeground(Color.WHITE);
 	}
 	
 //	Xóa trạng thái text chuột không nằm trong ô
@@ -226,7 +238,7 @@ public class DanhSachTinTuyenDungDialog extends JDialog implements FocusListener
 		Font font=text.getFont();
 		font=font.deriveFont(Font.PLAIN);
 		text.setFont(font);
-		text.setForeground(Color.BLACK);
+		text.setForeground(Color.WHITE);
 	}
 	
 	public void addFocusListener() {

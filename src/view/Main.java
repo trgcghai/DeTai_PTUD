@@ -8,16 +8,7 @@ import entity.NhanVien;
 import entity.TaiKhoan;
 
 public class Main {
-	public static void main(String[] args) {
-//		new LoginFrame().setVisible(true);
-//		new MainFrame("MinhDat").setVisible(true);
-		
-//		new TaiKhoanFrame("MinhDat").setVisible(true);
-//		
-//		new UngVienTestFrame("MinhDat").setVisible(true);
-		
-//		new HopDongFrame("Minh Dat").setVisible(true);
-		
+	public static void main(String[] args) {		
 //============================================================================================
 //		new LoginFrame().setVisible(true);
 		new MainFrame("MinhDat").setVisible(true);
@@ -41,7 +32,7 @@ public class Main {
 		
 //		new TimViecLamFrame("MinhDat").setVisible(true);
 //============================================================================================		
-
-//		new ThongKeTinTuyenDungFrame("MinhDat").setVisible(true);
+		
+//		new testGradient().setVisible(true);
 	}
 }

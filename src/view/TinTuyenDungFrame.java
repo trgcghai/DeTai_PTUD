@@ -12,6 +12,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -37,12 +38,14 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
+import component.GradientRoundPanel;
 import component.RoundPanel;
 import controller.ComboBoxRenderer;
 import controller.Database;
 import controller.ExcelHelper;
 import controller.FilterImp;
 import controller.LabelDateFormatter;
+import controller.actiontable.ButtonAction;
 import controller.actiontable.TableActionEvent;
 import controller.actiontable.TableCellEditorUpdateDelete;
 import controller.actiontable.TableCellEditorViewCreateHoSo;
@@ -69,30 +72,37 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 	
 //	Component danh sách tin tuyển dụng
 	JPanel leftPanel,menuPanel,
-		tintuyendungPanel,northPanelTinTuyenDung, centerPanelTinTuyenDung;
+		tintuyendungPanel,northPanelTinTuyenDung, centerPanelTinTuyenDung,
+		logoPanel;
 	JLabel userLabel, iconUserLabel,timkiemTenLabel, timkiemLuongLabel, timkiemNTDLabel, timkiemTrinhDoLabel, 
-		titleHoSo,vaitroLeftLabel;
+		titleHoSo,vaitroLeftLabel,
+		tieudeLabel, nhatuyendungLabel, luongLabel;
 	JTextField timkiemTenText, timkiemLuongText;
 	JButton btnTimKiem, btnLamLai, btnLuu;
-	JTable tableTinTuyenDung;
-	DefaultTableModel modelTableTinTuyenDung;
-	JScrollPane scrollTinTuyenDung;
 	JComboBox timkiemNTDText, timkiemTrinhDoText;
+	JScrollPane scroll;
 	Icon iconBtnSave;
 	
-	RoundPanel timkiemPanel,
+	GradientRoundPanel timkiemPanel,
 	danhsachPanel, danhsachNorthPanel, danhsachCenterPanel;
 	
+	ButtonAction update, delete;
+	
+	private ArrayList<Component> updates;
+	private ArrayList<Component> deletes;
 	
 	public TinTuyenDungFrame(String userName) {
 		this.userName=userName;
 		this.parent=this;
 		
+		updates=new ArrayList<Component>();
+		deletes=new ArrayList<Component>();
+		
 //		Tạo component bên phải
 		initComponent();
 		
 //		Thêm update và delete vào table
-		addTableActionEvent();
+		
 		
 //		Thêm sự kiện
 		addActionListener();
@@ -104,48 +114,68 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 	public void initComponent() {
 		tintuyendungPanel=new JPanel(); 
 		tintuyendungPanel.setLayout(new BorderLayout(5,5));
-		tintuyendungPanel.setBackground(new Color(220, 220, 220));
 		
 //		Hiển thị tìm kiếm và danh sách tin tuyển dụng
 		centerPanelTinTuyenDung=new JPanel();
 		centerPanelTinTuyenDung.setLayout(new BorderLayout(10, 10));
 		centerPanelTinTuyenDung.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		centerPanelTinTuyenDung.setBackground(new Color(220, 220, 220));
+		centerPanelTinTuyenDung.setBackground(new Color(89, 145, 144));
 //		Tìm kiếm tin tuyển dụng
-		timkiemPanel=new RoundPanel();
-		timkiemPanel.setBackground(Color.WHITE);
+		timkiemPanel=new GradientRoundPanel();
 		timkiemPanel.setLayout(new BorderLayout(5,5));
 		
-		RoundPanel resSearch=new RoundPanel(); resSearch.setLayout(new GridBagLayout());
+		JPanel resSearch=new JPanel(); 
+		resSearch.setOpaque(false);
+		resSearch.setLayout(new GridBagLayout());
 		resSearch.setBackground(Color.WHITE);
 		GridBagConstraints gbc= new GridBagConstraints();
 		gbc.gridx=0; gbc.gridy=0; gbc.insets=new Insets(5, 10, 5, 10); gbc.anchor=GridBagConstraints.EAST;
-		timkiemTenLabel=new JLabel("Tiêu đề tin tuyển dụng:"); timkiemTenLabel.setFont(new Font("Segoe UI",0,16));
+		timkiemTenLabel=new JLabel("Tiêu đề tin tuyển dụng:"); 
+		timkiemTenLabel.setFont(new Font("Segoe UI",1,16));
+		timkiemTenLabel.setForeground(Color.WHITE);
 		resSearch.add(timkiemTenLabel, gbc);
 		gbc.gridx=1; gbc.gridy=0; gbc.anchor=GridBagConstraints.WEST;
-		timkiemTenText=new JTextField(15); timkiemTenText.setFont(new Font("Segoe UI",0,16));
+		timkiemTenText=new JTextField(15); 
+		timkiemTenText.setFont(new Font("Segoe UI",0,16));
+		timkiemTenText.setOpaque(false);
+		timkiemTenText.setOpaque(false);
 		resSearch.add(timkiemTenText, gbc);
 		
 		gbc.gridx=2; gbc.gridy=0; gbc.anchor=GridBagConstraints.EAST;
-		timkiemLuongLabel=new JLabel("Mức lương:"); timkiemLuongLabel.setFont(new Font("Segoe UI",0,16));
+		timkiemLuongLabel=new JLabel("Mức lương:"); 
+		timkiemLuongLabel.setFont(new Font("Segoe UI",1,16));
+		timkiemLuongLabel.setForeground(Color.WHITE);
 		resSearch.add(timkiemLuongLabel, gbc);
 		gbc.gridx=3; gbc.gridy=0; gbc.anchor=GridBagConstraints.WEST;
-		timkiemLuongText=new JTextField(15); timkiemLuongText.setFont(new Font("Segoe UI",0,16));
+		timkiemLuongText=new JTextField(15); 
+		timkiemLuongText.setFont(new Font("Segoe UI",0,16));
+		timkiemLuongText.setOpaque(false);
+		timkiemLuongText.setForeground(Color.WHITE);
 		resSearch.add(timkiemLuongText, gbc);
 		
 		gbc.gridx=0; gbc.gridy=1; gbc.anchor=GridBagConstraints.EAST;
-		timkiemNTDLabel=new JLabel("Nhà tuyển dụng:"); timkiemNTDLabel.setFont(new Font("Segoe UI",0,16));
+		timkiemNTDLabel=new JLabel("Nhà tuyển dụng:"); 
+		timkiemNTDLabel.setFont(new Font("Segoe UI",1,16));
+		timkiemNTDLabel.setForeground(Color.WHITE);
 		resSearch.add(timkiemNTDLabel, gbc);
 		gbc.gridx=1; gbc.gridy=1; gbc.anchor=GridBagConstraints.WEST;
-		timkiemNTDText=new JComboBox(); timkiemNTDText.setFont(new Font("Segoe UI",0,16));
+		timkiemNTDText=new JComboBox(); 
+		timkiemNTDText.setFont(new Font("Segoe UI",0,16));
+		timkiemNTDText.setForeground(Color.WHITE);
+		timkiemNTDText.setBackground(new Color(89, 145, 144));
 		timkiemNTDText.setPreferredSize(new Dimension(213,26));
 		resSearch.add(timkiemNTDText, gbc);
 		
 		gbc.gridx=2; gbc.gridy=1; gbc.anchor=GridBagConstraints.EAST;
-		timkiemTrinhDoLabel=new JLabel("Trình độ:"); timkiemTrinhDoLabel.setFont(new Font("Segoe UI",0,16));
+		timkiemTrinhDoLabel=new JLabel("Trình độ:"); 
+		timkiemTrinhDoLabel.setFont(new Font("Segoe UI",1,16));
+		timkiemTrinhDoLabel.setForeground(Color.WHITE);
 		resSearch.add(timkiemTrinhDoLabel, gbc);
 		gbc.gridx=3; gbc.gridy=1; gbc.anchor=GridBagConstraints.WEST;
-		timkiemTrinhDoText=new JComboBox(); timkiemTrinhDoText.setFont(new Font("Segoe UI",0,16));
+		timkiemTrinhDoText=new JComboBox(); 
+		timkiemTrinhDoText.setFont(new Font("Segoe UI",0,16));
+		timkiemTrinhDoText.setBackground(new Color(89, 145, 144));
+		timkiemTrinhDoText.setForeground(Color.WHITE);
 		TrinhDo[] trinhdos=TrinhDo.class.getEnumConstants();
 		for(TrinhDo t: trinhdos) {
 			timkiemTrinhDoText.addItem(t.getValue());
@@ -153,9 +183,10 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 		timkiemTrinhDoText.setPreferredSize(new Dimension(213,26));
 		resSearch.add(timkiemTrinhDoText, gbc);
 		
-		RoundPanel resBtnSearch=new RoundPanel(); resBtnSearch.setLayout(new BorderLayout(0,5));
+		JPanel resBtnSearch=new JPanel(); 
+		resBtnSearch.setOpaque(false);
+		resBtnSearch.setLayout(new BorderLayout(0,5));
 		resBtnSearch.setBorder(BorderFactory.createEmptyBorder(10,10,10,23));
-		resBtnSearch.setBackground(Color.WHITE);
 		btnTimKiem=new JButton("Tìm kiếm"); btnTimKiem.setFont(new Font("Segoe UI",0,16));
 		btnTimKiem.setPreferredSize(new Dimension(120,25));
 		btnTimKiem.setBackground(new Color(0,102,102));
@@ -170,15 +201,15 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 		timkiemPanel.add(resBtnSearch, BorderLayout.EAST);
 		
 //		Danh sách tin tuyển dụng
-		danhsachPanel=new RoundPanel();
-		danhsachPanel.setBackground(Color.WHITE);
+		danhsachPanel=new GradientRoundPanel();
 		danhsachPanel.setLayout(new BorderLayout(10, 10));
 		
-		danhsachNorthPanel=new RoundPanel();
+		danhsachNorthPanel=new GradientRoundPanel();
 		danhsachNorthPanel.setLayout(new BorderLayout(10,10));
 		danhsachNorthPanel.setBackground(Color.WHITE);
 		iconBtnSave=new ImageIcon(getClass().getResource("/image/save.png"));
-		RoundPanel resBtn=new RoundPanel();
+		JPanel resBtn=new JPanel();
+		resBtn.setOpaque(false);
 		resBtn.setBorder(BorderFactory.createEmptyBorder(10,10,0,20));
 		resBtn.setBackground(Color.WHITE);
 		btnLuu=new JButton("Xuất Excel", iconBtnSave); btnLuu.setFont(new Font("Segoe UI",0,16));
@@ -188,55 +219,24 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 		resBtn.add(btnLuu);
 		titleHoSo=new JLabel("Danh sách tin tuyển dụng");
 		titleHoSo.setFont(new Font("Segoe UI",1,16));
+		titleHoSo.setForeground(Color.WHITE);
 		titleHoSo.setBorder(BorderFactory.createEmptyBorder(10,20,0,10));
 		danhsachNorthPanel.add(titleHoSo, BorderLayout.WEST);
 		danhsachNorthPanel.add(resBtn, BorderLayout.EAST);
 		
-		danhsachCenterPanel=new RoundPanel();
-		danhsachCenterPanel.setLayout(new BoxLayout(danhsachCenterPanel, BoxLayout.PAGE_AXIS));
-		danhsachCenterPanel.setBackground(Color.WHITE);
-		String[] colName= {"Mã tin tuyển dụng","Tiêu đề","Nhà tuyển dụng","Lương","Trình độ","Trạng thái","Hành động"};
-		Object[][] data = {
-			    {1, "Manual Tester", "Minh Đạt", "1000", "Cao đẳng", "Khả dụng",null},
-			    {2, "Technical Project Manager", "Thắng Đạt", "1000", "Đại học", "Khả dụng",null}
-			};
-		modelTableTinTuyenDung= new DefaultTableModel(data, colName){
-			boolean[] canEdit = new boolean [] {
-	                false, false, false, false, false, false, true
-	            };
-			
-            @Override
-            public boolean isCellEditable(int row, int column) {
-               return canEdit[column];
-            }
-        };
-		tableTinTuyenDung=new JTable(modelTableTinTuyenDung);
-		tableTinTuyenDung.getTableHeader().setFont(new Font("Segoe UI",1,14));
-		tableTinTuyenDung.setFont(new Font("Segoe UI",0,16));
-		tableTinTuyenDung.setRowHeight(30);
-		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
-		for(int i=0;i<tableTinTuyenDung.getColumnCount()-1;i++) {
-			tableTinTuyenDung.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);			
+		danhsachCenterPanel=new GradientRoundPanel();
+		danhsachCenterPanel.setLayout(new FlowLayout(FlowLayout.LEFT,20,20));
+		danhsachCenterPanel.setPreferredSize(new Dimension(getWidth(), 30*50));
+		danhsachCenterPanel.setBorder(BorderFactory.createEmptyBorder(0, 25, 0, 0));
+		
+		for(int i=0; i<30; i++) {
+			danhsachCenterPanel.add(panelTinTuyenDung("Project Manager", "FaceBook", 1000, "abc"));
 		}
-		tableTinTuyenDung.setAutoCreateRowSorter(true);
-		ArrayList<RowSorter.SortKey> list = new ArrayList<>();
-        DefaultRowSorter sorter = ((DefaultRowSorter)tableTinTuyenDung.getRowSorter());
-        sorter.setSortsOnUpdates(true);
-        list.add( new RowSorter.SortKey(0, SortOrder.ASCENDING));
-        sorter.setSortKeys(list);
-        sorter.sort();
-		scrollTinTuyenDung=new JScrollPane(tableTinTuyenDung);
-		scrollTinTuyenDung.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
-		RoundPanel resScroll=new RoundPanel();
-		resScroll.setBorder(BorderFactory.createEmptyBorder(0,20,20,20));
-		resScroll.setLayout(new BoxLayout(resScroll, BoxLayout.PAGE_AXIS));
-		resScroll.setBackground(Color.WHITE);
-		resScroll.add(scrollTinTuyenDung);
-		danhsachCenterPanel.add(resScroll);
+		
+		scroll=new JScrollPane(danhsachCenterPanel);
 		
 		danhsachPanel.add(danhsachNorthPanel, BorderLayout.NORTH);
-		danhsachPanel.add(danhsachCenterPanel, BorderLayout.CENTER);
+		danhsachPanel.add(scroll, BorderLayout.CENTER);
 		
 		centerPanelTinTuyenDung.add(timkiemPanel, BorderLayout.NORTH);
 		centerPanelTinTuyenDung.add(danhsachPanel, BorderLayout.CENTER);
@@ -244,59 +244,54 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 		tintuyendungPanel.add(centerPanelTinTuyenDung, BorderLayout.CENTER);
 	}
 	
-	public void addTableActionEvent() {
-		TableActionEvent event=new TableActionEvent() {
-			@Override
-			public void onUpdate(int row) {
-				// TODO Auto-generated method stub
-				new TaoSuaTinTuyenDungDialog(parent, rootPaneCheckingEnabled, true).setVisible(true);
-			}
-			
-			@Override
-			public void onDelete(int row) {
-				// TODO Auto-generated method stub
-				JOptionPane.showMessageDialog(rootPane, "Chức năng xóa tin tuyển dụng đang hoàn thiện");
-			}
-
-			@Override
-			public void onViewHoSo(int row) {
-				// TODO Auto-generated method stub
-			
-			}
-
-			@Override
-			public void onCreateHoSo(int row) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onCreateTaiKhoan(int row) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onViewTinTuyenDung(int row) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onCreateTinTuyenDung(int row) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onViewDetail(int row) {
-				// TODO Auto-generated method stub
-				
-			}
-		};
+	public RoundPanel panelTinTuyenDung(String tieude, String nhatuyendung, double luong, String logo) {
+		RoundPanel panel=new RoundPanel();
+		panel.setPreferredSize(new Dimension(400, 100));
+		panel.setBackground(new Color(89, 145, 144));
+		panel.setLayout(new BorderLayout(10,0));
+		panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		
-		tableTinTuyenDung.getColumnModel().getColumn(6).setCellRenderer(new TableCellRendererUpdateDelete());
-		tableTinTuyenDung.getColumnModel().getColumn(6).setCellEditor(new TableCellEditorUpdateDelete(event));
+		logoPanel=new JPanel();
+		logoPanel.setOpaque(false);
+		logoPanel.setBorder(BorderFactory.createLineBorder(Color.WHITE));
+		logoPanel.setPreferredSize(new Dimension(100,100));
+		
+		JPanel centerPanel=new JPanel();
+		centerPanel.setOpaque(false);
+		centerPanel.setLayout(new GridLayout(3,1));
+		tieudeLabel=new JLabel(tieude);
+		tieudeLabel.setFont(new Font("Segoe UI",0,16));
+		tieudeLabel.setForeground(Color.WHITE);
+		nhatuyendungLabel=new JLabel(nhatuyendung);
+		nhatuyendungLabel.setFont(new Font("Segoe UI",0,16));
+		nhatuyendungLabel.setForeground(Color.WHITE);
+		luongLabel=new JLabel(String.valueOf(luong));
+		luongLabel.setFont(new Font("Segoe UI",0,16));
+		luongLabel.setForeground(Color.WHITE);
+		centerPanel.add(tieudeLabel);
+		centerPanel.add(nhatuyendungLabel);
+		centerPanel.add(luongLabel);
+		
+		JPanel eastPanel=new JPanel();
+		eastPanel.setBackground(new Color(89, 145, 144));
+		eastPanel.setLayout(new BorderLayout());
+		JPanel res=new JPanel();
+		res.setOpaque(false);
+		ButtonAction update=new ButtonAction();
+		update.setIcon(new ImageIcon(getClass().getResource("/image/update.png")));
+		ButtonAction delete=new ButtonAction();
+		delete.setIcon(new ImageIcon(getClass().getResource("/image/delete.png")));
+		res.add(update); res.add(delete);
+		eastPanel.add(res, BorderLayout.SOUTH);
+		
+		panel.add(logoPanel, BorderLayout.WEST);
+		panel.add(centerPanel, BorderLayout.CENTER);
+		panel.add(eastPanel, BorderLayout.EAST);
+		
+		updates.add(update);
+		deletes.add(delete);
+		
+		return panel;
 	}
 	
 	public JPanel getPanel() {
@@ -308,7 +303,7 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 		Font font=text.getFont();
 		font=font.deriveFont(Font.ITALIC);
 		text.setFont(font);
-		text.setForeground(Color.GRAY);
+		text.setForeground(Color.WHITE);
 	}
 	
 //	Xóa trạng thái text chuột không nằm trong ô
@@ -316,7 +311,7 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 		Font font=text.getFont();
 		font=font.deriveFont(Font.PLAIN);
 		text.setFont(font);
-		text.setForeground(Color.BLACK);
+		text.setForeground(Color.WHITE);
 	}
 	
 //	Listener
@@ -338,13 +333,31 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 	}
 	
 	public void addMouseListener() {
+		for(Component c: updates) {
+			c.addMouseListener(this);
+		}
 		
+		for(Component c: deletes) {
+			c.addMouseListener(this);
+		}
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
-
+		var obj=e.getSource();
+		for(int i=0; i<updates.size();i++) {
+			if(obj.equals(updates.get(i))) {
+				System.out.println(i);
+				break;
+			}
+		}
+		for(int i=0; i<deletes.size();i++) {
+			if(obj.equals(deletes.get(i))) {
+				System.out.println(i);
+				break;
+			}
+		}
 	}
 
 	@Override

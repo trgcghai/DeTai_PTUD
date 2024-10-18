@@ -1,4 +1,8 @@
-/component/
 /view/
+<<<<<<< HEAD
 /dao/
 /entity/
+=======
+/component/
+/controller/
+>>>>>>> eec3bf246cd1e16a9feb20d1e798a02bb7ded42e
