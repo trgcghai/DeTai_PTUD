@@ -1,9 +1,11 @@
 package entity;
 
+import entity.constraint.TrangThai;
+
 public class HoSo {
 	private String maHS;
 	private String moTa;
-	private String trangThai;
+	private TrangThai trangThai;
 	private UngVien ungVien;
 	private TinTuyenDung tinTuyenDung;
 	private NhanVien nhanVien;
@@ -24,11 +26,11 @@ public class HoSo {
 		this.moTa = moTa;
 	}
 
-	public String getTrangThai() {
+	public TrangThai getTrangThai() {
 		return trangThai;
 	}
 
-	public void setTrangThai(String trangThai) {
+	public void setTrangThai(TrangThai trangThai) {
 		this.trangThai = trangThai;
 	}
 
@@ -91,7 +93,7 @@ public class HoSo {
 		super();
 	}
 
-	public HoSo(String maHS, String moTa, String trangThai, UngVien ungVien, TinTuyenDung tinTuyenDung,
+	public HoSo(String maHS, String moTa, TrangThai trangThai, UngVien ungVien, TinTuyenDung tinTuyenDung,
 			NhanVien nhanVien) {
 		super();
 		this.maHS = maHS;

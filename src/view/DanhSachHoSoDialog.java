@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -30,9 +32,16 @@ import controller.actiontable.TableCellEditorDetail;
 import controller.actiontable.TableCellEditorUpdateDelete;
 import controller.actiontable.TableCellRendererDetail;
 import controller.actiontable.TableCellRendererUpdateDelete;
+import dao.HoSo_DAO;
+import dao.NhaTuyenDung_DAO;
+import dao.TinTuyenDung_DAO;
+import entity.HoSo;
+import entity.NhaTuyenDung;
+import entity.TinTuyenDung;
+import entity.UngVien;
 import entity.constraint.TrangThai;
 
-public class DanhSachHoSoDialog extends JDialog {
+public class DanhSachHoSoDialog extends JDialog implements ActionListener{
 	
 	GradientPanel timkiemPanel, danhsachPanel, btnPanel;
 	JLabel timkiemTrangThaiLabel, timkiemNTDLabel;
@@ -43,22 +52,34 @@ public class DanhSachHoSoDialog extends JDialog {
 	JScrollPane scrollHoSo;
 	
 	DanhSachHoSoDialog son;
+	
+	private UngVien uv;
+	private HoSo_DAO hosoDAO;
+	private NhaTuyenDung_DAO nhatuyendungDAO;
+	private TinTuyenDung_DAO tintuyendungDAO;
 
-	public DanhSachHoSoDialog(Frame parent, boolean modal) {
+	public DanhSachHoSoDialog(Frame parent, boolean modal, UngVien uv) {
 		super(parent, modal);
 		setTitle("Danh sách hồ sơ");
 		setResizable(false);
-		setSize(900,450);
+		setSize(1000,450);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setLayout(new BorderLayout());
 		setLocationRelativeTo(null);
 		
 		this.son=this;
+		this.uv=uv;
+		hosoDAO=new HoSo_DAO();
+		nhatuyendungDAO=new NhaTuyenDung_DAO();
+		tintuyendungDAO=new TinTuyenDung_DAO();
 		
 		initComponent();
+		addActionListener();
 		
 		addTableActionEvent();
 		
+		loadDataNhaTuyenDung();
+		loadDataHoSo();
 	}
 	
 	public void initComponent() {
@@ -79,7 +100,7 @@ public class DanhSachHoSoDialog extends JDialog {
 		timkiemNTDLabel=new JLabel("Nhà tuyển dụng:"); timkiemNTDLabel.setFont(new Font("Segoe UI",0,16));
 		timkiemNTDText=new JComboBox(); 
 		timkiemNTDText.setFont(new Font("Segoe UI",0,16));
-		timkiemNTDText.setPreferredSize(new Dimension(156,26));
+		timkiemNTDText.setPreferredSize(new Dimension(300,26));
 		
 		JPanel resBtnSearch=new JPanel();
 		resBtnSearch.setOpaque(false);
@@ -213,6 +234,53 @@ public class DanhSachHoSoDialog extends JDialog {
 		
 		tableHoSo.getColumnModel().getColumn(4).setCellRenderer(new TableCellRendererDetail());
 		tableHoSo.getColumnModel().getColumn(4).setCellEditor(new TableCellEditorDetail(event));
+	}
+
+	public void addActionListener() {
+		btnTimKiem.addActionListener(this);
+		btnLamLai.addActionListener(this);
+		btnHuy.addActionListener(this);
+	}
+	
+	public void loadDataNhaTuyenDung() {
+		for(NhaTuyenDung ntd: nhatuyendungDAO.getDsNhaTuyenDung()) {
+			timkiemNTDText.addItem(ntd.getTenNTD());
+		}
+	}
+	
+	public void loadDataHoSo() {
+		modelTableHoSo.setRowCount(0);
+		for(HoSo i: hosoDAO.getHoSoTheoUngVien(uv.getMaUV())) {
+			NhaTuyenDung ntd=null;
+			TinTuyenDung ttd=null;
+			if(i.getTinTuyenDung()!=null) {
+				ttd=tintuyendungDAO.getTinTuyenDung(i.getTinTuyenDung().getMaTTD());
+				
+				ntd=nhatuyendungDAO.getNhaTuyenDung(ttd.getNhaTuyenDung().getMaNTD());
+			}
+			Object[] obj=new Object[] {
+					i.getMaHS(), i.getTrangThai().getValue(), 
+					ntd!=null?ntd.getTenNTD():"", 
+					ttd!=null?ttd.getTieuDe():"",
+					null
+			};
+			modelTableHoSo.addRow(obj);
+		}
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		var obj=e.getSource();
+		if(obj.equals(btnTimKiem)) {
+			
+		}
+		else if(obj.equals(btnLamLai)) {
+			
+		}
+		else if(obj.equals(btnHuy)) {
+			
+		}
 	}
 	
 

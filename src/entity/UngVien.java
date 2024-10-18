@@ -2,13 +2,15 @@ package entity;
 
 import java.time.LocalDate;
 
+import entity.constraint.GioiTinh;
+
 public class UngVien {
 	private String maUV;
 	private String tenUV;
 	private String email;
 	private LocalDate ngaySinh;
 	private String diaChi;
-	private String gioiTinh;
+	private GioiTinh gioiTinh;
 	private String soDienThoai;
 
 	public String getMaUV() {
@@ -51,11 +53,11 @@ public class UngVien {
 		this.diaChi = diaChi;
 	}
 
-	public String getGioiTinh() {
+	public GioiTinh getGioiTinh() {
 		return gioiTinh;
 	}
 
-	public void setGioiTinh(String gioiTinh) {
+	public void setGioiTinh(GioiTinh gioiTinh) {
 		this.gioiTinh = gioiTinh;
 	}
 
@@ -102,7 +104,7 @@ public class UngVien {
 		super();
 	}
 
-	public UngVien(String maUV, String tenUV, String email, LocalDate ngaySinh, String diaChi, String gioiTinh,
+	public UngVien(String maUV, String tenUV, String email, LocalDate ngaySinh, String diaChi, GioiTinh gioiTinh,
 			String soDienThoai) {
 		super();
 		this.maUV = maUV;

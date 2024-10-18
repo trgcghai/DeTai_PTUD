@@ -62,7 +62,7 @@ import exception.checkUserPass;
 
 public class TaiKhoanFrame extends JFrame implements ActionListener, MouseListener, FocusListener {
 
-	String userName;
+	NhanVien userName;
 	TaiKhoanFrame parent;
 	
 //	Component danh sách tài khoản
@@ -82,7 +82,7 @@ public class TaiKhoanFrame extends JFrame implements ActionListener, MouseListen
 	private TaiKhoan_DAO taikhoanDAO;
 	private NhanVien_DAO nhanvienDAO;
 	
-	public TaiKhoanFrame(String userName) {
+	public TaiKhoanFrame(NhanVien userName) {
 		this.userName=userName;
 		this.parent=this;
 		

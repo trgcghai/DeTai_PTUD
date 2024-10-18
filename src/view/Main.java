@@ -10,8 +10,8 @@ import entity.TaiKhoan;
 public class Main {
 	public static void main(String[] args) {		
 //============================================================================================
-//		new LoginFrame().setVisible(true);
-		new MainFrame("MinhDat","Admin").setVisible(true);
+		new LoginFrame().setVisible(true);
+//		new MainFrame("Nguyễn Thắng Minh Đạt","Admin").setVisible(true);
 //============================================================================================		
 	}
 }

@@ -1,7 +1,7 @@
 package entity.constraint;
 
 public enum TrangThai {
-	CHUANOP("Chưa nộp"), XEMXET("Xem xét"), CHO("Chờ"), CHAPNHAN("Chấp nhận"), TUCHOI("Từ chối");
+	CHUANOP("Chưa nộp"), XEMXET("Xem xét"), CHO("Chờ"), DADUYET("Đã duyệt"), TUCHOI("Từ chối");
 	
 	private final String value;
 	TrangThai(String value){

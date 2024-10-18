@@ -10,10 +10,12 @@ import javax.swing.*;
 
 import controller.Database;
 import controller.FilterImp;
+import dao.NhanVien_DAO;
 import dao.TaiKhoan_DAO;
 import exception.checkUserEmail;
 import exception.checkUserName;
 import exception.checkUserPass;
+import entity.NhanVien;
 import entity.TaiKhoan;
 
 public class LoginFrame extends JFrame implements ActionListener {
@@ -27,6 +29,7 @@ public class LoginFrame extends JFrame implements ActionListener {
 	JButton btnLogin, btnSignup;
 	
 	private TaiKhoan_DAO listTaiKhoan;
+	private NhanVien_DAO listNhanVien;
 	
 	public LoginFrame() {
 		setTitle("Đăng nhập");
@@ -39,6 +42,7 @@ public class LoginFrame extends JFrame implements ActionListener {
 		addActionListener();
 		
 		listTaiKhoan=new TaiKhoan_DAO();
+		listNhanVien=new NhanVien_DAO();
 		
 		Database.getInstance().connect();
 		loadUser();
@@ -144,11 +148,11 @@ public class LoginFrame extends JFrame implements ActionListener {
 			if(check.checkUserEmail(userName) && check.checkUserPass(pass)) {
 				TaiKhoan user=new TaiKhoan(userName,pass);
 				if(listTaiKhoan.getListTaiKhoan().contains(user)) {
-					String tenNV=userName.split("@")[0];
-					
 					int index=listTaiKhoan.getListTaiKhoan().indexOf(user);
-					String vaitro=listTaiKhoan.getListTaiKhoan().get(index).getVaiTro();
-					new MainFrame(tenNV, vaitro).setVisible(true);
+					String vaitro=listTaiKhoan.getListTaiKhoan().get(index).getVaiTro().getValue();
+					NhanVien nv=listNhanVien
+							.getNhanVien(listTaiKhoan.getListTaiKhoan().get(index).getNhanVien().getMaNV());
+					new MainFrame(nv, vaitro).setVisible(true);
 					this.dispose();
 				}
 				else {

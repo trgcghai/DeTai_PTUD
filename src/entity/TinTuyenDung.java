@@ -2,17 +2,21 @@ package entity;
 
 import java.time.LocalDate;
 
+import entity.constraint.HinhThucLamViec;
+import entity.constraint.NganhNghe;
+import entity.constraint.TrinhDo;
+
 public class TinTuyenDung {
 	private String maTTD;
 	private String tieuDe;
 	private String moTa;
 	private LocalDate ngayDangTin;
 	private LocalDate ngayHetHan;
-	private String trinhDo;
+	private TrinhDo trinhDo;
 	private int soLuong;
 	private double luong;
-	private String nganhNghe;
-	private String hinhThuc;
+	private NganhNghe nganhNghe;
+	private HinhThucLamViec hinhThuc;
 	private boolean trangThai;
 	private NhaTuyenDung nhaTuyenDung;
 
@@ -56,11 +60,11 @@ public class TinTuyenDung {
 		this.ngayHetHan = ngayHetHan;
 	}
 
-	public String getTrinhDo() {
+	public TrinhDo getTrinhDo() {
 		return trinhDo;
 	}
 
-	public void setTrinhDo(String trinhDo) {
+	public void setTrinhDo(TrinhDo trinhDo) {
 		this.trinhDo = trinhDo;
 	}
 
@@ -80,19 +84,19 @@ public class TinTuyenDung {
 		this.luong = luong;
 	}
 
-	public String getNganhNghe() {
+	public NganhNghe getNganhNghe() {
 		return nganhNghe;
 	}
 
-	public void setNganhNghe(String nganhNghe) {
+	public void setNganhNghe(NganhNghe nganhNghe) {
 		this.nganhNghe = nganhNghe;
 	}
 
-	public String getHinhThuc() {
+	public HinhThucLamViec getHinhThuc() {
 		return hinhThuc;
 	}
 
-	public void setHinhThuc(String hinhThuc) {
+	public void setHinhThuc(HinhThucLamViec hinhThuc) {
 		this.hinhThuc = hinhThuc;
 	}
 
@@ -146,7 +150,7 @@ public class TinTuyenDung {
 	}
 
 	public TinTuyenDung(String maTTD, String tieuDe, String moTa, LocalDate ngayDangTin, LocalDate ngayHetHan,
-			String trinhDo, int soLuong, double luong, String nganhNghe, String hinhThuc, boolean trangThai,
+			TrinhDo trinhDo, int soLuong, double luong, NganhNghe nganhNghe, HinhThucLamViec hinhThuc, boolean trangThai,
 			NhaTuyenDung nhaTuyenDung) {
 		super();
 		this.maTTD = maTTD;

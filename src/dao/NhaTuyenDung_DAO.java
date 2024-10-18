@@ -12,6 +12,20 @@ import entity.NhanVien;
 import entity.NhaTuyenDung;
 
 public class NhaTuyenDung_DAO {
+	
+	private ArrayList<NhaTuyenDung> listNhatuyenDung;
+	
+	public NhaTuyenDung_DAO() {
+		listNhatuyenDung=new ArrayList<NhaTuyenDung>();
+	}
+
+	public ArrayList<NhaTuyenDung> getListNhatuyenDung() {
+		return listNhatuyenDung;
+	}
+
+	public void setListNhatuyenDung(ArrayList<NhaTuyenDung> listNhatuyenDung) {
+		this.listNhatuyenDung = listNhatuyenDung;
+	}
 
 	public ArrayList<NhaTuyenDung> getDsNhaTuyenDung() {
 		ArrayList<NhaTuyenDung> list = new ArrayList<NhaTuyenDung>();
@@ -63,4 +77,58 @@ public class NhaTuyenDung_DAO {
 		return list.get(0);
 	}
 	
+	public boolean create(NhaTuyenDung ntd) {
+		int n = 0;
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			PreparedStatement stmt = con.prepareStatement("insert into NhaTuyenDung values (?, ?, ?, ?, ?, ?)");
+			stmt.setString(1, ntd.getMaNTD());
+			stmt.setString(2, ntd.getTenNTD());
+			stmt.setString(3, ntd.getEmail());
+			stmt.setString(4, ntd.getLogo());
+			stmt.setString(5, ntd.getDiaChi());
+			stmt.setString(6, ntd.getSoDienThoai());
+			n = stmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return n != 0;
+	}
+	
+	public boolean update(NhaTuyenDung ntd) {
+		int n = 0;
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			PreparedStatement stmt = con.prepareStatement("update NhaTuyenDung set TenNTD = ?, Email = ?, Logo = ?, DiaChi = ?, SoDienThoai = ? where MaNTD = ?");
+			stmt.setString(1, ntd.getTenNTD());
+			stmt.setString(2, ntd.getEmail());
+			stmt.setString(3, ntd.getLogo());
+			stmt.setString(4, ntd.getDiaChi());
+			stmt.setString(5, ntd.getSoDienThoai());
+			stmt.setString(6, ntd.getMaNTD());
+			n = stmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return n != 0;
+	}
+	
+	public boolean delete(String id) {
+		int n = 0;
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			PreparedStatement stmt = con.prepareStatement("delete NhaTuyenDung where MaNTD = ?");
+			stmt.setString(1, id);
+			n = stmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return n != 0;
+	}
 }

@@ -10,6 +10,7 @@ import org.jdatepicker.impl.UtilDateModel;
 
 import component.GradientPanel;
 import component.RoundPanel;
+import entity.NhanVien;
 import entity.constraint.VaiTro;
 
 import java.awt.*;
@@ -21,7 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class MainFrame extends JFrame implements MouseListener{
-	String userName;
+	NhanVien userName;
 	String vaitro;
 	Navbar nav;
 	
@@ -31,7 +32,7 @@ public class MainFrame extends JFrame implements MouseListener{
 	RoundPanel centerPanel;
 //	GradientPanel menuPanel;
 	
-	public MainFrame(String userName, String vaitro) {
+	public MainFrame(NhanVien userName, String vaitro) {
 		setTitle("Dịch vụ tìm việc làm");
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
 		setLocationRelativeTo(null);
@@ -94,7 +95,7 @@ public class MainFrame extends JFrame implements MouseListener{
 		
 		userLabel=new JLabel();
 		userLabel.setFont(new Font("Segoe UI",1,16));
-		userLabel.setText("Welcome "+userName);
+		userLabel.setText("Welcome "+userName.getTenNV());
 		userLabel.setForeground(Color.WHITE);
 		iconUserLabel=new JLabel();
 		iconUserLabel.setIcon(new ImageIcon(getClass().getResource("/image/user.png")));
@@ -149,19 +150,19 @@ public class MainFrame extends JFrame implements MouseListener{
 		if(obj.getClass().equals(JMenu.class)) {
 			if(((JMenu)obj).getText().equals("Nhân viên")) {
 				centerPanel.removeAll();
-				centerPanel.add(new NhanVienFrame().getPanel());
+				centerPanel.add(new NhanVienFrame(userName).getPanel());
 				
 				this.setTitle("Nhân viên");
 			}
 			else if(((JMenu)obj).getText().equals("Tài khoản")) {
 				centerPanel.removeAll();
-				centerPanel.add(new TaiKhoanFrame("MinhDat").getPanel());
+				centerPanel.add(new TaiKhoanFrame(userName).getPanel());
 				
 				this.setTitle("Tài khoản");
 			}
 			else if(((JMenu)obj).getText().equals("Ứng viên")) {
 				centerPanel.removeAll();
-				centerPanel.add(new UngVienFrame("MinhDat").getPanel());
+				centerPanel.add(new UngVienFrame(userName).getPanel());
 				
 				this.setTitle("Ứng viên");
 			}

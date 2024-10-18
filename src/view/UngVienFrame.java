@@ -50,8 +50,12 @@ import controller.actiontable.TableCellEditorViewCreateHoSo;
 import controller.actiontable.TableCellRendererUpdateDelete;
 import controller.actiontable.TableCellRendererViewCreateHoSo;
 import dao.TaiKhoan_DAO;
+import dao.UngVien_DAO;
 import dao.NhanVien_DAO;
 import entity.TaiKhoan;
+import entity.UngVien;
+import entity.constraint.GioiTinh;
+import entity.constraint.VaiTro;
 import entity.NhanVien;
 import exception.checkBirthday;
 import exception.checkDateOfWork;
@@ -62,7 +66,7 @@ import exception.checkUserPass;
 
 public class UngVienFrame extends JFrame implements ActionListener, MouseListener, FocusListener {
 	
-	String userName;
+	NhanVien userName;
 	UngVienFrame parent;
 	
 //	Component danh sách ứng viên
@@ -79,8 +83,10 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 	GradientRoundPanel timkiemPanel,
 	danhsachPanel, danhsachNorthPanel, danhsachCenterPanel;
 	
+	private UngVien_DAO ungvienDAO;
 	
-	public UngVienFrame(String userName) {
+	
+	public UngVienFrame(NhanVien userName) {
 		this.userName=userName;
 		this.parent=this;
 		
@@ -94,6 +100,13 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 		addActionListener();
 		addMouseListener();
 		addFocusListener();
+		
+		Database.getInstance().connect();
+		
+		ungvienDAO=new UngVien_DAO();
+		
+		loadData();
+		loadDataTable();
 		
 	}
 	
@@ -229,25 +242,34 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 			@Override
 			public void onUpdate(int row) {
 				// TODO Auto-generated method stub
-				new ThemSuaUngVienDialog(parent, rootPaneCheckingEnabled, true).setVisible(true);
+				UngVien ungvien=ungvienDAO.getUngVien(tableUngVien.getValueAt(row, 0).toString());
+				new ThemSuaUngVienDialog(parent, rootPaneCheckingEnabled, ungvien).setVisible(true);
 			}
 			
 			@Override
 			public void onDelete(int row) {
 				// TODO Auto-generated method stub
-				JOptionPane.showMessageDialog(rootPane, "Chức năng xóa ứng viên đang hoàn thiện");
+				UngVien uv=ungvienDAO.getUngVien(tableUngVien.getValueAt(row, 0).toString());
+				int check=JOptionPane.showConfirmDialog(rootPane, "Có chắc chắn xóa?");
+				if(check==JOptionPane.OK_OPTION) {
+					ungvienDAO.delete(uv.getMaUV());
+					JOptionPane.showMessageDialog(rootPane, "Xóa ứng viên thành công");
+					updateTable();
+				}
 			}
 
 			@Override
 			public void onViewHoSo(int row) {
 				// TODO Auto-generated method stub
-				new DanhSachHoSoDialog(parent, rootPaneCheckingEnabled).setVisible(true);
+				UngVien uv=ungvienDAO.getUngVien(tableUngVien.getValueAt(row, 0).toString());
+				new DanhSachHoSoDialog(parent, rootPaneCheckingEnabled, uv).setVisible(true);
 			}
 
 			@Override
 			public void onCreateHoSo(int row) {
 				// TODO Auto-generated method stub
-				new TaoSuaHoSoDialog(parent, rootPaneCheckingEnabled).setVisible(true);
+				UngVien uv=ungvienDAO.getUngVien(tableUngVien.getValueAt(row, 0).toString());
+				new TaoSuaHoSoDialog(parent, rootPaneCheckingEnabled, uv, userName).setVisible(true);
 			}
 
 			@Override
@@ -286,12 +308,74 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 		return this.ungvienPanel;
 	}
 	
+//	Lấy dữ liệu từ sql
+	public void loadData() {
+		ungvienDAO.setListUngVien(ungvienDAO.getDSUngVien());
+	}
+	
+//	Load dữ liệu lên bảng
+	public void loadDataTable() {
+		modelTableUngVien.setRowCount(0);
+		for(UngVien i: ungvienDAO.getListUngVien()) {
+			Object[] obj=new Object[] {
+					i.getMaUV(), i.getTenUV(), i.getSoDienThoai(), i.getEmail(),
+					null, null
+			};
+			modelTableUngVien.addRow(obj);
+		}
+
+	}
+	
+//	Load lại dữ liệu bảng khi cập nhật ứng viên
+	public void updateTable() {
+		loadData();
+		loadDataTable();
+	}
+	
+//	option tìm kiếm
+//	1: tìm kiếm ứng viên theo tên
+//	2: tìm kiếm ứng viên theo số điện thoại
+//	3: tìm kiếm ứng viên theo tên và số điện thoại
+//	Tìm kiếm nhân viên
+	public void timkiem() {
+		if(!timkiemTenText.getText().equals("Nhập dữ liệu") && timkiemSDTText.getText().equals("Nhập dữ liệu")) {
+			ungvienDAO.getListUngVien().clear();
+			String key=timkiemTenText.getText().trim();
+			ungvienDAO.setListUngVien(ungvienDAO.getUngVienBy(key,1));
+			loadDataTable();
+			JOptionPane.showMessageDialog(rootPane, "Tìm thấy "+ungvienDAO.getListUngVien().size()+" ứng viên");
+		}
+		else if(timkiemTenText.getText().equals("Nhập dữ liệu")
+				&& !timkiemSDTText.getText().equals("Nhập dữ liệu")) {
+			ungvienDAO.getListUngVien().clear();
+			String key=timkiemSDTText.getText().trim();
+			ungvienDAO.setListUngVien(ungvienDAO.getUngVienBy(key,2));
+			loadDataTable();
+			JOptionPane.showMessageDialog(rootPane, "Tìm thấy "+ungvienDAO.getListUngVien().size()+" ứng viên");
+		}
+		else if(!timkiemTenText.getText().equals("Nhập dữ liệu")
+				&& !timkiemSDTText.getText().equals("Nhập dữ liệu")) {
+			ungvienDAO.getListUngVien().clear();
+			String key=timkiemTenText.getText().trim()+"/"+timkiemSDTText.getText().trim();
+			ungvienDAO.setListUngVien(ungvienDAO.getUngVienBy(key,3));
+			loadDataTable();
+			JOptionPane.showMessageDialog(rootPane, "Tìm thấy "+ungvienDAO.getListUngVien().size()+" ứng viên");
+		}
+		else {
+			JOptionPane.showMessageDialog(rootPane, "Nhập tên hoặc số điện thoại ứng viên để tìm kiếm");
+		}
+
+		addPlaceHolder(timkiemTenText);
+		addPlaceHolder(timkiemSDTText);
+	}
+	
 //	Trạng thái text chuột không nằm trong ô
 	public void addPlaceHolder(JTextField text) {
 		Font font=text.getFont();
 		font=font.deriveFont(Font.ITALIC);
 		text.setFont(font);
 		text.setForeground(Color.WHITE);
+		text.setText("Nhập dữ liệu");
 	}
 	
 //	Xóa trạng thái text chuột không nằm trong ô
@@ -313,6 +397,9 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 	
 	public void addActionListener() {
 		btnThem.addActionListener(this);
+		btnTimKiem.addActionListener(this);
+		btnLamLai.addActionListener(this);
+		btnLuu.addActionListener(this);
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -321,6 +408,20 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 		
 		if(obj.equals(btnThem)) {
 			new ThemSuaUngVienDialog(this, rootPaneCheckingEnabled).setVisible(true);
+		}
+		else if(obj.equals(btnTimKiem)) {
+			timkiem();
+		}
+		else if(obj.equals(btnLamLai)) {
+			addPlaceHolder(timkiemTenText);
+			addPlaceHolder(timkiemSDTText);
+			
+			loadData();
+			loadDataTable();
+		}
+		else if(obj.equals(btnLuu)) {
+			ExcelHelper excel=new ExcelHelper();
+			excel.exportData(this, tableUngVien, 2);
 		}
 	}
 	

@@ -64,6 +64,7 @@ import exception.checkUserPass;
 
 public class NhanVienFrame extends JFrame implements ActionListener, MouseListener, FocusListener {
 
+	NhanVien userName;
 	NhanVienFrame parent;
 	
 //	Component danh sách nhân viên
@@ -81,7 +82,8 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
 	
 	private NhanVien_DAO nhanvienDAO;
 	
-	public NhanVienFrame() {
+	public NhanVienFrame(NhanVien userName) {
+		this.userName=userName;
 		this.parent=this;
 		
 //		Tạo component bên phải

@@ -53,7 +53,6 @@ import dao.TaiKhoan_DAO;
 import dao.NhanVien_DAO;
 import entity.TaiKhoan;
 import entity.constraint.TrangThai;
-import entity.Customer;
 import entity.NhanVien;
 import exception.checkBirthday;
 import exception.checkDateOfWork;

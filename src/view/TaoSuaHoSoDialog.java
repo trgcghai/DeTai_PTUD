@@ -11,6 +11,9 @@ import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.Properties;
 
@@ -19,6 +22,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -30,10 +34,14 @@ import org.jdatepicker.impl.UtilDateModel;
 
 import component.GradientPanel;
 import controller.LabelDateFormatter;
+import dao.HoSo_DAO;
+import entity.HoSo;
+import entity.NhanVien;
+import entity.UngVien;
 import entity.constraint.GioiTinh;
 import entity.constraint.TrangThai;
 
-public class TaoSuaHoSoDialog extends JDialog{
+public class TaoSuaHoSoDialog extends JDialog implements ActionListener{
 	
 	GradientPanel inforUngVienPanel, btnPanel;
 	JLabel idLabel, tenLabel, sdtLabel, dateLabel, gioitinhLabel, diachiLabel,emailLabel,trangthaiLabel, motaLabel,
@@ -48,7 +56,13 @@ public class TaoSuaHoSoDialog extends JDialog{
 	JButton btnThem, btnHuy;
 	GridBagConstraints gbc;
 	
-	public TaoSuaHoSoDialog(Frame parent, boolean modal) {
+	private int idMax;
+	private Frame parent;
+	private NhanVien nv;
+	private UngVien uv;
+	private HoSo_DAO hosoDAO;
+	
+	public TaoSuaHoSoDialog(Frame parent, boolean modal, UngVien uv, NhanVien user) {
 		super(parent, modal);
 		setTitle("Tạo hồ sơ");
 		setResizable(false);
@@ -57,11 +71,28 @@ public class TaoSuaHoSoDialog extends JDialog{
 		setLayout(new BorderLayout());
 		setLocationRelativeTo(null);
 		
+		this.parent=parent;
+		this.nv=user;
+		this.uv=uv;
+		hosoDAO=new HoSo_DAO();
+		
+		for(HoSo hs: hosoDAO.getDSHoSo()) {
+			int numberID=Integer.parseInt(hs.getMaHS().substring(2, hs.getMaHS().length()));
+			if(numberID > idMax) {
+				idMax=numberID;
+			}
+		}
+		
 		initComponent();
+		addActionListener();
+		
+		idText.setText((idMax+1)<10?("HS0"+(idMax+1)):("HS"+(idMax+1)));
+		
+		loadDataUngVien();
 	}
 
-	public TaoSuaHoSoDialog(Frame parent, boolean modal, boolean check) {
-		this(parent, modal);
+	public TaoSuaHoSoDialog(Frame parent, boolean modal, UngVien uv, NhanVien user, boolean check) {
+		this(parent, modal, uv, user);
 		setTitle("Cập nhật hồ sơ");
 		
 		gbc.gridx=0; gbc.gridy=6; gbc.gridwidth=1;
@@ -146,6 +177,7 @@ public class TaoSuaHoSoDialog extends JDialog{
 		JDatePanelImpl panelDate=new JDatePanelImpl(modelDate, p);
 		dateText=new JDatePickerImpl(panelDate, new LabelDateFormatter());
 		dateText.setPreferredSize(new Dimension(150,25));
+		dateText.getComponent(1).setEnabled(false);
 		modelDate.setValue(new Date());
 		inforUngVienPanel.add(dateText, gbc);
 		
@@ -200,5 +232,71 @@ public class TaoSuaHoSoDialog extends JDialog{
 		btnPanel.add(btnThem); btnPanel.add(btnHuy);
 		
 		add(btnPanel, BorderLayout.SOUTH);
+	}
+
+	public void addActionListener() {
+		btnThem.addActionListener(this);
+		btnHuy.addActionListener(this);
+	}
+	
+	public void loadDataUngVien() {
+		tenText.setText(uv.getTenUV());
+		emailText.setText(uv.getEmail());
+		sdtText.setText(uv.getSoDienThoai());
+		diachiText.setText(uv.getDiaChi());
+		modelDate.setValue(Date.from(uv.getNgaySinh().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+		
+		for(int i=0;i< gioitinhText.getItemCount();i++) {
+			if(gioitinhText.getItemAt(i).toString().equals(uv.getGioiTinh().getValue())) {
+				gioitinhText.setSelectedIndex(i);
+				break;
+			}
+		}
+	}
+	
+	public void them() {
+		String id=idText.getText();
+		String mota=motaText.getText();
+		String trangthai=trangthaiText.getSelectedItem().toString();
+		
+		if(!mota.equals("")) {
+			TrangThai t=null;
+			for(TrangThai i: TrangThai.class.getEnumConstants()) {
+				if(i.getValue().equalsIgnoreCase(trangthai)) {
+					t=i;
+				}
+			}
+			
+			HoSo hoso=new HoSo(id, mota, t, uv, null, nv);
+			if(btnThem.getText().equals("Tạo mới")) {
+				hosoDAO.create(hoso);
+				JOptionPane.showMessageDialog(rootPane, "Tạo hồ sơ thành công");
+				((UngVienFrame)parent).updateTable();
+			}
+			else {
+				
+			}
+			this.dispose();
+		}
+		else {
+			JOptionPane.showMessageDialog(rootPane, "Nhập đủ thông tin hồ sơ");
+		}
+	}
+	
+	public void huy() {
+		trangthaiText.setSelectedIndex(0);
+		motaText.setText("");
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		var obj=e.getSource();
+		if(obj.equals(btnThem)) {
+			them();
+		}
+		else if(obj.equals(btnHuy)) {
+			huy();
+		}
 	}
 }
