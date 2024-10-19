@@ -1,4 +1,5 @@
-﻿use master
+﻿===================================================================================================================
+use master
 
 CREATE DATABASE DVTimViecLam;
 USE DVTimViecLam;
@@ -149,3 +150,24 @@ INSERT INTO HopDong (MaHD, PhiDichVu, ThoiGian, MaTTD, MaUV, MaNV)
 VALUES 
     ('HD01', 500.00, CONVERT(DATE, '05/01/2024', 103), 'TTD01', 'UV01', 'NV01'),
     ('HD02', 800.00, CONVERT(DATE, '06/01/2024', 103), 'TTD02', 'UV02', 'NV02');
+================================================================================================================================
+
+Select * from TaiKhoan where MaNV='NV01'
+
+Select * from NhanVien where TenNV LIKE N'%Đ%' AND SoDienThoai LIKE '%0%'
+
+Select * from 
+NhanVien n join TaiKhoan t on n.MaNV=t.MaNV 
+where MaTK= 'TK01'
+
+delete from TaiKhoan where MaTK='TK03'
+
+Select * from UngVien where TenUV LIKE N'%L%'
+
+Select * from HoSo
+
+delete from HoSo where MaHS='HS03'
+
+select * from NhaTuyenDung
+
+select * from TinTuyenDung where MaTTD = 'TTD01'

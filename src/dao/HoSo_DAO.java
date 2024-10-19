@@ -68,7 +68,7 @@ public class HoSo_DAO {
 		Connection con = Database.getConnection();
 		
 		try {
-			PreparedStatement stmt = con.prepareStatement("select * from HoSo where maHS = ?");
+			PreparedStatement stmt = con.prepareStatement("select * from HoSo where MaHS = ?");
 			stmt.setString(1, ma);
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
@@ -80,7 +80,7 @@ public class HoSo_DAO {
 						trangthai=t;
 					}
 				}
-				TinTuyenDung tinTuyenDung = new TinTuyenDung(rs.getString(4));
+				TinTuyenDung tinTuyenDung = rs.getString(4)!=null?new TinTuyenDung(rs.getString(4)):null;;
 				UngVien ungVien = new UngVien(rs.getString(5));
 				NhanVien nhanVien = new NhanVien(rs.getString(6));
 				
@@ -128,7 +128,7 @@ public class HoSo_DAO {
 		Connection con = Database.getConnection();
 		
 		try {
-			PreparedStatement stmt = con.prepareStatement("select * from HoSo where maUV = ?");
+			PreparedStatement stmt = con.prepareStatement("select * from HoSo where MaUV = ?");
 			stmt.setString(1, ma);
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
@@ -140,7 +140,7 @@ public class HoSo_DAO {
 						trangthai=t;
 					}
 				}
-				TinTuyenDung tinTuyenDung = new TinTuyenDung(rs.getString(4));
+				TinTuyenDung tinTuyenDung = rs.getString(4)!=null?new TinTuyenDung(rs.getString(4)):null;
 				UngVien ungVien = new UngVien(rs.getString(5));
 				NhanVien nhanVien = new NhanVien(rs.getString(6));
 				

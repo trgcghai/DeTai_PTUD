@@ -11,6 +11,9 @@ import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.Properties;
 
@@ -30,10 +33,16 @@ import org.jdatepicker.impl.UtilDateModel;
 
 import component.GradientPanel;
 import controller.LabelDateFormatter;
+import dao.NhaTuyenDung_DAO;
+import dao.TinTuyenDung_DAO;
+import entity.HoSo;
+import entity.NhaTuyenDung;
+import entity.TinTuyenDung;
+import entity.UngVien;
 import entity.constraint.GioiTinh;
 import entity.constraint.TrangThai;
 
-public class ChiTietHoSoDialog extends JDialog{
+public class ChiTietHoSoDialog extends JDialog implements ActionListener{
 	
 	GradientPanel inforUngVienPanel, btnPanel;
 	JLabel idLabel, tenLabel, sdtLabel, dateLabel, gioitinhLabel, diachiLabel,emailLabel,trangthaiLabel, motaLabel,
@@ -48,7 +57,12 @@ public class ChiTietHoSoDialog extends JDialog{
 	JButton btnThem, btnHuy;
 	GridBagConstraints gbc;
 	
-	public ChiTietHoSoDialog(Dialog parent, boolean modal) {
+	private HoSo hsDialog;
+	private UngVien uvDialog;
+	private TinTuyenDung_DAO tintuyendungDAO;
+	private NhaTuyenDung_DAO nhatuyendungDAO;
+	
+	public ChiTietHoSoDialog(Dialog parent, boolean modal, HoSo hs, UngVien uv) {
 		super(parent, modal);
 		setTitle("Xem chi tiết hồ sơ");
 		setResizable(false);
@@ -57,7 +71,16 @@ public class ChiTietHoSoDialog extends JDialog{
 		setLayout(new BorderLayout());
 		setLocationRelativeTo(null);
 		
+		this.hsDialog=hs;
+		this.uvDialog=uv;
+		
+		tintuyendungDAO=new TinTuyenDung_DAO();
+		nhatuyendungDAO=new NhaTuyenDung_DAO();
+		
 		initComponent();
+		addActionListener();
+		
+		loadDataHoSoUngVien();
 	}
 	
 	public ChiTietHoSoDialog(Frame parent, boolean modal) {
@@ -134,6 +157,7 @@ public class ChiTietHoSoDialog extends JDialog{
 		JDatePanelImpl panelDate=new JDatePanelImpl(modelDate, p);
 		dateText=new JDatePickerImpl(panelDate, new LabelDateFormatter());
 		dateText.setPreferredSize(new Dimension(150,25));
+		dateText.getComponent(1).setEnabled(false);
 		modelDate.setValue(new Date());
 		inforUngVienPanel.add(dateText, gbc);
 		
@@ -200,5 +224,49 @@ public class ChiTietHoSoDialog extends JDialog{
 		btnPanel.add(btnHuy);
 		
 		add(btnPanel, BorderLayout.SOUTH);
+	}
+	
+	public void loadDataHoSoUngVien() {
+		idText.setText(hsDialog.getMaHS());
+		for(int i=0;i< trangthaiText.getItemCount();i++) {
+			if(trangthaiText.getItemAt(i).toString().equalsIgnoreCase(hsDialog.getTrangThai().getValue())) {
+				trangthaiText.setSelectedIndex(i);
+				break;
+			}
+		}
+		tenText.setText(uvDialog.getTenUV());
+		emailText.setText(uvDialog.getEmail());
+		sdtText.setText(uvDialog.getSoDienThoai());
+		diachiText.setText(uvDialog.getDiaChi());
+		modelDate.setValue(Date.from(uvDialog.getNgaySinh().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+		for(int i=0;i<gioitinhText.getItemCount();i++) {
+			if(gioitinhText.getItemAt(i).toString().equalsIgnoreCase(uvDialog.getGioiTinh().getValue())) {
+				gioitinhText.setSelectedIndex(i);
+				break;
+			}
+		}
+		motaText.setText(hsDialog.getMoTa());
+		
+		TinTuyenDung ttd=null;
+		NhaTuyenDung ntd=null;
+		if(hsDialog.getTinTuyenDung()!=null) {
+			ttd=tintuyendungDAO.getTinTuyenDung(hsDialog.getTinTuyenDung().getMaTTD());
+			ntd=nhatuyendungDAO.getNhaTuyenDung(ttd.getNhaTuyenDung().getMaNTD());
+		}
+		tintuyendungText.setText(ttd!=null?ttd.getTieuDe():"");
+		nhatuyendungText.setText(ntd!=null?ntd.getTenNTD():"");
+		
+	}
+	
+	public void addActionListener() {
+		btnHuy.addActionListener(this);
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		if(e.getSource().equals(btnHuy)) {
+			this.dispose();
+		}
 	}
 }

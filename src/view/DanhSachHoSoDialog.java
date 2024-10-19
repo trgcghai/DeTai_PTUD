@@ -228,7 +228,8 @@ public class DanhSachHoSoDialog extends JDialog implements ActionListener{
 			@Override
 			public void onViewDetail(int row) {
 				// TODO Auto-generated method stub
-				new ChiTietHoSoDialog(son, rootPaneCheckingEnabled).setVisible(true);
+				HoSo hs=hosoDAO.getHoSo(tableHoSo.getValueAt(row, 0).toString());
+				new ChiTietHoSoDialog(son, rootPaneCheckingEnabled, hs, uv).setVisible(true);
 			}
 		};
 		
@@ -268,18 +269,60 @@ public class DanhSachHoSoDialog extends JDialog implements ActionListener{
 		}
 	}
 	
+	public void loadDataHoSo(ArrayList<String> maHoSo) {
+		modelTableHoSo.setRowCount(0);
+		for(String i: maHoSo){
+			HoSo hoso=hosoDAO.getHoSo(i);
+			NhaTuyenDung ntd=null;
+			TinTuyenDung ttd=null;
+			if(hoso.getTinTuyenDung()!=null) {
+				ttd=tintuyendungDAO.getTinTuyenDung(hoso.getTinTuyenDung().getMaTTD());
+				
+				ntd=nhatuyendungDAO.getNhaTuyenDung(ttd.getNhaTuyenDung().getMaNTD());
+			}
+			Object[] obj=new Object[] {
+					hoso.getMaHS(), hoso.getTrangThai().getValue(), 
+					ntd!=null?ntd.getTenNTD():"", 
+					ttd!=null?ttd.getTieuDe():"",
+					null
+			};
+			modelTableHoSo.addRow(obj);
+		}
+	}
+	
+	public void timkiemHoSo() {
+		String trangthai=timkiemTrangThaiText.getSelectedItem().toString();
+		String nhatuyendung=timkiemNTDText.getSelectedItem().toString();
+		
+		ArrayList<String> maHoSo=new ArrayList<String>();
+		
+		for(int i=0;i<tableHoSo.getRowCount();i++) {
+			if(tableHoSo.getValueAt(i, 1).toString().equalsIgnoreCase(trangthai)) {
+				if(tableHoSo.getValueAt(i, 2)!=null
+						&& tableHoSo.getValueAt(i, 2).toString().equalsIgnoreCase(nhatuyendung)) {
+					maHoSo.add(tableHoSo.getValueAt(i, 0).toString());
+				}
+			}
+		}
+		
+		loadDataHoSo(maHoSo);
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		var obj=e.getSource();
 		if(obj.equals(btnTimKiem)) {
-			
+			timkiemHoSo();
 		}
 		else if(obj.equals(btnLamLai)) {
+			timkiemTrangThaiText.setSelectedIndex(0);
+			timkiemNTDText.setSelectedIndex(0);
 			
+			loadDataHoSo();
 		}
 		else if(obj.equals(btnHuy)) {
-			
+			this.dispose();
 		}
 	}
 	
