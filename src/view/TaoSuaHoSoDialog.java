@@ -35,8 +35,12 @@ import org.jdatepicker.impl.UtilDateModel;
 import component.GradientPanel;
 import controller.LabelDateFormatter;
 import dao.HoSo_DAO;
+import dao.NhaTuyenDung_DAO;
+import dao.TinTuyenDung_DAO;
 import entity.HoSo;
+import entity.NhaTuyenDung;
 import entity.NhanVien;
+import entity.TinTuyenDung;
 import entity.UngVien;
 import entity.constraint.GioiTinh;
 import entity.constraint.TrangThai;
@@ -60,7 +64,10 @@ public class TaoSuaHoSoDialog extends JDialog implements ActionListener{
 	private Frame parent;
 	private NhanVien nv;
 	private UngVien uv;
+	private HoSo hoso;
 	private HoSo_DAO hosoDAO;
+	private TinTuyenDung_DAO tintuyendungDAO;
+	private NhaTuyenDung_DAO nhatuyendungDAO;
 	
 	public TaoSuaHoSoDialog(Frame parent, boolean modal, UngVien uv, NhanVien user) {
 		super(parent, modal);
@@ -91,9 +98,13 @@ public class TaoSuaHoSoDialog extends JDialog implements ActionListener{
 		loadDataUngVien();
 	}
 
-	public TaoSuaHoSoDialog(Frame parent, boolean modal, UngVien uv, NhanVien user, boolean check) {
+	public TaoSuaHoSoDialog(Frame parent, boolean modal, UngVien uv, NhanVien user, HoSo hoso) {
 		this(parent, modal, uv, user);
 		setTitle("Cập nhật hồ sơ");
+		
+		this.hoso=hoso;
+		tintuyendungDAO=new TinTuyenDung_DAO();
+		nhatuyendungDAO=new NhaTuyenDung_DAO();
 		
 		gbc.gridx=0; gbc.gridy=6; gbc.gridwidth=1;
 		nhatuyendungLabel=new JLabel("Nhà tuyển dụng"); nhatuyendungLabel.setFont(new Font("Segoe UI",0,16));
@@ -112,6 +123,8 @@ public class TaoSuaHoSoDialog extends JDialog implements ActionListener{
 		inforUngVienPanel.add(tintuyendungText,gbc);
 		
 		btnThem.setText("Cập nhật");
+		
+		loadDataHoSo();
 	}
 	
 	
@@ -254,6 +267,27 @@ public class TaoSuaHoSoDialog extends JDialog implements ActionListener{
 		}
 	}
 	
+	public void loadDataHoSo() {
+		idText.setText(hoso.getMaHS());
+		for(int i=0;i< trangthaiText.getItemCount();i++) {
+			if(trangthaiText.getItemAt(i).toString().equalsIgnoreCase(hoso.getTrangThai().getValue())) {
+				trangthaiText.setSelectedIndex(i);
+				break;
+			}
+		}
+		motaText.setText(hoso.getMoTa());
+		
+		TinTuyenDung ttd=null;
+		NhaTuyenDung ntd=null;
+		if(hoso.getTinTuyenDung()!=null) {
+			ttd=tintuyendungDAO.getTinTuyenDung(hoso.getTinTuyenDung().getMaTTD());
+			ntd=nhatuyendungDAO.getNhaTuyenDung(ttd.getNhaTuyenDung().getMaNTD());
+			motaText.setEditable(false);
+		}
+		tintuyendungText.setText(ttd!=null?ttd.getTieuDe():"");
+		nhatuyendungText.setText(ntd!=null?ntd.getTenNTD():"");
+	}
+	
 	public void them() {
 		String id=idText.getText();
 		String mota=motaText.getText();
@@ -267,16 +301,44 @@ public class TaoSuaHoSoDialog extends JDialog implements ActionListener{
 				}
 			}
 			
-			HoSo hoso=new HoSo(id, mota, t, uv, null, nv);
+			HoSo hs=new HoSo(id, mota, t, uv, null, nv);
 			if(btnThem.getText().equals("Tạo mới")) {
-				hosoDAO.create(hoso);
-				JOptionPane.showMessageDialog(rootPane, "Tạo hồ sơ thành công");
-				((UngVienFrame)parent).updateTable();
+				if(!trangthaiText.getSelectedItem().toString().equalsIgnoreCase("Chưa nộp")) {
+					JOptionPane.showMessageDialog(rootPane, "Trạng thái hồ sơ không hợp lệ");
+				}
+				else {
+					hosoDAO.create(hs);
+					JOptionPane.showMessageDialog(rootPane, "Tạo hồ sơ thành công");
+					((UngVienFrame)parent).updateTable();
+					this.dispose();					
+				}
 			}
 			else {
-				
+				if(hoso.getTinTuyenDung()!=null) {
+					if(trangthaiText.getSelectedItem().toString().equalsIgnoreCase("Chưa nộp")) {
+						JOptionPane.showMessageDialog(rootPane, "Trạng thái hồ sơ không hợp lệ");
+					}
+					else {
+						TinTuyenDung ttd=tintuyendungDAO.getTinTuyenDung(hoso.getTinTuyenDung().getMaTTD());
+						hs.setTinTuyenDung(ttd);
+						hosoDAO.update(hs);
+						JOptionPane.showMessageDialog(rootPane, "Cập nhật hồ sơ thành công");
+						((HoSoFrame)parent).updateTable();
+						this.dispose();
+					}
+				}
+				else {
+					if(!trangthaiText.getSelectedItem().toString().equalsIgnoreCase("Chưa nộp")) {
+						JOptionPane.showMessageDialog(rootPane, "Trạng thái hồ sơ không hợp lệ");
+					}
+					else {
+						hosoDAO.update(hs);
+						JOptionPane.showMessageDialog(rootPane, "Cập nhật hồ sơ thành công");
+						((HoSoFrame)parent).updateTable();
+						this.dispose();
+					}
+				}
 			}
-			this.dispose();
 		}
 		else {
 			JOptionPane.showMessageDialog(rootPane, "Nhập đủ thông tin hồ sơ");
@@ -285,7 +347,10 @@ public class TaoSuaHoSoDialog extends JDialog implements ActionListener{
 	
 	public void huy() {
 		trangthaiText.setSelectedIndex(0);
-		motaText.setText("");
+		
+		if(hoso.getTinTuyenDung()==null) {
+			motaText.setText("");			
+		}
 	}
 	
 	@Override

@@ -252,13 +252,26 @@ public class HoSoFrame extends JFrame implements ActionListener, MouseListener, 
 			@Override
 			public void onUpdate(int row) {
 				// TODO Auto-generated method stub
-				new TaoSuaHoSoDialog(parent, rootPaneCheckingEnabled, null, userName, true).setVisible(true);
+				UngVien uv=ungvienDAO.getUngVien(hosoDAO.getHoSo(tableHoSo.getValueAt(row, 0).toString()).getUngVien().getMaUV());
+				HoSo hoso=hosoDAO.getHoSo(tableHoSo.getValueAt(row, 0).toString());
+				new TaoSuaHoSoDialog(parent, rootPaneCheckingEnabled, uv, userName, hoso).setVisible(true);
 			}
 			
 			@Override
 			public void onDelete(int row) {
 				// TODO Auto-generated method stub
-				JOptionPane.showMessageDialog(rootPane, "Chức năng xóa hồ sơ đang hoàn thiện");
+				HoSo hoso=hosoDAO.getHoSo(tableHoSo.getValueAt(row, 0).toString());
+				if(hoso.getTinTuyenDung()!=null) {
+					JOptionPane.showMessageDialog(rootPane, "Hồ sơ không thể xóa vì đã ứng tuyển");
+				}
+				else {
+					int check=JOptionPane.showConfirmDialog(rootPane, "Có chắc chắn xóa?");
+					if(check==JOptionPane.OK_OPTION) {
+						hosoDAO.delete(hoso.getMaHS());
+						JOptionPane.showMessageDialog(rootPane, "Xóa hồ sơ thành công");
+						updateTable();
+					}
+				}
 			}
 
 			@Override
@@ -334,8 +347,27 @@ public class HoSoFrame extends JFrame implements ActionListener, MouseListener, 
 
 	}
 	
+	public void updateTable() {
+		loadData();
+		loadDataTable();
+	}
+	
+//	option tìm kiếm
+//	1: tìm kiếm hồ sơ theo trạng thái
+//	2: tìm kiếm hồ sơ theo trạng thái và tên ứng viên
 	public void timkiem() {
-		
+		if(timkiemTenText.getText().equals("Nhập dữ liệu")) {
+			String key=timkiemTrangThaiText.getSelectedItem().toString();
+			hosoDAO.getListHoSo().clear();
+			hosoDAO.setListHoSo(hosoDAO.getHoSoTheo(key,1));
+		}
+		else {
+			String key=timkiemTenText.getText()+"/"+timkiemTrangThaiText.getSelectedItem().toString();
+			hosoDAO.getListHoSo().clear();
+			hosoDAO.setListHoSo(hosoDAO.getHoSoTheo(key,2));
+		}
+		loadDataTable();
+		JOptionPane.showMessageDialog(rootPane, "Tìm thấy "+hosoDAO.getListHoSo().size()+" hồ sơ");
 	}
 	
 //	Trạng thái text chuột không nằm trong ô
@@ -365,6 +397,7 @@ public class HoSoFrame extends JFrame implements ActionListener, MouseListener, 
 	public void addActionListener() {
 		btnTimKiem.addActionListener(this);
 		btnLamLai.addActionListener(this);
+		btnLuu.addActionListener(this);
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -379,6 +412,10 @@ public class HoSoFrame extends JFrame implements ActionListener, MouseListener, 
 			
 			loadData();
 			loadDataTable();
+		}
+		else if(obj.equals(btnLuu)) {
+			ExcelHelper excel=new ExcelHelper();
+			excel.exportData(this, tableHoSo, 1);
 		}
 	}
 	

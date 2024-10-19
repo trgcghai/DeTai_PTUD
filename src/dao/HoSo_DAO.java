@@ -62,6 +62,49 @@ public class HoSo_DAO {
 		return list;
 	} 
 	
+	public ArrayList<HoSo> getHoSoTheo(String key, int option) {
+		ArrayList<HoSo> list = new ArrayList<HoSo>();
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			PreparedStatement stmt=null;
+			if(option==1) {
+				stmt = con.prepareStatement("Select * from HoSo where TrangThai LIKE ?");
+				stmt.setString(1, key);				
+			}
+			else if(option==2) {
+				String tenuv=key.split("/")[0];
+				String trangthais=key.split("/")[1];
+				stmt = con.prepareStatement("Select * \r\n"
+						+ "from HoSo h join UngVien u\r\n"
+						+ "on h.MaUV = u.MaUV\r\n"
+						+ "where TrangThai LIKE ? AND u.TenUV LIKE ?");
+				stmt.setString(1, trangthais);
+				stmt.setString(2, "%"+tenuv+"%");
+			}
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				String maHS = rs.getString(1);
+				String moTa = rs.getString(2);
+				TrangThai trangthai=null;
+				for(TrangThai t: TrangThai.class.getEnumConstants()) {
+					if(t.getValue().equalsIgnoreCase(rs.getString(3))) {
+						trangthai=t;
+					}
+				}
+				TinTuyenDung tinTuyenDung = rs.getString(4)!=null?new TinTuyenDung(rs.getString(4)):null;
+				UngVien ungVien = new UngVien(rs.getString(5));
+				NhanVien nhanVien = new NhanVien(rs.getString(6));
+				
+				list.add(new HoSo(maHS, moTa, trangthai, ungVien, tinTuyenDung, nhanVien));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+	
 	public HoSo getHoSo(String ma) {
 		ArrayList<HoSo> list = new ArrayList<HoSo>();
 		Database.getInstance();
@@ -170,24 +213,6 @@ public class HoSo_DAO {
 		return res;
 	}
 	
-	public String getTrangThai(String ma) {
-		String res = "";
-		Database.getInstance();
-		Connection con = Database.getConnection();
-		
-		try {
-			PreparedStatement stmt = con.prepareStatement("select TrangThai from HoSo where MaHS = ?");
-			stmt.setString(1, ma);
-			ResultSet rs = stmt.executeQuery();
-			while (rs.next()) {
-				res = rs.getNString(1);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return res;
-	}
-	
 	public boolean create(HoSo hs) {
 		int n = 0;
 		Database.getInstance();
@@ -214,7 +239,7 @@ public class HoSo_DAO {
 		Connection con = Database.getConnection();
 		
 		try {
-			PreparedStatement stmt = con.prepareStatement("update HoSo set TrangThai = ?, MoTa = ? where MaHS = ?");
+			PreparedStatement stmt = con.prepareStatement("update HoSo set MoTa = ?, TrangThai = ? where MaHS = ?");
 			stmt.setString(1, hs.getMoTa());
 			stmt.setString(2, hs.getTrangThai().getValue());
 			stmt.setString(3, hs.getMaHS());
