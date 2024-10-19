@@ -269,43 +269,41 @@ public class DanhSachHoSoDialog extends JDialog implements ActionListener{
 		}
 	}
 	
-	public void loadDataHoSo(ArrayList<String> maHoSo) {
-		modelTableHoSo.setRowCount(0);
-		for(String i: maHoSo){
-			HoSo hoso=hosoDAO.getHoSo(i);
-			NhaTuyenDung ntd=null;
-			TinTuyenDung ttd=null;
-			if(hoso.getTinTuyenDung()!=null) {
-				ttd=tintuyendungDAO.getTinTuyenDung(hoso.getTinTuyenDung().getMaTTD());
-				
-				ntd=nhatuyendungDAO.getNhaTuyenDung(ttd.getNhaTuyenDung().getMaNTD());
-			}
-			Object[] obj=new Object[] {
-					hoso.getMaHS(), hoso.getTrangThai().getValue(), 
-					ntd!=null?ntd.getTenNTD():"", 
-					ttd!=null?ttd.getTieuDe():"",
-					null
-			};
-			modelTableHoSo.addRow(obj);
-		}
-	}
-	
 	public void timkiemHoSo() {
+		modelTableHoSo.setRowCount(0);
 		String trangthai=timkiemTrangThaiText.getSelectedItem().toString();
 		String nhatuyendung=timkiemNTDText.getSelectedItem().toString();
 		
-		ArrayList<String> maHoSo=new ArrayList<String>();
-		
-		for(int i=0;i<tableHoSo.getRowCount();i++) {
-			if(tableHoSo.getValueAt(i, 1).toString().equalsIgnoreCase(trangthai)) {
-				if(tableHoSo.getValueAt(i, 2)!=null
-						&& tableHoSo.getValueAt(i, 2).toString().equalsIgnoreCase(nhatuyendung)) {
-					maHoSo.add(tableHoSo.getValueAt(i, 0).toString());
+		for(HoSo i: hosoDAO.getHoSoTheoUngVien(uv.getMaUV())) {
+			NhaTuyenDung ntd=null;
+			TinTuyenDung ttd=null;
+			if(i.getTinTuyenDung()!=null) {
+				ttd=tintuyendungDAO.getTinTuyenDung(i.getTinTuyenDung().getMaTTD());
+				
+				ntd=nhatuyendungDAO.getNhaTuyenDung(ttd.getNhaTuyenDung().getMaNTD());
+			}
+			
+			if(i.getTrangThai().getValue().equalsIgnoreCase(trangthai) && ttd!=null) {
+				if(ntd.getTenNTD().equalsIgnoreCase(nhatuyendung)) {
+					Object[] obj=new Object[] {
+							i.getMaHS(), i.getTrangThai().getValue(), 
+							ntd!=null?ntd.getTenNTD():"", 
+							ttd!=null?ttd.getTieuDe():"",
+							null
+					};
+					modelTableHoSo.addRow(obj);
 				}
 			}
+			else if(i.getTrangThai().getValue().equalsIgnoreCase(trangthai) && ttd==null) {
+				Object[] obj=new Object[] {
+						i.getMaHS(), i.getTrangThai().getValue(), 
+						ntd!=null?ntd.getTenNTD():"", 
+						ttd!=null?ttd.getTieuDe():"",
+						null
+				};
+				modelTableHoSo.addRow(obj);
+			}
 		}
-		
-		loadDataHoSo(maHoSo);
 	}
 	
 	@Override

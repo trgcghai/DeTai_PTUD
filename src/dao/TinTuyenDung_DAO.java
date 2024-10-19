@@ -74,7 +74,7 @@ public class TinTuyenDung_DAO {
 		Connection con = Database.getConnection();
 		
 		try {
-			PreparedStatement stmt = con.prepareStatement("select * from TinTuyenDung where maTTD = ?");
+			PreparedStatement stmt = con.prepareStatement("select * from TinTuyenDung where MaTTD = ?");
 			stmt.setString(1, ma);
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {

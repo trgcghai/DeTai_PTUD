@@ -50,9 +50,17 @@ import controller.actiontable.TableCellEditorViewCreateHoSo;
 import controller.actiontable.TableCellRendererUpdateDelete;
 import controller.actiontable.TableCellRendererViewCreateHoSo;
 import dao.TaiKhoan_DAO;
+import dao.TinTuyenDung_DAO;
+import dao.UngVien_DAO;
+import dao.HoSo_DAO;
+import dao.NhaTuyenDung_DAO;
 import dao.NhanVien_DAO;
 import entity.TaiKhoan;
+import entity.TinTuyenDung;
+import entity.UngVien;
 import entity.constraint.TrangThai;
+import entity.HoSo;
+import entity.NhaTuyenDung;
 import entity.NhanVien;
 import exception.checkBirthday;
 import exception.checkDateOfWork;
@@ -63,7 +71,7 @@ import exception.checkUserPass;
 
 public class HoSoFrame extends JFrame implements ActionListener, MouseListener, FocusListener {
 	
-	String userName;
+	NhanVien userName;
 	HoSoFrame parent;
 	
 //	Component danh sách hồ sơ
@@ -81,8 +89,12 @@ public class HoSoFrame extends JFrame implements ActionListener, MouseListener, 
 	GradientRoundPanel timkiemPanel,
 	danhsachPanel, danhsachNorthPanel, danhsachCenterPanel;
 	
+	private HoSo_DAO hosoDAO;
+	private UngVien_DAO ungvienDAO;
+	private TinTuyenDung_DAO tintuyendungDAO;
+	private NhaTuyenDung_DAO nhatuyendungDAO;
 	
-	public HoSoFrame(String userName) {
+	public HoSoFrame(NhanVien userName) {
 		this.userName=userName;
 		this.parent=this;
 		
@@ -96,6 +108,16 @@ public class HoSoFrame extends JFrame implements ActionListener, MouseListener, 
 		addActionListener();
 		addMouseListener();
 		addFocusListener();
+		
+		Database.getInstance().connect();
+		
+		hosoDAO=new HoSo_DAO();
+		ungvienDAO=new UngVien_DAO();
+		tintuyendungDAO=new TinTuyenDung_DAO();
+		nhatuyendungDAO=new NhaTuyenDung_DAO();
+		
+		loadData();
+		loadDataTable();
 		
 	}
 	
@@ -230,7 +252,7 @@ public class HoSoFrame extends JFrame implements ActionListener, MouseListener, 
 			@Override
 			public void onUpdate(int row) {
 				// TODO Auto-generated method stub
-				new TaoSuaHoSoDialog(parent, rootPaneCheckingEnabled, true).setVisible(true);
+				new TaoSuaHoSoDialog(parent, rootPaneCheckingEnabled, null, userName, true).setVisible(true);
 			}
 			
 			@Override
@@ -284,12 +306,45 @@ public class HoSoFrame extends JFrame implements ActionListener, MouseListener, 
 		return this.hosoPanel;
 	}
 	
+//	Lấy dữ liệu từ sql
+	public void loadData() {
+		hosoDAO.setListHoSo(hosoDAO.getDSHoSo());
+	}
+	
+//	Load dữ liệu lên bảng
+	public void loadDataTable() {
+		modelTableHoSo.setRowCount(0);
+		for(HoSo i: hosoDAO.getListHoSo()) {
+			UngVien uv=ungvienDAO.getUngVien(i.getUngVien().getMaUV());
+			NhaTuyenDung ntd=null;
+			TinTuyenDung ttd=null;
+			if(i.getTinTuyenDung()!=null) {
+				ttd=tintuyendungDAO.getTinTuyenDung(i.getTinTuyenDung().getMaTTD());
+				
+				ntd=nhatuyendungDAO.getNhaTuyenDung(ttd.getNhaTuyenDung().getMaNTD());
+			}
+			Object[] obj=new Object[] {
+					i.getMaHS(), i.getTrangThai().getValue(), uv.getTenUV(), 
+					ntd!=null?ntd.getTenNTD():"",
+					ttd!=null?ttd.getTieuDe():"",
+					null
+			};
+			modelTableHoSo.addRow(obj);
+		}
+
+	}
+	
+	public void timkiem() {
+		
+	}
+	
 //	Trạng thái text chuột không nằm trong ô
 	public void addPlaceHolder(JTextField text) {
 		Font font=text.getFont();
 		font=font.deriveFont(Font.ITALIC);
 		text.setFont(font);
 		text.setForeground(Color.WHITE);
+		text.setText("Nhập dữ liệu");
 	}
 	
 //	Xóa trạng thái text chuột không nằm trong ô
@@ -308,12 +363,23 @@ public class HoSoFrame extends JFrame implements ActionListener, MouseListener, 
 	}
 	
 	public void addActionListener() {
+		btnTimKiem.addActionListener(this);
+		btnLamLai.addActionListener(this);
 	}
 
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		var obj=e.getSource();
-		
+		if(obj.equals(btnTimKiem)) {
+			timkiem();
+		}
+		else if(obj.equals(btnLamLai)) {
+			addPlaceHolder(timkiemTenText);
+			timkiemTrangThaiText.setSelectedIndex(0);
+			
+			loadData();
+			loadDataTable();
+		}
 	}
 	
 	public void addMouseListener() {

@@ -168,7 +168,7 @@ public class MainFrame extends JFrame implements MouseListener{
 			}
 			else if(((JMenu)obj).getText().equals("Hồ sơ")) {
 				centerPanel.removeAll();
-				centerPanel.add(new HoSoFrame("MinhDat").getPanel());
+				centerPanel.add(new HoSoFrame(userName).getPanel());
 				
 				this.setTitle("Hồ sơ");
 			}

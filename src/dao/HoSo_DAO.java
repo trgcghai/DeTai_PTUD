@@ -50,7 +50,7 @@ public class HoSo_DAO {
 						trangthai=t;
 					}
 				}
-				TinTuyenDung tinTuyenDung = new TinTuyenDung(rs.getString(4));
+				TinTuyenDung tinTuyenDung = rs.getString(4)!=null?new TinTuyenDung(rs.getString(4)):null;
 				UngVien ungVien = new UngVien(rs.getString(5));
 				NhanVien nhanVien = new NhanVien(rs.getString(6));
 				
@@ -80,7 +80,7 @@ public class HoSo_DAO {
 						trangthai=t;
 					}
 				}
-				TinTuyenDung tinTuyenDung = rs.getString(4)!=null?new TinTuyenDung(rs.getString(4)):null;;
+				TinTuyenDung tinTuyenDung = rs.getString(4)!=null?new TinTuyenDung(rs.getString(4)):null;
 				UngVien ungVien = new UngVien(rs.getString(5));
 				NhanVien nhanVien = new NhanVien(rs.getString(6));
 				
