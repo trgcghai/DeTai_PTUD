@@ -5,10 +5,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import controller.Database;
 import entity.NhanVien;
+import entity.UngVien;
+import entity.constraint.GioiTinh;
 import entity.NhaTuyenDung;
 
 public class NhaTuyenDung_DAO {
@@ -75,6 +78,45 @@ public class NhaTuyenDung_DAO {
 			e.printStackTrace();
 		}
 		return list.get(0);
+	}
+	
+	public ArrayList<NhaTuyenDung> getNhaTuyenDungBy(String key, int option) {
+		ArrayList<NhaTuyenDung> list = new ArrayList<NhaTuyenDung>();
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			PreparedStatement stmt =null;
+			if(option==1) {
+				stmt = con.prepareStatement("Select * from NhaTuyenDung where TenNTD LIKE ?");
+				stmt.setString(1, "%"+key+"%");
+			}
+			else if(option==2) {
+				stmt = con.prepareStatement("Select * from NhaTuyenDung where SoDienThoai LIKE ?");
+				stmt.setString(1, "%"+key+"%");
+			}
+			else if(option==3) {
+				String tenNTD=key.split("/")[0];
+				String sdt=key.split("/")[1];
+				
+				stmt = con.prepareStatement("Select * from NhaTuyenDung where TenNTD LIKE ? AND SoDienThoai LIKE ?");
+				stmt.setString(1, "%"+tenNTD+"%");
+				stmt.setString(2, "%"+sdt+"%");
+			}
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				String maNTD = rs.getString(1);
+				String tenNTD = rs.getString(2);
+				String email = rs.getString(3);
+				String logo=rs.getString(4);
+				String diaChi = rs.getString(5);
+				String soDienThoai = rs.getString(6);
+				list.add(new NhaTuyenDung(maNTD, tenNTD, email, logo, soDienThoai, diaChi));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
 	}
 	
 	public boolean create(NhaTuyenDung ntd) {

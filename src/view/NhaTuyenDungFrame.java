@@ -52,8 +52,11 @@ import controller.actiontable.TableCellRendererUpdateDelete;
 import controller.actiontable.TableCellRendererViewCreateHoSo;
 import controller.actiontable.TableCellRendererViewCreateTinTuyenDung;
 import dao.TaiKhoan_DAO;
+import dao.NhaTuyenDung_DAO;
 import dao.NhanVien_DAO;
 import entity.TaiKhoan;
+import entity.UngVien;
+import entity.NhaTuyenDung;
 import entity.NhanVien;
 import exception.checkBirthday;
 import exception.checkDateOfWork;
@@ -81,6 +84,7 @@ public class NhaTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 	GradientRoundPanel timkiemPanel,
 	danhsachPanel, danhsachNorthPanel, danhsachCenterPanel;
 	
+	private NhaTuyenDung_DAO nhatuyendungDAO;
 	
 	public NhaTuyenDungFrame(String userName) {
 		this.userName=userName;
@@ -96,6 +100,13 @@ public class NhaTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 		addActionListener();
 		addMouseListener();
 		addFocusListener();	
+		
+		Database.getInstance().connect();
+		
+		nhatuyendungDAO=new NhaTuyenDung_DAO();
+		
+		loadData();
+		loadDataTable();
 	}
 	
 	public void initComponent() {
@@ -169,6 +180,7 @@ public class NhaTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 		btnLuu.setForeground(Color.WHITE);
 		resBtnThem.add(btnThem); resBtnThem.add(btnLuu);
 		titleNhaTuyenDung=new JLabel("Danh sách nhà tuyển dụng");
+		titleNhaTuyenDung.setForeground(Color.WHITE);
 		titleNhaTuyenDung.setFont(new Font("Segoe UI",1,16));
 		titleNhaTuyenDung.setBorder(BorderFactory.createEmptyBorder(10,20,0,10));
 		danhsachNorthPanel.add(titleNhaTuyenDung, BorderLayout.WEST);
@@ -288,12 +300,74 @@ public class NhaTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 		return this.nhatuyendungPanel;
 	}
 	
+//	Lấy dữ liệu từ sql
+	public void loadData() {
+		nhatuyendungDAO.setListNhatuyenDung(nhatuyendungDAO.getDsNhaTuyenDung());
+	}
+	
+//	Load dữ liệu lên bảng
+	public void loadDataTable() {
+		modelTableNhaTuyenDung.setRowCount(0);
+		for(NhaTuyenDung i: nhatuyendungDAO.getListNhatuyenDung()) {
+			Object[] obj=new Object[] {
+					i.getMaNTD(), i.getTenNTD(), i.getDiaChi(), 
+					i.getEmail(), i.getSoDienThoai(),
+					null, null
+			};
+			modelTableNhaTuyenDung.addRow(obj);
+		}
+
+	}
+	
+//	option tìm kiếm
+//	1: tìm kiếm nhà tuyển dụng theo tên
+//	2: tìm kiếm nhà tuyển dụng theo số điện thoại
+//	3: tìm kiếm nhà tuyển dụng theo tên và số điện thoại
+	public void timkiem() {
+		if(!timkiemTenText.getText().equals("Nhập dữ liệu") && timkiemSDTText.getText().equals("Nhập dữ liệu")) {
+			nhatuyendungDAO.getListNhatuyenDung().clear();
+			String key=timkiemTenText.getText().trim();
+			nhatuyendungDAO.setListNhatuyenDung(nhatuyendungDAO.getNhaTuyenDungBy(key,1));
+			loadDataTable();
+			JOptionPane.showMessageDialog(rootPane, "Tìm thấy "+nhatuyendungDAO.getListNhatuyenDung().size()+" nhà tuyển dụng");
+		}
+		else if(timkiemTenText.getText().equals("Nhập dữ liệu")
+				&& !timkiemSDTText.getText().equals("Nhập dữ liệu")) {
+			nhatuyendungDAO.getListNhatuyenDung().clear();
+			String key=timkiemSDTText.getText().trim();
+			nhatuyendungDAO.setListNhatuyenDung(nhatuyendungDAO.getNhaTuyenDungBy(key,2));
+			loadDataTable();
+			JOptionPane.showMessageDialog(rootPane, "Tìm thấy "+nhatuyendungDAO.getListNhatuyenDung().size()+" nhà tuyển dụng");
+		}
+		else if(!timkiemTenText.getText().equals("Nhập dữ liệu")
+				&& !timkiemSDTText.getText().equals("Nhập dữ liệu")) {
+			nhatuyendungDAO.getListNhatuyenDung().clear();
+			String key=timkiemTenText.getText().trim()+"/"+timkiemSDTText.getText().trim();
+			nhatuyendungDAO.setListNhatuyenDung(nhatuyendungDAO.getNhaTuyenDungBy(key,3));
+			loadDataTable();
+			JOptionPane.showMessageDialog(rootPane, "Tìm thấy "+nhatuyendungDAO.getListNhatuyenDung().size()+" nhà tuyển dụng");
+		}
+		else {
+			JOptionPane.showMessageDialog(rootPane, "Nhập tên hoặc số điện thoại nhà tuyển dung để tìm kiếm");
+		}
+
+		addPlaceHolder(timkiemTenText);
+		addPlaceHolder(timkiemSDTText);
+	}
+	
+//	Load lại dữ liệu bảng khi cập nhật ứng viên
+	public void updateTable() {
+		loadData();
+		loadDataTable();
+	}
+	
 //	Trạng thái text chuột không nằm trong ô
 	public void addPlaceHolder(JTextField text) {
 		Font font=text.getFont();
 		font=font.deriveFont(Font.ITALIC);
 		text.setFont(font);
 		text.setForeground(Color.WHITE);
+		text.setText("Nhập dữ liệu");
 	}
 	
 //	Xóa trạng thái text chuột không nằm trong ô
@@ -314,7 +388,10 @@ public class NhaTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 	}
 	
 	public void addActionListener() {
+		btnTimKiem.addActionListener(this);
+		btnLamLai.addActionListener(this);
 		btnThem.addActionListener(this);
+		btnLuu.addActionListener(this);
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -323,6 +400,20 @@ public class NhaTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 		
 		if(obj.equals(btnThem)) {
 			new ThemSuaNhaTuyenDungDialog(this, rootPaneCheckingEnabled).setVisible(true);
+		}
+		else if(obj.equals(btnTimKiem)) {
+			timkiem();
+		}
+		else if(obj.equals(btnLamLai)) {
+			addPlaceHolder(timkiemTenText);
+			addPlaceHolder(timkiemSDTText);
+			
+			loadData();
+			loadDataTable();
+		}
+		else if(obj.equals(btnLuu)) {
+			ExcelHelper excel=new ExcelHelper();
+			excel.exportData(this, tableNhaTuyenDung, 2);
 		}
 	}
 	

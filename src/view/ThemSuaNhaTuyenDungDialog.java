@@ -8,15 +8,22 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Date;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
@@ -26,10 +33,15 @@ import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
 import component.GradientPanel;
+import controller.FilterImp;
 import controller.LabelDateFormatter;
+import dao.NhaTuyenDung_DAO;
+import entity.NhaTuyenDung;
 import entity.constraint.GioiTinh;
+import exception.checkPhone;
+import exception.checkUserEmail;
 
-public class ThemSuaNhaTuyenDungDialog extends JDialog {
+public class ThemSuaNhaTuyenDungDialog extends JDialog implements ActionListener{
 	
 	JPanel logoPanel;
 	GradientPanel inforNhaTuyenDungPanel, btnPanel;
@@ -39,6 +51,12 @@ public class ThemSuaNhaTuyenDungDialog extends JDialog {
 	UtilDateModel modelDate;
 	JDatePickerImpl dateText;
 	JButton btnThem, btnHuy, btnLogo;
+	JFileChooser fileChooser;
+	String logo;
+	
+	private Frame parent;
+	private int idMax=0;
+	private NhaTuyenDung_DAO nhatuyendungDAO;
 
 	public ThemSuaNhaTuyenDungDialog(Frame parent, boolean modal) {
 		super(parent, modal);
@@ -49,7 +67,20 @@ public class ThemSuaNhaTuyenDungDialog extends JDialog {
 		setLayout(new BorderLayout());
 		setLocationRelativeTo(null);
 		
+		this.parent=parent;
+		nhatuyendungDAO=new NhaTuyenDung_DAO();
+		for(NhaTuyenDung ntd: nhatuyendungDAO.getDsNhaTuyenDung()) {
+			int numberID=Integer.parseInt(ntd.getMaNTD().substring(3, ntd.getMaNTD().length()));
+			if(numberID > idMax) {
+				idMax=numberID;
+			}
+		}
+		
 		initComponent();
+		
+		addActionListener();
+		
+		idText.setText((idMax+1)<10?("NTD0"+(idMax+1)):("NTD"+(idMax+1)));
 	}
 	
 	public ThemSuaNhaTuyenDungDialog(Frame parent, boolean modal, boolean check) {
@@ -79,9 +110,9 @@ public class ThemSuaNhaTuyenDungDialog extends JDialog {
 		
 		gbc.gridx=1; gbc.gridy=0; gbc.gridheight=2;
 		logoPanel=new JPanel();
+		logoPanel.setLayout(new BorderLayout());
 		logoPanel.setOpaque(false);
-		logoPanel.setBorder(new TitledBorder(BorderFactory.createLineBorder(new Color(0,191,165)), "Logo",
-				TitledBorder.LEADING, TitledBorder.TOP, new Font("Segoe UI",0,15)));
+		logoPanel.setBorder(BorderFactory.createLineBorder(new Color(0,102,102)));
 		logoPanel.setPreferredSize(new Dimension(100, 100));
 		logoPanel.setBackground(Color.WHITE);
 		inforNhaTuyenDungPanel.add(logoPanel, gbc);
@@ -143,5 +174,108 @@ public class ThemSuaNhaTuyenDungDialog extends JDialog {
 		btnPanel.add(btnThem); btnPanel.add(btnHuy);
 		
 		add(btnPanel, BorderLayout.SOUTH);
+	}
+
+	public void openFile() {
+		fileChooser=new JFileChooser("D:\\DeadlineIUH\\BaitapPTUD\\Code\\DeTai_PTUD\\src\\image\\imageNTD");
+		int actionResult=fileChooser.showOpenDialog(this);
+		if(actionResult==fileChooser.APPROVE_OPTION) {
+			String path=fileChooser.getSelectedFile().getAbsolutePath();
+			var res=path.split("\\\\");
+			logo=res[res.length-1].split("\\.")[0];
+			String extension = res[res.length-1].split("\\.")[1];
+			Pattern pattern=Pattern.compile("(png|jpg|gif)$",Pattern.CASE_INSENSITIVE);
+			if(pattern.matcher(extension).matches()) {
+				if(logoPanel.getComponents()!=null) {
+					logoPanel.removeAll();
+					logoPanel.revalidate();
+					logoPanel.repaint();	
+				}
+				
+				ImageIcon imageIcon=new ImageIcon(path);
+				Image image=imageIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+				JLabel poster=new JLabel(); poster.setIcon(new ImageIcon(image));
+				logoPanel.add(poster, BorderLayout.CENTER);
+				logoPanel.revalidate();
+				logoPanel.repaint();			
+			}
+			else {
+				JOptionPane.showMessageDialog(rootPane, "Không phải file ảnh");
+			}
+		}
+	}
+
+	
+	public void them() {
+		String id=idText.getText();
+		String ten=tenText.getText();
+		String sdt=sdtText.getText();
+		String diachi=diachiText.getText();
+		String email=emailText.getText();
+		
+		if(!ten.equals("") && !sdt.equals("") && !diachi.equals("") && !email.equals("")) {
+			if(!logo.equals("")) {
+				var check=new FilterImp();
+				try {
+					if(check.checkPhone(sdt) && check.checkUserEmail(email)) {
+						NhaTuyenDung ntd=new NhaTuyenDung(id, ten, email, logo, sdt, diachi);
+						
+						if(btnThem.getText().equals("Thêm mới")) {
+							nhatuyendungDAO.create(ntd);
+							JOptionPane.showMessageDialog(rootPane, "Thêm nhà tuyển dụng thành công");
+						}
+						else {
+							
+						}
+						this.dispose();
+						((NhaTuyenDungFrame)parent).updateTable();
+					}
+				} catch (checkPhone | checkUserEmail e) {
+					// TODO Auto-generated catch block
+					JOptionPane.showMessageDialog(rootPane, e.getMessage());
+				}
+			}
+			else {
+				JOptionPane.showMessageDialog(rootPane, "Chọn logo nhà tuyển dụng");
+			}
+		}
+		else {
+			JOptionPane.showMessageDialog(rootPane, "Nhập đủ thông tin nhà tuyển dụng");
+		}
+	}
+	
+	public void huy() {
+		tenText.setText("");
+		sdtText.setText("");
+		diachiText.setText("");
+		emailText.setText("");
+		
+		logoPanel.removeAll();
+		logoPanel.revalidate();
+		logoPanel.repaint();
+		
+		logo="";
+
+	}
+	
+	public void addActionListener() {
+		btnThem.addActionListener(this);
+		btnHuy.addActionListener(this);
+		btnLogo.addActionListener(this);
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		var obj=e.getSource();
+		if(obj.equals(btnThem)) {
+			them();
+		}
+		else if(obj.equals(btnHuy)) {
+			huy();
+		}
+		else if(obj.equals(btnLogo)) {
+			openFile();
+		}
 	}
 }
