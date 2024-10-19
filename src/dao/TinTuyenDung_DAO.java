@@ -118,14 +118,35 @@ public class TinTuyenDung_DAO {
 		return list.get(0);
 	}
 	
-	public ArrayList<TinTuyenDung> getTinTuyenDungTheoNTD(String ma) {
+	public ArrayList<TinTuyenDung> getTinTuyenDungTheoNTD(String key, int option) {
 		ArrayList<TinTuyenDung> list = new ArrayList<TinTuyenDung>();
 		Database.getInstance();
 		Connection con = Database.getConnection();
 		
 		try {
-			PreparedStatement stmt = con.prepareStatement("select * from TinTuyenDung where maNTD = ?");
-			stmt.setString(1, ma);
+			PreparedStatement stmt=null;
+			if(option==1) {
+				stmt = con.prepareStatement("select * from TinTuyenDung where maNTD = ?");
+				stmt.setString(1, key);				
+			}
+			else if(option==2) {
+				String mantd=key.split("/")[0];
+				int trangthai=Integer.parseInt(key.split("/")[1]);
+				stmt = con.prepareStatement("select * from TinTuyenDung \r\n"
+						+ "where maNTD = ? AND TrangThai = ?");
+				stmt.setString(1, mantd);
+				stmt.setInt(2, trangthai);
+			}
+			else if(option==3) {
+				String mantd=key.split("/")[0];
+				int trangthai=Integer.parseInt(key.split("/")[1]);
+				String tieude=key.split("/")[2];
+				stmt = con.prepareStatement("select * from TinTuyenDung \r\n"
+						+ "where maNTD = ? AND TrangThai = ? AND TieuDe LIKE ?");
+				stmt.setString(1, mantd);
+				stmt.setInt(2, trangthai);
+				stmt.setString(3, "%"+tieude+"%");
+			}
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
 				String maTTD = rs.getString(1);

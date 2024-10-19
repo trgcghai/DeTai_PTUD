@@ -243,13 +243,19 @@ public class NhaTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 			@Override
 			public void onUpdate(int row) {
 				// TODO Auto-generated method stub
-				new ThemSuaNhaTuyenDungDialog(parent, rootPaneCheckingEnabled, true).setVisible(true);
+				NhaTuyenDung ntd= nhatuyendungDAO.getNhaTuyenDung(tableNhaTuyenDung.getValueAt(row, 0).toString());
+				new ThemSuaNhaTuyenDungDialog(parent, rootPaneCheckingEnabled, ntd).setVisible(true);
 			}
 			
 			@Override
 			public void onDelete(int row) {
 				// TODO Auto-generated method stub
-				JOptionPane.showMessageDialog(rootPane, "Chức năng xóa nhà tuyển dụng đang hoàn thiện");
+				int check=JOptionPane.showConfirmDialog(rootPane, "Có chắc chắn xóa?");
+				if(check==JOptionPane.OK_OPTION) {
+					nhatuyendungDAO.delete(tableNhaTuyenDung.getValueAt(row, 0).toString());
+					JOptionPane.showMessageDialog(rootPane, "Xóa nhà tuyển dụng thành công");
+					updateTable();
+				}
 			}
 
 			@Override
@@ -273,13 +279,15 @@ public class NhaTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 			@Override
 			public void onViewTinTuyenDung(int row) {
 				// TODO Auto-generated method stub
-				new DanhSachTinTuyenDungDialog(parent, rootPaneCheckingEnabled).setVisible(true);
+				NhaTuyenDung ntd= nhatuyendungDAO.getNhaTuyenDung(tableNhaTuyenDung.getValueAt(row, 0).toString());
+				new DanhSachTinTuyenDungDialog(parent, rootPaneCheckingEnabled, ntd).setVisible(true);
 			}
 
 			@Override
 			public void onCreateTinTuyenDung(int row) {
 				// TODO Auto-generated method stub
-				new TaoSuaTinTuyenDungDialog(parent, rootPaneCheckingEnabled).setVisible(true);
+				NhaTuyenDung ntd= nhatuyendungDAO.getNhaTuyenDung(tableNhaTuyenDung.getValueAt(row, 0).toString());
+				new TaoSuaTinTuyenDungDialog(parent, rootPaneCheckingEnabled, ntd).setVisible(true);
 			}
 
 			@Override

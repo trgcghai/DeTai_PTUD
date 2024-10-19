@@ -55,6 +55,7 @@ public class ThemSuaNhaTuyenDungDialog extends JDialog implements ActionListener
 	String logo;
 	
 	private Frame parent;
+	private NhaTuyenDung ntd;
 	private int idMax=0;
 	private NhaTuyenDung_DAO nhatuyendungDAO;
 
@@ -83,10 +84,13 @@ public class ThemSuaNhaTuyenDungDialog extends JDialog implements ActionListener
 		idText.setText((idMax+1)<10?("NTD0"+(idMax+1)):("NTD"+(idMax+1)));
 	}
 	
-	public ThemSuaNhaTuyenDungDialog(Frame parent, boolean modal, boolean check) {
+	public ThemSuaNhaTuyenDungDialog(Frame parent, boolean modal, NhaTuyenDung ntd) {
 		this(parent, modal);
+		this.ntd=ntd;
 		setTitle("Cập nhật nhà tuyển dụng");
 		btnThem.setText("Cập nhật");
+		
+		loadDataNhaTuyenDung();
 	}
 	
 	public void initComponent() {
@@ -182,8 +186,8 @@ public class ThemSuaNhaTuyenDungDialog extends JDialog implements ActionListener
 		if(actionResult==fileChooser.APPROVE_OPTION) {
 			String path=fileChooser.getSelectedFile().getAbsolutePath();
 			var res=path.split("\\\\");
-			logo=res[res.length-1].split("\\.")[0];
 			String extension = res[res.length-1].split("\\.")[1];
+			logo=res[res.length-1].split("\\.")[0]+"."+extension;
 			Pattern pattern=Pattern.compile("(png|jpg|gif)$",Pattern.CASE_INSENSITIVE);
 			if(pattern.matcher(extension).matches()) {
 				if(logoPanel.getComponents()!=null) {
@@ -194,8 +198,8 @@ public class ThemSuaNhaTuyenDungDialog extends JDialog implements ActionListener
 				
 				ImageIcon imageIcon=new ImageIcon(path);
 				Image image=imageIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-				JLabel poster=new JLabel(); poster.setIcon(new ImageIcon(image));
-				logoPanel.add(poster, BorderLayout.CENTER);
+				JLabel logo=new JLabel(); logo.setIcon(new ImageIcon(image));
+				logoPanel.add(logo, BorderLayout.CENTER);
 				logoPanel.revalidate();
 				logoPanel.repaint();			
 			}
@@ -205,6 +209,35 @@ public class ThemSuaNhaTuyenDungDialog extends JDialog implements ActionListener
 		}
 	}
 
+	public void loadDataNhaTuyenDung() {
+		idText.setText(ntd.getMaNTD());
+		tenText.setText(ntd.getTenNTD());
+		diachiText.setText(ntd.getDiaChi());
+		sdtText.setText(ntd.getSoDienThoai());
+		emailText.setText(ntd.getEmail());
+		logo=ntd.getLogo();
+		
+		if(getClass().getResource("/image/imageNTD/"+ntd.getLogo())!=null) {
+			if(logoPanel.getComponents()!=null) {
+				logoPanel.removeAll();
+				logoPanel.revalidate();
+				logoPanel.repaint();	
+			}
+			
+			ImageIcon imageIcon=new ImageIcon(getClass().getResource("/image/imageNTD/"+ntd.getLogo()));
+			Image image=imageIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+			JLabel logo=new JLabel(); logo.setIcon(new ImageIcon(image));
+			logoPanel.add(logo);
+			logoPanel.revalidate();
+			logoPanel.repaint();				
+		}
+		else {
+			logoPanel.removeAll();
+			logoPanel.revalidate();
+			logoPanel.repaint();	
+		}
+
+	}
 	
 	public void them() {
 		String id=idText.getText();
@@ -225,7 +258,8 @@ public class ThemSuaNhaTuyenDungDialog extends JDialog implements ActionListener
 							JOptionPane.showMessageDialog(rootPane, "Thêm nhà tuyển dụng thành công");
 						}
 						else {
-							
+							nhatuyendungDAO.update(ntd);
+							JOptionPane.showMessageDialog(rootPane, "Cập nhật nhà tuyển dụng thành công");
 						}
 						this.dispose();
 						((NhaTuyenDungFrame)parent).updateTable();

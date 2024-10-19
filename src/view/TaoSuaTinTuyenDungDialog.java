@@ -11,14 +11,18 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -30,14 +34,18 @@ import org.jdatepicker.impl.UtilDateModel;
 
 import component.ComboBoxRenderer;
 import component.GradientPanel;
+import controller.FilterImp;
 import controller.LabelDateFormatter;
+import dao.TinTuyenDung_DAO;
+import entity.NhaTuyenDung;
+import entity.TinTuyenDung;
 import entity.constraint.GioiTinh;
 import entity.constraint.HinhThucLamViec;
 import entity.constraint.NganhNghe;
 import entity.constraint.TrangThai;
 import entity.constraint.TrinhDo;
 
-public class TaoSuaTinTuyenDungDialog extends JDialog{
+public class TaoSuaTinTuyenDungDialog extends JDialog implements ActionListener{
 	
 	GradientPanel inforTinTuyenDungPanel, btnPanel;
 	JLabel idLabel, tenLabel, hinhthucLabel, startLabel, endLabel, trinhdoLabel, diachiLabel,tieudeLabel,trangthaiLabel, motaLabel,
@@ -52,7 +60,12 @@ public class TaoSuaTinTuyenDungDialog extends JDialog{
 	JButton btnThem, btnHuy;
 	GridBagConstraints gbc;
 	
-	public TaoSuaTinTuyenDungDialog(Frame parent, boolean modal) {
+	private Frame parent;
+	private NhaTuyenDung ntd;
+	private TinTuyenDung_DAO tintuyendungDAO;
+	private int idMax;
+	
+	public TaoSuaTinTuyenDungDialog(Frame parent, boolean modal, NhaTuyenDung ntd) {
 		super(parent, modal);
 		setTitle("Tạo tin tuyển dụng");
 		setResizable(false);
@@ -61,11 +74,27 @@ public class TaoSuaTinTuyenDungDialog extends JDialog{
 		setLayout(new BorderLayout());
 		setLocationRelativeTo(null);
 		
+		this.parent=parent;
+		this.ntd=ntd;
+		tintuyendungDAO=new TinTuyenDung_DAO();
+		for(TinTuyenDung ttd: tintuyendungDAO.getDsTinTuyenDung()) {
+			int numberID=Integer.parseInt(ttd.getMaTTD().substring(3, ttd.getMaTTD().length()));
+			if(numberID > idMax) {
+				idMax=numberID;
+			}
+		}
+		
 		initComponent();
+		
+		addActionListener();
+		
+		idText.setText((idMax+1)<10?("TTD0"+(idMax+1)):("TTD"+(idMax+1)));
+		
+		loadDataNhaTuyenDung();
 	}
 	
-	public TaoSuaTinTuyenDungDialog(Frame parent, boolean modal, boolean check) {
-		this(parent, modal);
+	public TaoSuaTinTuyenDungDialog(Frame parent, boolean modal, NhaTuyenDung ntd, boolean check) {
+		this(parent, modal, ntd);
 		setTitle("Cập nhật tin tuyển dụng");
 		
 		btnThem.setText("Cập nhật");
@@ -221,5 +250,112 @@ public class TaoSuaTinTuyenDungDialog extends JDialog{
 		btnPanel.add(btnThem); btnPanel.add(btnHuy);
 		
 		add(btnPanel, BorderLayout.SOUTH);
+	}
+
+	public void loadDataNhaTuyenDung() {
+		tenText.setText(ntd.getTenNTD());
+	}
+	
+	public void them() {
+		SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd");
+		
+		String id=idText.getText();
+		boolean trangthai=trangthaiText.getSelectedItem().toString().equalsIgnoreCase("Khả dụng")?true:false;
+		String tieude=tieudeText.getText();
+		HinhThucLamViec hinhthuc=null;
+		for(HinhThucLamViec h: HinhThucLamViec.class.getEnumConstants()) {
+			if(h.getValue().equalsIgnoreCase(hinhthucText.getSelectedItem().toString())) {
+				hinhthuc=h;
+				break;
+			}
+		}
+		TrinhDo trinhdo=null;
+		for(TrinhDo h: TrinhDo.class.getEnumConstants()) {
+			if(h.getValue().equalsIgnoreCase(trinhdoText.getSelectedItem().toString())) {
+				trinhdo=h;
+				break;
+			}
+		}
+		String soluong=soluongText.getText();
+		String luong=luongText.getText();
+		NganhNghe nganhnghe=null;
+		if(nganhngheBox.getSelectedIndex()!=-1) {
+			for(NganhNghe h: NganhNghe.class.getEnumConstants()) {
+				if(h.getValue().equalsIgnoreCase(nganhngheBox.getSelectedItem().toString())) {
+					nganhnghe=h;
+					break;
+				}
+			}
+		}
+		String ngaydangtin=format.format(modelDateStart.getValue());
+		String ngayhethan=format.format(modelDateEnd.getValue());
+		String mota=motaText.getText();
+		
+		if(!tieude.equals("") && !soluong.equals("") && !luong.equals("") && !mota.equals("")) {
+			if(Pattern.compile("^[0-9]+$").matcher(soluong).matches()
+				&& Pattern.compile("^[0-9]+$").matcher(luong).matches()) {
+				if(nganhngheBox.getSelectedIndex()!=-1) {
+					if(LocalDate.parse(ngaydangtin).compareTo(LocalDate.now())>=0) {
+						if(LocalDate.parse(ngayhethan).compareTo(LocalDate.now())>0
+								&& LocalDate.parse(ngayhethan).compareTo(LocalDate.parse(ngaydangtin))>0) {
+							
+							TinTuyenDung tintuyendung=new TinTuyenDung(id, tieude, mota,
+									LocalDate.parse(ngaydangtin), LocalDate.parse(ngayhethan), 
+									trinhdo, Integer.parseInt(soluong), Double.parseDouble(luong), 
+									nganhnghe, hinhthuc, trangthai, ntd);
+							tintuyendungDAO.create(tintuyendung);
+							JOptionPane.showMessageDialog(rootPane, "Thêm tin tuyển dụng thành công");
+							this.dispose();
+						}
+						else {
+							JOptionPane.showMessageDialog(rootPane, 
+									"Ngày hết hạn phải sau ngày hiện tại và ngày đăng tin");
+						}
+					}
+					else {
+						JOptionPane.showMessageDialog(rootPane, "Ngày đăng tin phải sau hoặc bằng ngày hiện tại");
+					}
+				}
+				else {
+					JOptionPane.showMessageDialog(rootPane, "Chọn ngành nghề cho tin tuyển dụng");
+				}
+			}
+			else {
+				JOptionPane.showMessageDialog(rootPane, "Số lượng và lương phải là số lớn hơn 0");
+			}
+		}
+		else {
+			JOptionPane.showMessageDialog(rootPane, "Nhập đủ thông tin tin tuyển dụng");
+		}
+	}
+	
+	public void huy() {
+		trangthaiText.setSelectedIndex(0);
+		tieudeText.setText("");
+		hinhthucText.setSelectedIndex(0);
+		trinhdoText.setSelectedIndex(0);
+		soluongText.setText("");
+		luongText.setText("");
+		nganhngheBox.setSelectedIndex(-1);
+		modelDateStart.setValue(new Date());
+		modelDateEnd.setValue(new Date());
+		motaText.setText("");
+	}
+	
+	public void addActionListener() {
+		btnThem.addActionListener(this);
+		btnHuy.addActionListener(this);
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		var obj=e.getSource();
+		if(obj.equals(btnThem)) {
+			them();
+		}
+		else if(obj.equals(btnHuy)) {
+			huy();
+		}
 	}
 }

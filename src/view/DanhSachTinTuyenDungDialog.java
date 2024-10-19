@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.ArrayList;
@@ -33,22 +35,29 @@ import controller.actiontable.TableCellEditorDetail;
 import controller.actiontable.TableCellEditorUpdateDelete;
 import controller.actiontable.TableCellRendererDetail;
 import controller.actiontable.TableCellRendererUpdateDelete;
+import dao.TinTuyenDung_DAO;
+import entity.NhaTuyenDung;
+import entity.TinTuyenDung;
 import entity.constraint.TrangThai;
 
-public class DanhSachTinTuyenDungDialog extends JDialog implements FocusListener {
+public class DanhSachTinTuyenDungDialog extends JDialog implements FocusListener, ActionListener {
 	
 	GradientPanel timkiemPanel, danhsachPanel, btnPanel;
 	JLabel timkiemTrangThaiLabel, timkiemTieudeLabel;
 	JTextField timkiemTieudeText;
 	JComboBox timkiemTrangThaiText;
 	JButton btnTimKiem, btnLamLai, btnHuy;
-	DefaultTableModel modelTableHoSo;
-	JTable tableHoSo;
-	JScrollPane scrollHoSo;
+	DefaultTableModel modelTableTinTuyenDung;
+	JTable tableTinTuyenDung;
+	JScrollPane scrollTinTuyenDung;
 	
 	DanhSachTinTuyenDungDialog son;
+	
+	private Frame parent;
+	private NhaTuyenDung ntd;
+	private TinTuyenDung_DAO tintuyendungDAO;
 
-	public DanhSachTinTuyenDungDialog(Frame parent, boolean modal) {
+	public DanhSachTinTuyenDungDialog(Frame parent, boolean modal, NhaTuyenDung ntd) {
 		super(parent, modal);
 		setTitle("Danh sách tin tuyển dụng");
 		setResizable(false);
@@ -58,12 +67,18 @@ public class DanhSachTinTuyenDungDialog extends JDialog implements FocusListener
 		setLocationRelativeTo(null);
 		
 		this.son=this;
+		this.parent=parent;
+		this.ntd=ntd;
+		tintuyendungDAO=new TinTuyenDung_DAO();
 		
 		initComponent();
 		
 		addFocusListener();
+		addActionListener();
 		
 		addTableActionEvent();
+		
+		loadDataTable();
 		
 	}
 	
@@ -119,7 +134,7 @@ public class DanhSachTinTuyenDungDialog extends JDialog implements FocusListener
 			    {1, "Manual Tester", "10000","Cao đẳng", "Khả dụng",null},
 			    {2, "Technical Project Manager", "15000","Đại học", "Không khả dụng",null}
 			};
-		modelTableHoSo= new DefaultTableModel(data, colName){
+		modelTableTinTuyenDung= new DefaultTableModel(data, colName){
 			boolean[] canEdit = new boolean [] {
 	                false, false, false, false, false, true
 	            };
@@ -129,30 +144,30 @@ public class DanhSachTinTuyenDungDialog extends JDialog implements FocusListener
                return canEdit[column];
             }
         };
-		tableHoSo=new JTable(modelTableHoSo);
-		tableHoSo.getTableHeader().setFont(new Font("Segoe UI",1,14));
-		tableHoSo.setFont(new Font("Segoe UI",0,16));
-		tableHoSo.setRowHeight(30);
+		tableTinTuyenDung=new JTable(modelTableTinTuyenDung);
+		tableTinTuyenDung.getTableHeader().setFont(new Font("Segoe UI",1,14));
+		tableTinTuyenDung.setFont(new Font("Segoe UI",0,16));
+		tableTinTuyenDung.setRowHeight(30);
 		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
 		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
-		for(int i=0;i<tableHoSo.getColumnCount()-1;i++) {
-			tableHoSo.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);			
+		for(int i=0;i<tableTinTuyenDung.getColumnCount()-1;i++) {
+			tableTinTuyenDung.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);			
 		}
-		tableHoSo.setAutoCreateRowSorter(true);
+		tableTinTuyenDung.setAutoCreateRowSorter(true);
 		ArrayList<RowSorter.SortKey> list = new ArrayList<>();
-        DefaultRowSorter sorter = ((DefaultRowSorter)tableHoSo.getRowSorter());
+        DefaultRowSorter sorter = ((DefaultRowSorter)tableTinTuyenDung.getRowSorter());
         sorter.setSortsOnUpdates(true);
         list.add( new RowSorter.SortKey(0, SortOrder.ASCENDING));
         sorter.setSortKeys(list);
         sorter.sort();
-		scrollHoSo=new JScrollPane(tableHoSo);
-		scrollHoSo.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
+		scrollTinTuyenDung=new JScrollPane(tableTinTuyenDung);
+		scrollTinTuyenDung.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
 		JPanel resScroll=new JPanel();
 		resScroll.setOpaque(false);
 		resScroll.setBorder(BorderFactory.createEmptyBorder(0,20,20,20));
 		resScroll.setLayout(new BoxLayout(resScroll, BoxLayout.PAGE_AXIS));
 		resScroll.setBackground(Color.WHITE);
-		resScroll.add(scrollHoSo);
+		resScroll.add(scrollTinTuyenDung);
 		danhsachPanel.add(resScroll);
 		
 //		Các nút chức năng
@@ -217,12 +232,57 @@ public class DanhSachTinTuyenDungDialog extends JDialog implements FocusListener
 			@Override
 			public void onViewDetail(int row) {
 				// TODO Auto-generated method stub
-				new ChiTietTinTuyenDungDialog(son, rootPaneCheckingEnabled).setVisible(true);
+				TinTuyenDung tintuyendung=tintuyendungDAO.getTinTuyenDung(tableTinTuyenDung.getValueAt(row, 0).toString());
+				new ChiTietTinTuyenDungDialog(son, rootPaneCheckingEnabled, tintuyendung, ntd).setVisible(true);
 			}
 		};
 		
-		tableHoSo.getColumnModel().getColumn(5).setCellRenderer(new TableCellRendererDetail());
-		tableHoSo.getColumnModel().getColumn(5).setCellEditor(new TableCellEditorDetail(event));
+		tableTinTuyenDung.getColumnModel().getColumn(5).setCellRenderer(new TableCellRendererDetail());
+		tableTinTuyenDung.getColumnModel().getColumn(5).setCellEditor(new TableCellEditorDetail(event));
+	}
+	
+//	getTinTuyenDungTheoNTD với option
+//	1: theo mã nhà tuyển dụng
+//	2: theo trạng thái tin tuyển dụng
+//	3: theo tiêu đề và trạng thái tin tuyển dụng
+	public void loadDataTable() {
+		modelTableTinTuyenDung.setRowCount(0);
+		for(TinTuyenDung i: tintuyendungDAO.getTinTuyenDungTheoNTD(ntd.getMaNTD(),1)) {
+			Object[] obj=new Object[] {
+					i.getMaTTD(), i.getTieuDe(), i.getLuong(), 
+					i.getTrinhDo().getValue(), i.isTrangThai()?"Khả dụng":"Không khả dụng",
+					null
+			};
+			modelTableTinTuyenDung.addRow(obj);
+		}
+	}
+	
+	public void timkiem() {
+		modelTableTinTuyenDung.setRowCount(0);
+		String tieude=timkiemTieudeText.getText();
+		boolean trangthai=timkiemTrangThaiText.getSelectedItem().toString().equalsIgnoreCase("Khả dụng")?true:false;
+		
+		if(tieude.equals("Nhập dữ liệu") || tieude.equals("")) {
+			for(TinTuyenDung i: tintuyendungDAO.getTinTuyenDungTheoNTD(ntd.getMaNTD()+"/"+String.valueOf(trangthai?1:0), 2)) {
+				Object[] obj=new Object[] {
+						i.getMaTTD(), i.getTieuDe(), i.getLuong(), 
+						i.getTrinhDo().getValue(), i.isTrangThai()?"Khả dụng":"Không khả dụng",
+						null
+				};
+				modelTableTinTuyenDung.addRow(obj);
+			}
+		}
+		else {
+			for(TinTuyenDung i: tintuyendungDAO.
+					getTinTuyenDungTheoNTD(ntd.getMaNTD()+"/"+String.valueOf(trangthai?1:0)+"/"+tieude, 3)) {
+				Object[] obj=new Object[] {
+						i.getMaTTD(), i.getTieuDe(), i.getLuong(), 
+						i.getTrinhDo().getValue(), i.isTrangThai()?"Khả dụng":"Không khả dụng",
+						null
+				};
+				modelTableTinTuyenDung.addRow(obj);
+			}
+		}
 	}
 	
 //	Trạng thái text chuột không nằm trong ô
@@ -231,6 +291,7 @@ public class DanhSachTinTuyenDungDialog extends JDialog implements FocusListener
 		font=font.deriveFont(Font.ITALIC);
 		text.setFont(font);
 		text.setForeground(Color.WHITE);
+		text.setText("Nhập dữ liệu");
 	}
 	
 //	Xóa trạng thái text chuột không nằm trong ô
@@ -239,6 +300,12 @@ public class DanhSachTinTuyenDungDialog extends JDialog implements FocusListener
 		font=font.deriveFont(Font.PLAIN);
 		text.setFont(font);
 		text.setForeground(Color.WHITE);
+	}
+	
+	public void addActionListener() {
+		btnTimKiem.addActionListener(this);
+		btnLamLai.addActionListener(this);
+		btnHuy.addActionListener(this);
 	}
 	
 	public void addFocusListener() {
@@ -270,6 +337,24 @@ public class DanhSachTinTuyenDungDialog extends JDialog implements FocusListener
 				addPlaceHolder(timkiemTieudeText);
 				timkiemTieudeText.setText("Nhập dữ liệu");
 			}
+		}
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		var obj=e.getSource();
+		if(obj.equals(btnTimKiem)) {
+			timkiem();
+		}
+		else if(obj.equals(btnLamLai)) {
+			addPlaceHolder(timkiemTieudeText);
+			timkiemTrangThaiText.setSelectedIndex(0);
+			
+			loadDataTable();
+		}
+		else if(obj.equals(btnHuy)) {
+			this.dispose();
 		}
 	}
 	
