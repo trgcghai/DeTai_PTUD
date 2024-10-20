@@ -120,4 +120,10 @@ public class UngVien {
 		super();
 		this.maUV = maUV;
 	}
+	
+	public UngVien(String maUV, String tenUV) {
+		super();
+		this.maUV = maUV;
+		this.tenUV=tenUV;
+	}
 }

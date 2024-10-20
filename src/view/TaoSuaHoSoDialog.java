@@ -13,9 +13,13 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -45,7 +49,7 @@ import entity.UngVien;
 import entity.constraint.GioiTinh;
 import entity.constraint.TrangThai;
 
-public class TaoSuaHoSoDialog extends JDialog implements ActionListener{
+public class TaoSuaHoSoDialog extends JDialog implements ActionListener, FocusListener{
 	
 	GradientPanel inforUngVienPanel, btnPanel;
 	JLabel idLabel, tenLabel, sdtLabel, dateLabel, gioitinhLabel, diachiLabel,emailLabel,trangthaiLabel, motaLabel,
@@ -60,6 +64,7 @@ public class TaoSuaHoSoDialog extends JDialog implements ActionListener{
 	JButton btnThem, btnHuy;
 	GridBagConstraints gbc;
 	
+	private String motaDefault="Hồ sơ phải có thông tin trình độ và ngành nghề của ứng viên";
 	private int idMax;
 	private Frame parent;
 	private NhanVien nv;
@@ -92,6 +97,7 @@ public class TaoSuaHoSoDialog extends JDialog implements ActionListener{
 		
 		initComponent();
 		addActionListener();
+		addFocusListener();
 		
 		idText.setText((idMax+1)<10?("HS0"+(idMax+1)):("HS"+(idMax+1)));
 		
@@ -123,6 +129,8 @@ public class TaoSuaHoSoDialog extends JDialog implements ActionListener{
 		inforUngVienPanel.add(tintuyendungText,gbc);
 		
 		btnThem.setText("Cập nhật");
+		
+		removePlaceHolder(motaText);
 		
 		loadDataHoSo();
 	}
@@ -221,6 +229,7 @@ public class TaoSuaHoSoDialog extends JDialog implements ActionListener{
 		motaText=new JTextArea(10, 48); motaText.setFont(new Font("Segoe UI",0,16));
 		motaText.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
 		motaText.setLineWrap(true);
+		motaText.setWrapStyleWord(true);
 		scrollMoTa=new JScrollPane(motaText);
 		inforUngVienPanel.add(scrollMoTa, gbc);
 		
@@ -288,54 +297,68 @@ public class TaoSuaHoSoDialog extends JDialog implements ActionListener{
 		nhatuyendungText.setText(ntd!=null?ntd.getTenNTD():"");
 	}
 	
+//	Lấy thông tin trình độ và chuyên ngành trong mô tả hồ sơ
+	public String extracInfor(String text, String key) {
+		Matcher matcher=Pattern.compile(key + ":\\s*(.*)", Pattern.MULTILINE).matcher(text);
+		if(matcher.find()) {
+			return matcher.group(1).trim();
+		}
+		return "";
+	}
+	
 	public void them() {
 		String id=idText.getText();
 		String mota=motaText.getText();
 		String trangthai=trangthaiText.getSelectedItem().toString();
 		
-		if(!mota.equals("")) {
-			TrangThai t=null;
-			for(TrangThai i: TrangThai.class.getEnumConstants()) {
-				if(i.getValue().equalsIgnoreCase(trangthai)) {
-					t=i;
-				}
-			}
-			
-			HoSo hs=new HoSo(id, mota, t, uv, null, nv);
-			if(btnThem.getText().equals("Tạo mới")) {
-				if(!trangthaiText.getSelectedItem().toString().equalsIgnoreCase("Chưa nộp")) {
-					JOptionPane.showMessageDialog(rootPane, "Trạng thái hồ sơ không hợp lệ");
-				}
-				else {
-					hosoDAO.create(hs);
-					JOptionPane.showMessageDialog(rootPane, "Tạo hồ sơ thành công");
-					((UngVienFrame)parent).updateTable();
-					this.dispose();					
-				}
+		if(!mota.equals(motaDefault)) {
+			if(extracInfor(mota, "Trình độ").equals("") || extracInfor(mota, "Chuyên ngành").equals("")) {
+				JOptionPane.showMessageDialog(rootPane, "Mô tả hồ sơ thiếu thông tin trình độ hoặc chuyên ngành");
 			}
 			else {
-				if(hoso.getTinTuyenDung()!=null) {
-					if(trangthaiText.getSelectedItem().toString().equalsIgnoreCase("Chưa nộp")) {
-						JOptionPane.showMessageDialog(rootPane, "Trạng thái hồ sơ không hợp lệ");
-					}
-					else {
-						TinTuyenDung ttd=tintuyendungDAO.getTinTuyenDung(hoso.getTinTuyenDung().getMaTTD());
-						hs.setTinTuyenDung(ttd);
-						hosoDAO.update(hs);
-						JOptionPane.showMessageDialog(rootPane, "Cập nhật hồ sơ thành công");
-						((HoSoFrame)parent).updateTable();
-						this.dispose();
+				TrangThai t=null;
+				for(TrangThai i: TrangThai.class.getEnumConstants()) {
+					if(i.getValue().equalsIgnoreCase(trangthai)) {
+						t=i;
 					}
 				}
-				else {
+				
+				HoSo hs=new HoSo(id, mota, t, uv, null, nv);
+				if(btnThem.getText().equals("Tạo mới")) {
 					if(!trangthaiText.getSelectedItem().toString().equalsIgnoreCase("Chưa nộp")) {
 						JOptionPane.showMessageDialog(rootPane, "Trạng thái hồ sơ không hợp lệ");
 					}
 					else {
-						hosoDAO.update(hs);
-						JOptionPane.showMessageDialog(rootPane, "Cập nhật hồ sơ thành công");
-						((HoSoFrame)parent).updateTable();
-						this.dispose();
+						hosoDAO.create(hs);
+						JOptionPane.showMessageDialog(rootPane, "Tạo hồ sơ thành công");
+						((UngVienFrame)parent).updateTable();
+						this.dispose();					
+					}
+				}
+				else {
+					if(hoso.getTinTuyenDung()!=null) {
+						if(trangthaiText.getSelectedItem().toString().equalsIgnoreCase("Chưa nộp")) {
+							JOptionPane.showMessageDialog(rootPane, "Trạng thái hồ sơ không hợp lệ");
+						}
+						else {
+							TinTuyenDung ttd=tintuyendungDAO.getTinTuyenDung(hoso.getTinTuyenDung().getMaTTD());
+							hs.setTinTuyenDung(ttd);
+							hosoDAO.update(hs);
+							JOptionPane.showMessageDialog(rootPane, "Cập nhật hồ sơ thành công");
+							((HoSoFrame)parent).updateTable();
+							this.dispose();
+						}
+					}
+					else {
+						if(!trangthaiText.getSelectedItem().toString().equalsIgnoreCase("Chưa nộp")) {
+							JOptionPane.showMessageDialog(rootPane, "Trạng thái hồ sơ không hợp lệ");
+						}
+						else {
+							hosoDAO.update(hs);
+							JOptionPane.showMessageDialog(rootPane, "Cập nhật hồ sơ thành công");
+							((HoSoFrame)parent).updateTable();
+							this.dispose();
+						}
 					}
 				}
 			}
@@ -353,6 +376,29 @@ public class TaoSuaHoSoDialog extends JDialog implements ActionListener{
 		}
 	}
 	
+//	Trạng thái text chuột không nằm trong ô
+	public void addPlaceHolder(JTextArea text) {
+		Font font=text.getFont();
+		font=font.deriveFont(Font.ITALIC);
+		text.setFont(font);
+		text.setForeground(Color.decode("#259195"));
+		text.setText(motaDefault);
+	}
+	
+//	Xóa trạng thái text chuột không nằm trong ô
+	public void removePlaceHolder(JTextArea text) {
+		Font font=text.getFont();
+		font=font.deriveFont(Font.PLAIN);
+		text.setFont(font);
+		text.setForeground(Color.decode("#259195"));
+	}
+	
+	public void addFocusListener() {
+		motaText.addFocusListener(this);
+		
+		addPlaceHolder(motaText);
+	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
@@ -362,6 +408,32 @@ public class TaoSuaHoSoDialog extends JDialog implements ActionListener{
 		}
 		else if(obj.equals(btnHuy)) {
 			huy();
+		}
+	}
+
+	@Override
+	public void focusGained(FocusEvent e) {
+		// TODO Auto-generated method stub
+		var obj=e.getSource();
+		if(obj.equals(motaText)) {
+			if(motaText.getText().equals(motaDefault)) {
+				motaText.setText(null);
+				motaText.requestFocus();
+				
+				removePlaceHolder(motaText);
+			}
+		}
+	}
+
+	@Override
+	public void focusLost(FocusEvent e) {
+		// TODO Auto-generated method stub
+		var obj=e.getSource();
+		if(obj.equals(motaText)) {
+			if(motaText.getText().length()==0) {
+				addPlaceHolder(motaText);
+				motaText.setText(motaDefault);
+			}
 		}
 	}
 }

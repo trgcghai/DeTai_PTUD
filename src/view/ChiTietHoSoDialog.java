@@ -35,6 +35,7 @@ import component.GradientPanel;
 import controller.LabelDateFormatter;
 import dao.NhaTuyenDung_DAO;
 import dao.TinTuyenDung_DAO;
+import dao.UngVien_DAO;
 import entity.HoSo;
 import entity.NhaTuyenDung;
 import entity.TinTuyenDung;
@@ -59,8 +60,10 @@ public class ChiTietHoSoDialog extends JDialog implements ActionListener{
 	
 	private HoSo hsDialog;
 	private UngVien uvDialog;
+	private HoSo hoso;
 	private TinTuyenDung_DAO tintuyendungDAO;
 	private NhaTuyenDung_DAO nhatuyendungDAO;
+	private UngVien_DAO ungvienDAO;
 	
 	public ChiTietHoSoDialog(Dialog parent, boolean modal, HoSo hs, UngVien uv) {
 		super(parent, modal);
@@ -83,7 +86,7 @@ public class ChiTietHoSoDialog extends JDialog implements ActionListener{
 		loadDataHoSoUngVien();
 	}
 	
-	public ChiTietHoSoDialog(Frame parent, boolean modal) {
+	public ChiTietHoSoDialog(Frame parent, boolean modal, HoSo hoso) {
 		super(parent, modal);
 		setTitle("Xem chi tiết hồ sơ");
 		setResizable(false);
@@ -92,7 +95,16 @@ public class ChiTietHoSoDialog extends JDialog implements ActionListener{
 		setLayout(new BorderLayout());
 		setLocationRelativeTo(null);
 		
+		this.hoso=hoso;
+		
+		tintuyendungDAO=new TinTuyenDung_DAO();
+		nhatuyendungDAO=new NhaTuyenDung_DAO();
+		ungvienDAO=new UngVien_DAO();
+		
 		initComponent();
+		addActionListener();
+		
+		loadData();
 	}
 	
 	public void initComponent() {
@@ -256,6 +268,40 @@ public class ChiTietHoSoDialog extends JDialog implements ActionListener{
 		tintuyendungText.setText(ttd!=null?ttd.getTieuDe():"");
 		nhatuyendungText.setText(ntd!=null?ntd.getTenNTD():"");
 		
+	}
+	
+	public void loadData() {
+		idText.setText(hoso.getMaHS());
+		for(int i=0;i< trangthaiText.getItemCount();i++) {
+			if(trangthaiText.getItemAt(i).toString().equalsIgnoreCase(hoso.getTrangThai().getValue())) {
+				trangthaiText.setSelectedIndex(i);
+				break;
+			}
+		}
+		
+		UngVien uv=ungvienDAO.getUngVien(hoso.getUngVien().getMaUV());
+		
+		tenText.setText(uv.getTenUV());
+		emailText.setText(uv.getEmail());
+		sdtText.setText(uv.getSoDienThoai());
+		diachiText.setText(uv.getDiaChi());
+		modelDate.setValue(Date.from(uv.getNgaySinh().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+		for(int i=0;i<gioitinhText.getItemCount();i++) {
+			if(gioitinhText.getItemAt(i).toString().equalsIgnoreCase(uv.getGioiTinh().getValue())) {
+				gioitinhText.setSelectedIndex(i);
+				break;
+			}
+		}
+		motaText.setText(hoso.getMoTa());
+		
+		TinTuyenDung ttd=null;
+		NhaTuyenDung ntd=null;
+		if(hoso.getTinTuyenDung()!=null) {
+			ttd=tintuyendungDAO.getTinTuyenDung(hoso.getTinTuyenDung().getMaTTD());
+			ntd=nhatuyendungDAO.getNhaTuyenDung(ttd.getNhaTuyenDung().getMaNTD());
+		}
+		tintuyendungText.setText(ttd!=null?ttd.getTieuDe():"");
+		nhatuyendungText.setText(ntd!=null?ntd.getTenNTD():"");
 	}
 	
 	public void addActionListener() {

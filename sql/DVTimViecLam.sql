@@ -143,8 +143,18 @@ VALUES
 
 INSERT INTO HoSo (MaHS, MoTa, TrangThai, MaTTD, MaUV, MaNV)
 VALUES 
-    ('HS01', N'Hồ sơ ứng viên Lê Huỳnh Công Tiếp cho vị trí lập trình viên backend', N'Chờ', 'TTD01', 'UV01', 'NV01'),
-    ('HS02', N'Hồ sơ ứng viên Lê Minh Tuấn cho vị trí lập trình viên mobile', N'Đã Duyệt', 'TTD02', 'UV02', 'NV02');
+    ('HS07', N'- Mục tiêu nghề nghiệp: Mong muốn trở thành chuyên gia trong lĩnh vực Công nghệ thông tin, đặc biệt trong mảng phát triển phần mềm. Định hướng làm việc trong môi trường chuyên nghiệp, có cơ hội học hỏi và thăng tiến.\n'
+    +N'- Trình độ: Đại học\n'
+    +N'- Chuyên ngành: Công nghệ thông tin\n'
+    +N'- Kinh nghiệm làm việc: Công ty ABC – Lập trình viên, Phát triển và bảo trì các hệ thống quản lý nội bộ bằng Java và Spring Framework.\n'
+    +N'- Kỹ năng chuyên môn:\n\tThành thạo các ngôn ngữ lập trình: Java, Python, SQL.\n\tKinh nghiệm làm việc với Git và Docker.\n\tKhả năng phân tích và giải quyết vấn đề hiệu quả.\n'
+    +N'- Ngoại ngữ Tiếng Anh: Giao tiếp tốt (TOEIC 850).', N'Chờ', 'TTD01', 'UV01', 'NV01'),
+    ('HS08', N'- Mong muốn trở thành một chuyên gia trong lĩnh vực Marketing, đặc biệt tập trung vào Digital Marketing và Phân tích dữ liệu khách hàng. Hướng đến vị trí Quản lý Marketing, góp phần xây dựng chiến lược hiệu quả và gia tăng nhận diện thương hiệu.\n'
+    +N'- Trình độ: Đại học\n'
+    +N'- Chuyên ngành: Marketing\n'
+    +N'- Kinh nghiệm làm việc: Công ty ABC – Chuyên viên Digital Marketing, Lên kế hoạch và triển khai các chiến dịch quảng cáo trên Facebook, Google Ads. Theo dõi và tối ưu hiệu quả chiến dịch dựa trên các chỉ số KPI.\n'
+    +N'- Kỹ năng chuyên môn:\n\tThành thạo các công cụ quảng cáo: Facebook Ads, Google Analytics, SEO.\n\tKỹ năng sáng tạo nội dung và quản lý kênh truyền thông xã hội.\n\tKinh nghiệm phân tích dữ liệu và tối ưu hóa chi phí quảng cáo.\n'
+    +N'- Ngoại ngữ: Giao tiếp tốt (IELTS 7.0).', N'Đã Duyệt', 'TTD02', 'UV02', 'NV02');
 
 INSERT INTO HopDong (MaHD, PhiDichVu, ThoiGian, MaTTD, MaUV, MaNV)
 VALUES 
@@ -183,7 +193,7 @@ select * from NhaTuyenDung
 
 select * from 
 TinTuyenDung t join NhaTuyenDung n on t.MaNTD=n.MaNTD
-where TieuDe Like '%marketing%' AND Luong=100000 AND TenNTD LIKE '%Shinhan%' 
+where TieuDe Like N'%kỹ sư%' AND Luong=1000 AND TenNTD LIKE '%Shinhan%' 
 
 select * from TinTuyenDung 
-where maNTD = 'NTD07' AND TrangThai = 1
+where TrinhDo LIKE N'%Cao đẳng%' AND NganhNghe LIKE N'%IT%'

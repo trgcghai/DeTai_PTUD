@@ -12,6 +12,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.Properties;
 
@@ -32,13 +33,16 @@ import org.jdatepicker.impl.UtilDateModel;
 import component.ComboBoxRenderer;
 import component.GradientPanel;
 import controller.LabelDateFormatter;
+import dao.NhaTuyenDung_DAO;
+import entity.NhaTuyenDung;
+import entity.TinTuyenDung;
 import entity.constraint.GioiTinh;
 import entity.constraint.HinhThucLamViec;
 import entity.constraint.NganhNghe;
 import entity.constraint.TrangThai;
 import entity.constraint.TrinhDo;
 
-public class ChiTietViecLamDialog extends JDialog{
+public class ChiTietViecLamDialog extends JDialog implements ActionListener{
 	
 	GradientPanel inforTinTuyenDungPanel, btnPanel;
 	JLabel idLabel, tenLabel, hinhthucLabel, startLabel, endLabel, trinhdoLabel, diachiLabel,tieudeLabel,trangthaiLabel, motaLabel,
@@ -53,7 +57,10 @@ public class ChiTietViecLamDialog extends JDialog{
 	JButton btnUngTuyen, btnHuy;
 	GridBagConstraints gbc;
 	
-	public ChiTietViecLamDialog(Frame parent, boolean modal) {
+	private TinTuyenDung ttd;
+	private NhaTuyenDung_DAO nhatuyendungDAO;
+	
+	public ChiTietViecLamDialog(Frame parent, boolean modal, TinTuyenDung ttd) {
 		super(parent, modal);
 		setTitle("Xem chi tiết việc làm");
 		setResizable(false);
@@ -62,7 +69,13 @@ public class ChiTietViecLamDialog extends JDialog{
 		setLayout(new BorderLayout());
 		setLocationRelativeTo(null);
 		
+		this.ttd=ttd;
+		nhatuyendungDAO=new NhaTuyenDung_DAO();
+		
 		initComponent();
+		addActionListener();
+		
+		loadData();
 	}
 	
 	public ChiTietViecLamDialog(Frame parent, boolean modal, boolean check) {
@@ -185,6 +198,7 @@ public class ChiTietViecLamDialog extends JDialog{
 		JDatePanelImpl panelStart=new JDatePanelImpl(modelDateStart, p);
 		startText=new JDatePickerImpl(panelStart, new LabelDateFormatter());
 		startText.setPreferredSize(new Dimension(140, 24));
+		startText.getComponent(1).setEnabled(false);
 		inforTinTuyenDungPanel.add(startText, gbc);
 		
 		gbc.gridx=1; gbc.gridy=6;
@@ -198,6 +212,7 @@ public class ChiTietViecLamDialog extends JDialog{
 		JDatePanelImpl panelEnd=new JDatePanelImpl(modelDateEnd, q);
 		endText=new JDatePickerImpl(panelEnd, new LabelDateFormatter());
 		endText.setPreferredSize(new Dimension(157, 24));
+		endText.getComponent(1).setEnabled(false);
 		inforTinTuyenDungPanel.add(endText, gbc);
 		
 		gbc.gridx=0; gbc.gridy=8;
@@ -232,5 +247,55 @@ public class ChiTietViecLamDialog extends JDialog{
 		btnPanel.add(btnUngTuyen); btnPanel.add(btnHuy);
 		
 		add(btnPanel, BorderLayout.SOUTH);
+	}
+
+	public void loadData() {
+		idText.setText(ttd.getMaTTD());
+		trangthaiText.setSelectedIndex(ttd.isTrangThai()?0:1);
+		
+		NhaTuyenDung ntd=nhatuyendungDAO.getNhaTuyenDung(ttd.getNhaTuyenDung().getMaNTD());
+		
+		tenText.setText(ntd.getTenNTD());
+		tieudeText.setText(ttd.getTieuDe());
+		for(int i=0;i<hinhthucText.getItemCount();i++) {
+			if(hinhthucText.getItemAt(i).toString().equalsIgnoreCase(ttd.getHinhThuc().getValue())) {
+				hinhthucText.setSelectedIndex(i);
+				break;
+			}
+		}
+		for(int i=0;i<trinhdoText.getItemCount();i++) {
+			if(trinhdoText.getItemAt(i).toString().equalsIgnoreCase(ttd.getTrinhDo().getValue())) {
+				trinhdoText.setSelectedIndex(i);
+				break;
+			}
+		}
+		for(int i=0;i<nganhngheBox.getItemCount();i++) {
+			if(nganhngheBox.getItemAt(i).toString().equalsIgnoreCase(ttd.getNganhNghe().getValue())) {
+				nganhngheBox.setSelectedIndex(i);
+				break;
+			}
+		}
+		soluongText.setText(String.valueOf(ttd.getSoLuong()));
+		luongText.setText(String.valueOf(ttd.getLuong()));
+		modelDateStart.setValue(Date.from(ttd.getNgayDangTin().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+		modelDateEnd.setValue(Date.from(ttd.getNgayHetHan().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+		motaText.setText(ttd.getMoTa());
+	}
+	
+	public void addActionListener() {
+		btnHuy.addActionListener(this);
+		btnUngTuyen.addActionListener(this);
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		var obj=e.getSource();
+		if(obj.equals(btnHuy)) {
+			this.dispose();
+		}
+		else if(obj.equals(btnUngTuyen)) {
+			
+		}
 	}
 }

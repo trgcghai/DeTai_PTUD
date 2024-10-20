@@ -16,6 +16,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -26,6 +28,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -52,12 +56,20 @@ import controller.actiontable.TableCellRendererDetail;
 import controller.actiontable.TableCellRendererUpdateDelete;
 import controller.actiontable.TableCellRendererViewCreateHoSo;
 import dao.TaiKhoan_DAO;
+import dao.TinTuyenDung_DAO;
+import dao.UngVien_DAO;
+import dao.HoSo_DAO;
+import dao.NhaTuyenDung_DAO;
 import dao.NhanVien_DAO;
 import entity.TaiKhoan;
+import entity.TinTuyenDung;
+import entity.UngVien;
 import entity.constraint.HinhThucLamViec;
 import entity.constraint.NganhNghe;
 import entity.constraint.TrangThai;
 import entity.constraint.TrinhDo;
+import entity.HoSo;
+import entity.NhaTuyenDung;
 import entity.NhanVien;
 import exception.checkBirthday;
 import exception.checkDateOfWork;
@@ -66,27 +78,43 @@ import exception.checkPhone;
 import exception.checkUserName;
 import exception.checkUserPass;
 
-public class TimViecLamFrame extends JFrame implements ActionListener, MouseListener, FocusListener {
+public class TimViecLamFrame extends JFrame implements ActionListener, MouseListener, FocusListener, ItemListener {
 	
 	String userName;
 	TimViecLamFrame parent;
 	
 //	Component tìm việc làm
 	JPanel leftPanel,menuPanel,
-		timviecPanel, centerPanelTimViec;
+		timviecPanel, centerPanelTimViec, northPanelTimViec;
 	JLabel titleTinTuyenDung, titleHoSo, nhatuyendungLabel, ungvienLabel;
 	JTable tableTinTuyenDung, tableHoSo;
 	DefaultTableModel modelTableTinTuyenDung, modelTableHoSo;
 	JScrollPane scrollTinTuyenDung, scrollHoSo;
 	JComboBox nhatuyendungCombo, ungvienCombo;
+	JButton btnHuy;
 	
 	GradientRoundPanel danhsachTTDPanel, danhsachTTDNorthPanel, danhsachTTDCenterPanel,
 				danhsachHoSoPanel, danhsachHoSoNorthPanel, danhsachHoSoCenterPanel;
 	
+	private UngVien_DAO ungvienDAO;
+	private HoSo_DAO hosoDAO;
+	private NhaTuyenDung_DAO nhatuyendungDAO;
+	private TinTuyenDung_DAO tintuyendungDAO;
+	
+	private ArrayList<UngVien> ungviens;
+	private ArrayList<NhaTuyenDung> nhatuyendungs;
 	
 	public TimViecLamFrame(String userName) {
 		this.userName=userName;
 		this.parent=this;
+		
+		ungvienDAO=new UngVien_DAO();
+		hosoDAO=new HoSo_DAO();
+		nhatuyendungDAO=new NhaTuyenDung_DAO();
+		tintuyendungDAO=new TinTuyenDung_DAO();
+		
+		ungviens=new ArrayList<UngVien>();
+		nhatuyendungs=new ArrayList<NhaTuyenDung>();
 		
 //		Tạo component bên phải
 		initComponent();
@@ -98,14 +126,26 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 //		Thêm sự kiện
 		addActionListener();
 		addMouseListener();
-		addFocusListener();
+		addItemListener();
 		
+		loadData();
+		loadDataUngVienHoSo();
+		loadDataTinTuyenDungNhaTuyenDung();
 	}
 	
 	public void initComponent() {
 		timviecPanel=new JPanel(); 
 		timviecPanel.setLayout(new BorderLayout());
 		timviecPanel.setBackground(new Color(89, 145, 144));
+		
+		northPanelTimViec=new JPanel();
+		northPanelTimViec.setLayout(new FlowLayout(FlowLayout.RIGHT,10,0));
+		northPanelTimViec.setBackground(new Color(89, 145, 144));
+		btnHuy=new JButton("Hủy"); btnHuy.setFont(new Font("Segoe UI",0,16));
+		btnHuy.setPreferredSize(new Dimension(120,25));
+		btnHuy.setBackground(Color.RED);
+		btnHuy.setForeground(Color.WHITE);
+		northPanelTimViec.add(btnHuy);
 		
 //		Hiển thị danh sách tin tuyển dụng, danh sách hồ sơ ứng viên
 		centerPanelTimViec=new JPanel();
@@ -132,7 +172,7 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 		nhatuyendungCombo.setForeground(Color.WHITE);
 		nhatuyendungCombo.setBackground(new Color(89, 145, 144));
 		nhatuyendungCombo.setPreferredSize(new Dimension(200,25));
-		nhatuyendungCombo.setRenderer(new ComboBoxRenderer("Chọn nhà tuyển dụng"));
+//		nhatuyendungCombo.setRenderer(new ComboBoxRenderer("Chọn nhà tuyển dụng"));
 		resNTD.add(nhatuyendungLabel); resNTD.add(nhatuyendungCombo);
 		titleTinTuyenDung=new JLabel("Danh sách tin tuyển dụng");
 		titleTinTuyenDung.setFont(new Font("Segoe UI",1,16));
@@ -144,14 +184,14 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 		danhsachTTDCenterPanel=new GradientRoundPanel();
 		danhsachTTDCenterPanel.setLayout(new BoxLayout(danhsachTTDCenterPanel, BoxLayout.PAGE_AXIS));
 		danhsachTTDCenterPanel.setBackground(Color.WHITE);
-		String[] colName= {"Tiêu đề","Trình độ","Lương", "Hành động"};
+		String[] colName= {"Mã","Tiêu đề","Trình độ","Lương", "Hành động"};
 		Object[][] data = {
-			    {"Technical Project Manager","Đại học","1000",null},
-			    {"Manual Tester","Cao đẳng", "500",null}
+			    {"1","Technical Project Manager","Đại học","1000",null},
+			    {"2","Manual Tester","Cao đẳng", "500",null}
 			};
 		modelTableTinTuyenDung= new DefaultTableModel(data, colName){
 			boolean[] canEdit = new boolean [] {
-	                false, false, false, true
+	                false, false, false, false, true
 	            };
 			
             @Override
@@ -207,14 +247,14 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 		danhsachHoSoCenterPanel=new GradientRoundPanel();
 		danhsachHoSoCenterPanel.setLayout(new BoxLayout(danhsachHoSoCenterPanel, BoxLayout.PAGE_AXIS));
 		danhsachHoSoCenterPanel.setBackground(Color.WHITE);
-		String[] col= {"Trạng thái","Tên ứng viên","Trình độ", "Hành động"};
+		String[] col= {"Mã","Trạng thái","Tên ứng viên","Trình độ", "Hành động"};
 		Object[][] datas = {
-			    {"Chưa nộp","Minh Đạt", "Đại học", null},
-			    {"Chưa nộp","Thắng Đạt", "Cao đẳng", null}
+			    {"1","Chưa nộp","Minh Đạt", "Đại học", null},
+			    {"2","Chưa nộp","Thắng Đạt", "Cao đẳng", null}
 			};
 		modelTableHoSo= new DefaultTableModel(datas, col){
 			boolean[] canEdit = new boolean [] {
-	                false, false, false, true
+	                false,false, false, false, true
 	            };
 			
             @Override
@@ -237,6 +277,7 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 		centerPanelTimViec.add(danhsachTTDPanel, BorderLayout.EAST);
 		centerPanelTimViec.add(danhsachHoSoPanel, BorderLayout.WEST);
 		
+		timviecPanel.add(northPanelTimViec, BorderLayout.NORTH);
 		timviecPanel.add(centerPanelTimViec, BorderLayout.CENTER);
 	}
 	
@@ -261,60 +302,60 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 		return table;
 	}
 	
-	public void addTableTTDActionEvent() {
-		TableActionEvent event=new TableActionEvent() {
-			@Override
-			public void onUpdate(int row) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void onDelete(int row) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onViewHoSo(int row) {
-				// TODO Auto-generated method stub
-			
-			}
-
-			@Override
-			public void onCreateHoSo(int row) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onCreateTaiKhoan(int row) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onViewTinTuyenDung(int row) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onCreateTinTuyenDung(int row) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onViewDetail(int row) {
-				// TODO Auto-generated method stub
-				new ChiTietViecLamDialog(parent, rootPaneCheckingEnabled).setVisible(true);
-			}
-			
-		};
+	public void loadData() {
+		ungvienDAO.setListUngVien(ungvienDAO.getDSUngVien());
+		hosoDAO.setListHoSo(hosoDAO.getDSHoSo());
+		tintuyendungDAO.setListTinTuyenDung(tintuyendungDAO.getDsTinTuyenDung());
+		nhatuyendungDAO.setListNhatuyenDung(nhatuyendungDAO.getDsNhaTuyenDung());
+	}
+	
+	public void loadDataUngVienHoSo() {
+		ungviens.clear();
+		ungvienCombo.removeAllItems();
+		for(UngVien uv: ungvienDAO.getListUngVien()) {
+			ungvienCombo.addItem(uv.getTenUV());
+			ungviens.add(uv);
+		}
 		
-		tableTinTuyenDung.getColumnModel().getColumn(3).setCellRenderer(new TableCellRendererDetail());
-		tableTinTuyenDung.getColumnModel().getColumn(3).setCellEditor(new TableCellEditorDetail(event));
+		modelTableHoSo.setRowCount(0);
+		for(HoSo i: hosoDAO.getListHoSo()) {
+			if(i.getTrangThai().getValue().equalsIgnoreCase("Chưa nộp")) {
+				Object[] obj=new Object[] {
+						i.getMaHS(),
+						i.getTrangThai().getValue(), 
+						ungvienDAO.getUngVien(i.getUngVien().getMaUV()).getTenUV(), 
+						extracInfor(i.getMoTa(), "Trình độ"), null
+				};
+				modelTableHoSo.addRow(obj);
+			}
+		}
+	}
+	
+	public void loadDataTinTuyenDungNhaTuyenDung() {
+		nhatuyendungs.clear();
+		nhatuyendungCombo.removeAllItems();
+		for(NhaTuyenDung ntd: nhatuyendungDAO.getListNhatuyenDung()) {
+			nhatuyendungCombo.addItem(ntd.getTenNTD());
+			nhatuyendungs.add(ntd);
+		}
+		
+		modelTableTinTuyenDung.setRowCount(0);
+		for(TinTuyenDung i: tintuyendungDAO.getListTinTuyenDung()) {
+			Object[] obj=new Object[] {
+					i.getMaTTD(),
+					i.getTieuDe(), i.getTrinhDo().getValue(), i.getLuong(), null
+			};
+			modelTableTinTuyenDung.addRow(obj);
+		}
+	}
+	
+//	Lấy thông tin trình độ và chuyên ngành trong mô tả hồ sơ
+	public String extracInfor(String text, String key) {
+		Matcher matcher=Pattern.compile(key + ":\\s*(.*)", Pattern.MULTILINE).matcher(text);
+		if(matcher.find()) {
+			return matcher.group(1).trim();
+		}
+		return "";
 	}
 	
 	public void addTableHoSoActionEvent() {
@@ -364,18 +405,101 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 			@Override
 			public void onViewDetail(int row) {
 				// TODO Auto-generated method stub
-				new ChiTietHoSoDialog(parent, rootPaneCheckingEnabled).setVisible(true);
+				HoSo hoso=hosoDAO.getHoSo(tableHoSo.getValueAt(row, 0).toString());
+				new ChiTietHoSoDialog(parent, rootPaneCheckingEnabled,hoso).setVisible(true);
 			}
 			
 		};
 		
-		tableHoSo.getColumnModel().getColumn(3).setCellRenderer(new TableCellRendererDetail());
-		tableHoSo.getColumnModel().getColumn(3).setCellEditor(new TableCellEditorDetail(event));
+		tableHoSo.getColumnModel().getColumn(4).setCellRenderer(new TableCellRendererDetail());
+		tableHoSo.getColumnModel().getColumn(4).setCellEditor(new TableCellEditorDetail(event));
 	}
 	
+	public void addTableTTDActionEvent() {
+		TableActionEvent event=new TableActionEvent() {
+			@Override
+			public void onUpdate(int row) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onDelete(int row) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onViewHoSo(int row) {
+				// TODO Auto-generated method stub
+			
+			}
+
+			@Override
+			public void onCreateHoSo(int row) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onCreateTaiKhoan(int row) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onViewTinTuyenDung(int row) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onCreateTinTuyenDung(int row) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onViewDetail(int row) {
+				// TODO Auto-generated method stub
+				TinTuyenDung ttd=tintuyendungDAO.getTinTuyenDung(tableTinTuyenDung.getValueAt(row, 0).toString());
+				new ChiTietViecLamDialog(parent, rootPaneCheckingEnabled, ttd).setVisible(true);
+			}
+			
+		};
+		
+		tableTinTuyenDung.getColumnModel().getColumn(4).setCellRenderer(new TableCellRendererDetail());
+		tableTinTuyenDung.getColumnModel().getColumn(4).setCellEditor(new TableCellEditorDetail(event));
+	}
 	
 	public JPanel getPanel() {
 		return this.timviecPanel;
+	}
+	
+//	Tìm kiếm việc làm phù hợp với hồ sơ
+	public void displayTinTuyenDung(HoSo hoso) {
+		String trinhdo=extracInfor(hoso.getMoTa(), "Trình độ");
+		String nganhnghe=extracInfor(hoso.getMoTa(), "Chuyên ngành");
+		
+		tintuyendungDAO.setListTinTuyenDung(tintuyendungDAO.getTinTuyenDungTheoTDNN(trinhdo, nganhnghe));
+		loadDataTinTuyenDungNhaTuyenDung();
+	}
+	
+//	Tìm hồ sơ phù hợp với việc làm
+	public void displayHoSo(TinTuyenDung tintuyendung) {
+		String trinhdo=tintuyendung.getTrinhDo().getValue();
+		String nganhnghe=tintuyendung.getNganhNghe().getValue();
+		
+		ArrayList<HoSo> hs=new ArrayList<HoSo>();
+		for(HoSo i: hosoDAO.getDSHoSo()) {
+			String hsTD=extracInfor(i.getMoTa(), "Trình độ");
+			String hsNN=extracInfor(i.getMoTa(), "Chuyên ngành");
+			if(trinhdo.equalsIgnoreCase(hsTD) && nganhnghe.equalsIgnoreCase(hsNN)) {
+				hs.add(i);
+			}
+		}
+		hosoDAO.setListHoSo(hs);
+		loadDataUngVienHoSo();
 	}
 	
 //	Trạng thái text chuột không nằm trong ô
@@ -395,17 +519,25 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 	}
 	
 //	Listener
-	public void addFocusListener() {
-
+	public void addItemListener() {
+		ungvienCombo.addItemListener(this);
 	}
 	
 	public void addActionListener() {
+		btnHuy.addActionListener(this);
 	}
 
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		var obj=e.getSource();
-		
+		if(obj.equals(btnHuy)) {
+			ungvienCombo.setSelectedIndex(0);
+			nhatuyendungCombo.setSelectedIndex(0);
+			
+			loadData();
+			loadDataUngVienHoSo();
+			loadDataTinTuyenDungNhaTuyenDung();
+		}
 	}
 	
 	public void addMouseListener() {
@@ -416,7 +548,18 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+		if(e.getSource().equals(tableHoSo)) {
+			int index=tableHoSo.getSelectedRow();
+			if(index!=-1) {
+				HoSo hoso=hosoDAO.getHoSo(tableHoSo.getValueAt(index, 0).toString());
+				displayTinTuyenDung(hoso);
+			}
+		}
+		else if(e.getSource().equals(tableTinTuyenDung)) {
+			int idx=tableTinTuyenDung.getSelectedRow();
+			TinTuyenDung tintuyendung=tintuyendungDAO.getTinTuyenDung(tableTinTuyenDung.getValueAt(idx, 0).toString());
+			displayHoSo(tintuyendung);
+		}
 	}
 
 	@Override
@@ -451,6 +594,12 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 	@Override
 	public void focusLost(FocusEvent e) {
 		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public void itemStateChanged(ItemEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

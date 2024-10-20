@@ -1,7 +1,7 @@
 package entity.constraint;
 
 public enum TrinhDo {
-	CAODANG("Cao đẳng"), DAIHOC("Đại học"), KYSU("Kỹ sư");
+	CAODANG("Cao đẳng"), DAIHOC("Đại học"), KYSU("Kỹ sư"), THPT("THPT");
 	
 	private final String value;
 	TrinhDo(String value){

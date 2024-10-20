@@ -397,6 +397,58 @@ public class TinTuyenDung_DAO {
 		return tinTuyenDung;
 	}
 	
+	public ArrayList<TinTuyenDung> getTinTuyenDungTheoTDNN(String td, String nn) {
+		ArrayList<TinTuyenDung> list = new ArrayList<TinTuyenDung>();
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			PreparedStatement stmt=con.prepareStatement("select * from TinTuyenDung \r\n"
+					+ "where TrinhDo LIKE ? AND NganhNghe LIKE ?");
+			stmt.setString(1, "%"+td+"%");
+			stmt.setString(2, "%"+nn+"%");
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				String maTTD = rs.getString(1);
+				String tieuDe = rs.getString(2);
+				String moTa = rs.getString(3);
+				LocalDate ngayDangTin = rs.getDate(4).toLocalDate();
+				LocalDate ngayHetHan = rs.getDate(5).toLocalDate();
+				TrinhDo trinhdo=null;
+				for(TrinhDo t: TrinhDo.class.getEnumConstants()) {
+					if(t.getValue().equalsIgnoreCase(rs.getString(6))) {
+						trinhdo=t;
+						break;
+					}
+				}
+				int soLuong = rs.getInt(7);
+				double luong = rs.getDouble(8);
+				NganhNghe nganhnghe=null;
+				for(NganhNghe n: NganhNghe.class.getEnumConstants()) {
+					if(n.getValue().equalsIgnoreCase(rs.getString(9))) {
+						nganhnghe=n;
+						break;
+					}
+				}
+				boolean trangThai = rs.getBoolean(10);
+				HinhThucLamViec hinhthuc=null;
+				for(HinhThucLamViec h: HinhThucLamViec.class.getEnumConstants()) {
+					if(h.getValue().equalsIgnoreCase(rs.getString(11))) {
+						hinhthuc=h;
+						break;
+					}
+				}
+				NhaTuyenDung nhaTuyenDung = new NhaTuyenDung(rs.getString(12));
+				
+				list.add(new TinTuyenDung(maTTD, tieuDe, moTa, ngayDangTin, ngayHetHan, trinhdo, 
+						soLuong, luong, nganhnghe, hinhthuc, trangThai, nhaTuyenDung));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+	
 	public boolean create(TinTuyenDung ttd) {
 		int n = 0;
 		Database.getInstance();
