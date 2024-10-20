@@ -174,13 +174,13 @@ public class MainFrame extends JFrame implements MouseListener{
 			}
 			else if(((JMenu)obj).getText().equals("Nhà tuyển dụng")) {
 				centerPanel.removeAll();
-				centerPanel.add(new NhaTuyenDungFrame("MinhDat").getPanel());
+				centerPanel.add(new NhaTuyenDungFrame(userName).getPanel());
 				
 				this.setTitle("Nhà tuyển dụng");
 			}
 			else if(((JMenu)obj).getText().equals("Tin tuyển dụng")) {
 				centerPanel.removeAll();
-				centerPanel.add(new TinTuyenDungFrame("MinhDat").getPanel());
+				centerPanel.add(new TinTuyenDungFrame(userName).getPanel());
 				
 				this.setTitle("Tin tuyển dụng");
 			}

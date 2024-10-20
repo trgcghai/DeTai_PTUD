@@ -67,7 +67,7 @@ import exception.checkUserPass;
 
 public class NhaTuyenDungFrame extends JFrame implements ActionListener, MouseListener, FocusListener {
 	
-	String userName;
+	NhanVien userName;
 	NhaTuyenDungFrame parent;
 	
 //	Component danh sách nhà tuyển dụng
@@ -86,7 +86,7 @@ public class NhaTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 	
 	private NhaTuyenDung_DAO nhatuyendungDAO;
 	
-	public NhaTuyenDungFrame(String userName) {
+	public NhaTuyenDungFrame(NhanVien userName) {
 		this.userName=userName;
 		this.parent=this;
 		

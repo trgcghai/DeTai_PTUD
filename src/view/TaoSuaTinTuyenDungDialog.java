@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.Properties;
 import java.util.regex.Pattern;
@@ -62,6 +63,7 @@ public class TaoSuaTinTuyenDungDialog extends JDialog implements ActionListener{
 	
 	private Frame parent;
 	private NhaTuyenDung ntd;
+	private TinTuyenDung ttd;
 	private TinTuyenDung_DAO tintuyendungDAO;
 	private int idMax;
 	
@@ -93,11 +95,14 @@ public class TaoSuaTinTuyenDungDialog extends JDialog implements ActionListener{
 		loadDataNhaTuyenDung();
 	}
 	
-	public TaoSuaTinTuyenDungDialog(Frame parent, boolean modal, NhaTuyenDung ntd, boolean check) {
+	public TaoSuaTinTuyenDungDialog(Frame parent, boolean modal, NhaTuyenDung ntd, TinTuyenDung ttd) {
 		this(parent, modal, ntd);
+		this.ttd=ttd;
 		setTitle("Cập nhật tin tuyển dụng");
 		
 		btnThem.setText("Cập nhật");
+		
+		loadDataTinTuyenDung();
 	}
 	
 	public void initComponent() {
@@ -256,6 +261,35 @@ public class TaoSuaTinTuyenDungDialog extends JDialog implements ActionListener{
 		tenText.setText(ntd.getTenNTD());
 	}
 	
+	public void loadDataTinTuyenDung() {
+		idText.setText(ttd.getMaTTD());
+		trangthaiText.setSelectedIndex(ttd.isTrangThai()?0:1);
+		tieudeText.setText(ttd.getTieuDe());
+		for(int i=0;i<hinhthucText.getItemCount();i++) {
+			if(hinhthucText.getItemAt(i).toString().equalsIgnoreCase(ttd.getHinhThuc().getValue())) {
+				hinhthucText.setSelectedIndex(i);
+				break;
+			}
+		}
+		for(int i=0;i<trinhdoText.getItemCount();i++) {
+			if(trinhdoText.getItemAt(i).toString().equalsIgnoreCase(ttd.getTrinhDo().getValue())) {
+				trinhdoText.setSelectedIndex(i);
+				break;
+			}
+		}
+		for(int i=0;i<nganhngheBox.getItemCount();i++) {
+			if(nganhngheBox.getItemAt(i).toString().equalsIgnoreCase(ttd.getNganhNghe().getValue())) {
+				nganhngheBox.setSelectedIndex(i);
+				break;
+			}
+		}
+		soluongText.setText(String.valueOf(ttd.getSoLuong()));
+		luongText.setText(String.valueOf(ttd.getLuong()));
+		modelDateStart.setValue(Date.from(ttd.getNgayDangTin().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+		modelDateEnd.setValue(Date.from(ttd.getNgayHetHan().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+		motaText.setText(ttd.getMoTa());
+	}
+	
 	public void them() {
 		SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd");
 		
@@ -303,8 +337,16 @@ public class TaoSuaTinTuyenDungDialog extends JDialog implements ActionListener{
 									LocalDate.parse(ngaydangtin), LocalDate.parse(ngayhethan), 
 									trinhdo, Integer.parseInt(soluong), Double.parseDouble(luong), 
 									nganhnghe, hinhthuc, trangthai, ntd);
-							tintuyendungDAO.create(tintuyendung);
-							JOptionPane.showMessageDialog(rootPane, "Thêm tin tuyển dụng thành công");
+							
+							if(btnThem.getText().equalsIgnoreCase("Tạo mới")) {
+								tintuyendungDAO.create(tintuyendung);
+								JOptionPane.showMessageDialog(rootPane, "Thêm tin tuyển dụng thành công");								
+							}
+							else {
+								tintuyendungDAO.update(tintuyendung);
+								JOptionPane.showMessageDialog(rootPane, "Cập nhật tin tuyển dụng thành công");	
+								((TinTuyenDungFrame)parent).updateData();
+							}
 							this.dispose();
 						}
 						else {

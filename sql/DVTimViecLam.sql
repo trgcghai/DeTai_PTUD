@@ -164,10 +164,26 @@ delete from TaiKhoan where MaTK='TK03'
 
 Select * from UngVien where TenUV LIKE N'%L%'
 
-Select * from HoSo
+Select * from HoSo where TrangThai LIKE N'%Chưa nộp%'
 
 delete from HoSo where MaHS='HS03'
 
 select * from NhaTuyenDung
 
 select * from TinTuyenDung where MaTTD = 'TTD01'
+
+Select * from HoSo where TrangThai LIKE N'Chưa nộp'
+
+Select * 
+from HoSo h join UngVien u
+on h.MaUV = u.MaUV
+where TrangThai LIKE N'Chưa nộp' AND u.TenUV LIKE N'%Minh%'
+
+select * from NhaTuyenDung
+
+select * from 
+TinTuyenDung t join NhaTuyenDung n on t.MaNTD=n.MaNTD
+where TieuDe Like '%marketing%' AND Luong=100000 AND TenNTD LIKE '%Shinhan%' 
+
+select * from TinTuyenDung 
+where maNTD = 'NTD07' AND TrangThai = 1

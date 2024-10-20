@@ -27,6 +27,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -39,6 +40,7 @@ import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
 import component.ComboBoxRenderer;
+import component.GradientPanel;
 import component.GradientRoundPanel;
 import component.RoundPanel;
 import controller.Database;
@@ -52,10 +54,14 @@ import controller.actiontable.TableCellEditorViewCreateHoSo;
 import controller.actiontable.TableCellRendererUpdateDelete;
 import controller.actiontable.TableCellRendererViewCreateHoSo;
 import dao.TaiKhoan_DAO;
+import dao.TinTuyenDung_DAO;
+import dao.NhaTuyenDung_DAO;
 import dao.NhanVien_DAO;
 import entity.TaiKhoan;
+import entity.TinTuyenDung;
 import entity.constraint.TrangThai;
 import entity.constraint.TrinhDo;
+import entity.NhaTuyenDung;
 import entity.NhanVien;
 import exception.checkBirthday;
 import exception.checkDateOfWork;
@@ -66,7 +72,7 @@ import exception.checkUserPass;
 
 public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseListener, FocusListener {
 	
-	String userName;
+	NhanVien userName;
 	TinTuyenDungFrame parent;
 	
 //	Component danh sách tin tuyển dụng
@@ -82,20 +88,29 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 	JScrollPane scroll;
 	Icon iconBtnSave;
 	
+	GradientPanel danhsachCenterPanel;
 	GradientRoundPanel timkiemPanel,
-	danhsachPanel, danhsachNorthPanel, danhsachCenterPanel;
+	danhsachPanel, danhsachNorthPanel;
 	
 	ButtonAction update, delete;
 	
 	private ArrayList<Component> updates;
 	private ArrayList<Component> deletes;
+	private ArrayList<RoundPanel> panelTTDs;
 	
-	public TinTuyenDungFrame(String userName) {
+	private TinTuyenDung_DAO tintuyendungDAO;
+	private NhaTuyenDung_DAO nhatuyendungDAO;
+	
+	public TinTuyenDungFrame(NhanVien userName) {
 		this.userName=userName;
 		this.parent=this;
 		
 		updates=new ArrayList<Component>();
 		deletes=new ArrayList<Component>();
+		panelTTDs=new ArrayList<RoundPanel>();
+		
+		tintuyendungDAO=new TinTuyenDung_DAO();
+		nhatuyendungDAO=new NhaTuyenDung_DAO();
 		
 //		Tạo component bên phải
 		initComponent();
@@ -105,9 +120,10 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 		
 //		Thêm sự kiện
 		addActionListener();
-		addMouseListener();
 		addFocusListener();
 		
+		loadData();
+		loadDataTinTuyenDung();
 	}
 	
 	public void initComponent() {
@@ -175,6 +191,7 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 		timkiemTrinhDoText.setFont(new Font("Segoe UI",0,16));
 		timkiemTrinhDoText.setBackground(new Color(89, 145, 144));
 		timkiemTrinhDoText.setForeground(Color.WHITE);
+		timkiemTrinhDoText.addItem("Chọn trình độ");
 		TrinhDo[] trinhdos=TrinhDo.class.getEnumConstants();
 		for(TrinhDo t: trinhdos) {
 			timkiemTrinhDoText.addItem(t.getValue());
@@ -215,7 +232,7 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 		btnLuu.setPreferredSize(new Dimension(140,30));
 		btnLuu.setBackground(new Color(51,51,255));
 		btnLuu.setForeground(Color.WHITE);
-		resBtn.add(btnLuu);
+//		resBtn.add(btnLuu);
 		titleHoSo=new JLabel("Danh sách tin tuyển dụng");
 		titleHoSo.setFont(new Font("Segoe UI",1,16));
 		titleHoSo.setForeground(Color.WHITE);
@@ -223,14 +240,10 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 		danhsachNorthPanel.add(titleHoSo, BorderLayout.WEST);
 		danhsachNorthPanel.add(resBtn, BorderLayout.EAST);
 		
-		danhsachCenterPanel=new GradientRoundPanel();
+		danhsachCenterPanel=new GradientPanel(Color.decode("#ABC8CB"), Color.decode("#259195"));
 		danhsachCenterPanel.setLayout(new FlowLayout(FlowLayout.LEFT,20,20));
 		danhsachCenterPanel.setPreferredSize(new Dimension(getWidth(), 30*50));
 		danhsachCenterPanel.setBorder(BorderFactory.createEmptyBorder(0, 25, 0, 0));
-		
-		for(int i=0; i<30; i++) {
-			danhsachCenterPanel.add(panelTinTuyenDung("Project Manager", "FaceBook", 1000, "abc"));
-		}
 		
 		scroll=new JScrollPane(danhsachCenterPanel);
 		
@@ -243,17 +256,36 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 		tintuyendungPanel.add(centerPanelTinTuyenDung, BorderLayout.CENTER);
 	}
 	
-	public RoundPanel panelTinTuyenDung(String tieude, String nhatuyendung, double luong, String logo) {
+	public RoundPanel panelTinTuyenDung(String tieude, String nhatuyendung, double luong, String logo, String maTTD) {
 		RoundPanel panel=new RoundPanel();
 		panel.setPreferredSize(new Dimension(400, 100));
 		panel.setBackground(new Color(89, 145, 144));
 		panel.setLayout(new BorderLayout(10,0));
-		panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		panel.setBorder(BorderFactory.createEmptyBorder(5, 0, 10, 10));
 		
 		logoPanel=new JPanel();
 		logoPanel.setOpaque(false);
-		logoPanel.setBorder(BorderFactory.createLineBorder(Color.WHITE));
+//		logoPanel.setBorder(BorderFactory.createLineBorder(Color.WHITE));
 		logoPanel.setPreferredSize(new Dimension(100,100));
+		if(getClass().getResource("/image/imageNTD/"+logo)!=null) {
+			if(logoPanel.getComponents()!=null) {
+				logoPanel.removeAll();
+				logoPanel.revalidate();
+				logoPanel.repaint();	
+			}
+			
+			ImageIcon imageIcon=new ImageIcon(getClass().getResource("/image/imageNTD/"+logo));
+			Image image=imageIcon.getImage().getScaledInstance(80, 80, Image.SCALE_SMOOTH);
+			JLabel logoLabel=new JLabel(); logoLabel.setIcon(new ImageIcon(image));
+			logoPanel.add(logoLabel);
+			logoPanel.revalidate();
+			logoPanel.repaint();				
+		}
+		else {
+			logoPanel.removeAll();
+			logoPanel.revalidate();
+			logoPanel.repaint();	
+		}
 		
 		JPanel centerPanel=new JPanel();
 		centerPanel.setOpaque(false);
@@ -278,14 +310,19 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 		res.setOpaque(false);
 		ButtonAction update=new ButtonAction();
 		update.setIcon(new ImageIcon(getClass().getResource("/image/update.png")));
+		update.setName(maTTD);
 		ButtonAction delete=new ButtonAction();
 		delete.setIcon(new ImageIcon(getClass().getResource("/image/delete.png")));
+		delete.setName(maTTD);
 		res.add(update); res.add(delete);
 		eastPanel.add(res, BorderLayout.SOUTH);
 		
 		panel.add(logoPanel, BorderLayout.WEST);
 		panel.add(centerPanel, BorderLayout.CENTER);
 		panel.add(eastPanel, BorderLayout.EAST);
+		
+		update.addMouseListener(this);
+		delete.addMouseListener(this);
 		
 		updates.add(update);
 		deletes.add(delete);
@@ -297,12 +334,200 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 		return this.tintuyendungPanel;
 	}
 	
+	public void loadData() {
+		tintuyendungDAO.setListTinTuyenDung(tintuyendungDAO.getDsTinTuyenDung());
+		nhatuyendungDAO.setListNhatuyenDung(nhatuyendungDAO.getDsNhaTuyenDung());
+		
+		timkiemNTDText.addItem("Chọn nhà tuyển dụng");
+		for(NhaTuyenDung i: nhatuyendungDAO.getListNhatuyenDung()) {
+			timkiemNTDText.addItem(i.getTenNTD());
+		}
+	}
+	
+	public void loadDataTinTuyenDung() {
+		updates.clear();
+		deletes.clear();
+		panelTTDs.clear();
+		
+		danhsachCenterPanel.setPreferredSize(
+				new Dimension(danhsachCenterPanel.getWidth(), tintuyendungDAO.getListTinTuyenDung().size()*50));
+		danhsachCenterPanel.removeAll();
+		danhsachCenterPanel.revalidate();
+		danhsachCenterPanel.repaint();
+		
+		for(TinTuyenDung i: tintuyendungDAO.getListTinTuyenDung()) {
+			NhaTuyenDung nhatuyendung=nhatuyendungDAO.getNhaTuyenDung(i.getNhaTuyenDung().getMaNTD());
+			String tieude=i.getTieuDe();
+			String tenNTD=nhatuyendung.getTenNTD();
+			double luong=i.getLuong();
+			String logo=nhatuyendung.getLogo();
+
+			RoundPanel panel=panelTinTuyenDung(tieude, tenNTD, luong, logo, i.getMaTTD());
+			panelTTDs.add(panel);
+			danhsachCenterPanel.add(panel);
+		}
+	}
+	
+	public void updateData() {
+		loadData();
+		loadDataTinTuyenDung();
+	}
+	
+	public void displayChiTietTinTuyenDung(String maTTD) {
+		TinTuyenDung ttd=tintuyendungDAO.getTinTuyenDung(maTTD);
+		NhaTuyenDung ntd=nhatuyendungDAO.getNhaTuyenDung(ttd.getNhaTuyenDung().getMaNTD());
+		
+		new TaoSuaTinTuyenDungDialog(parent, rootPaneCheckingEnabled, ntd, ttd).setVisible(true);;
+	}
+	
+//	option
+//	1: tìm kiếm theo tiêu đề
+//	2: tìm kiếm theo lương
+//	3: tìm kiếm theo tiêu đề và lương
+//	4: tìm kiếm theo tiêu đề và nhà tuyển dụng
+//	5: tìm kiếm theo tiêu đề và trình độ
+//	6: tìm kiếm theo lương và nhà tuyển dụng
+//	7: tìm kiếm theo lương và trình độ
+//	8: tìm kiếm theo tiêu đề, lương và nhà tuyển dụng
+//	9: tìm kiếm theo tiêu đề, lương và trình độ
+//	10: tìm kiếm theo tất cả tiêu chí
+	public void timkiem() {
+		String tieude=timkiemTenText.getText();
+		String luong=timkiemLuongText.getText();
+		String ntd=timkiemNTDText.getSelectedItem().toString();
+		String trinhdo=timkiemTrinhDoText.getSelectedItem().toString();
+		
+		if(tieude.equals("Nhập dữ liệu") && luong.equals("Nhập dữ liệu")
+			&& ntd.equalsIgnoreCase("Chọn nhà tuyển dụng") && trinhdo.equalsIgnoreCase("Chọn trình độ")) {
+			JOptionPane.showMessageDialog(rootPane, "Nhập thông tin để tìm kiếm");
+			return;
+		}
+		
+		if(!tieude.equals("Nhập dữ liệu")) {
+			tintuyendungDAO.getListTinTuyenDung().clear();
+			tintuyendungDAO.setListTinTuyenDung(tintuyendungDAO.getTinTuyenDungTheo(tieude,1));
+		}
+		else if(!luong.equals("Nhập dữ liệu")) {
+			if(Pattern.compile("^[0-9]+$").matcher(luong).matches()) {
+				tintuyendungDAO.getListTinTuyenDung().clear();
+				tintuyendungDAO.setListTinTuyenDung(tintuyendungDAO.getTinTuyenDungTheo(luong,2));
+			}
+			else {
+				JOptionPane.showMessageDialog(rootPane, "Lương phải là số lớn hơn 0");
+			}
+		}
+		else if(!ntd.equalsIgnoreCase("Chọn nhà tuyển dụng")) {
+			tintuyendungDAO.getListTinTuyenDung().clear();
+			tintuyendungDAO.setListTinTuyenDung(tintuyendungDAO.getTinTuyenDungTheo(ntd,11));
+		}
+		else if(!trinhdo.equalsIgnoreCase("Chọn trình độ")) {
+			tintuyendungDAO.getListTinTuyenDung().clear();
+			tintuyendungDAO.setListTinTuyenDung(tintuyendungDAO.getTinTuyenDungTheo(trinhdo,12));
+		}
+		else if(!ntd.equalsIgnoreCase("Chọn nhà tuyển dụng") && !trinhdo.equalsIgnoreCase("Chọn trình độ")) {
+			tintuyendungDAO.getListTinTuyenDung().clear();
+			String key=ntd+"/"+trinhdo;
+			tintuyendungDAO.setListTinTuyenDung(tintuyendungDAO.getTinTuyenDungTheo(key,13));
+		}
+		else if(!tieude.equals("Nhập dữ liệu") && !luong.equals("Nhập dữ liệu")) {
+			if(Pattern.compile("^[0-9]+$").matcher(luong).matches()) {
+				tintuyendungDAO.getListTinTuyenDung().clear();
+				String key=tieude+"/"+luong;
+				tintuyendungDAO.setListTinTuyenDung(tintuyendungDAO.getTinTuyenDungTheo(key,3));
+			}
+			else {
+				JOptionPane.showMessageDialog(rootPane, "Lương phải là số lớn hơn 0");
+			}
+		}
+		else if(!tieude.equals("Nhập dữ liệu") && !ntd.equalsIgnoreCase("Chọn nhà tuyển dụng")) {
+			tintuyendungDAO.getListTinTuyenDung().clear();
+			String key=tieude+"/"+ntd;
+			tintuyendungDAO.setListTinTuyenDung(tintuyendungDAO.getTinTuyenDungTheo(key,4));
+		}
+		else if(!tieude.equals("Nhập dữ liệu") && !trinhdo.equalsIgnoreCase("Chọn trình độ")) {
+			tintuyendungDAO.getListTinTuyenDung().clear();
+			String key=tieude+"/"+trinhdo;
+			tintuyendungDAO.setListTinTuyenDung(tintuyendungDAO.getTinTuyenDungTheo(key,5));
+		}
+		else if(!luong.equals("Nhập dữ liệu") && !ntd.equalsIgnoreCase("Chọn nhà tuyển dụng")) {
+			if(Pattern.compile("^[0-9]+$").matcher(luong).matches()) {
+				tintuyendungDAO.getListTinTuyenDung().clear();
+				String key=luong+"/"+ntd;
+				tintuyendungDAO.setListTinTuyenDung(tintuyendungDAO.getTinTuyenDungTheo(key,6));
+			}
+			else {
+				JOptionPane.showMessageDialog(rootPane, "Lương phải là số lớn hơn 0");
+			}
+		}
+		else if(!luong.equals("Nhập dữ liệu") && !trinhdo.equalsIgnoreCase("Chọn trình độ")) {
+			if(Pattern.compile("^[0-9]+$").matcher(luong).matches()) {
+				tintuyendungDAO.getListTinTuyenDung().clear();
+				String key=luong+"/"+trinhdo;
+				tintuyendungDAO.setListTinTuyenDung(tintuyendungDAO.getTinTuyenDungTheo(key,7));
+			}
+			else {
+				JOptionPane.showMessageDialog(rootPane, "Lương phải là số lớn hơn 0");
+			}
+		}
+		else if(!tieude.equals("Nhập dữ liệu") && !ntd.equalsIgnoreCase("Chọn nhà tuyển dụng")
+				&& !trinhdo.equalsIgnoreCase("Chọn trình độ")) {
+			tintuyendungDAO.getListTinTuyenDung().clear();
+			String key=tieude+"/"+ntd+"/"+trinhdo;
+			tintuyendungDAO.setListTinTuyenDung(tintuyendungDAO.getTinTuyenDungTheo(key,14));
+		}
+		else if(!luong.equals("Nhập dữ liệu") && !ntd.equalsIgnoreCase("Chọn nhà tuyển dụng")
+				&& !trinhdo.equalsIgnoreCase("Chọn trình độ")) {
+			if(Pattern.compile("^[0-9]+$").matcher(luong).matches()) {
+				tintuyendungDAO.getListTinTuyenDung().clear();
+				String key=luong+"/"+ntd+"/"+trinhdo;
+				tintuyendungDAO.setListTinTuyenDung(tintuyendungDAO.getTinTuyenDungTheo(key,15));
+			}
+			else {
+				JOptionPane.showMessageDialog(rootPane, "Lương phải là số lớn hơn 0");
+			}
+		}
+		else if(!tieude.equals("Nhập dữ liệu") && !luong.equals("Nhập dữ liệu") && !ntd.equalsIgnoreCase("Chọn nhà tuyển dụng")) {
+			if(Pattern.compile("^[0-9]+$").matcher(luong).matches()) {
+				tintuyendungDAO.getListTinTuyenDung().clear();
+				String key=tieude+"/"+luong+"/"+ntd;
+				tintuyendungDAO.setListTinTuyenDung(tintuyendungDAO.getTinTuyenDungTheo(key,8));
+			}
+			else {
+				JOptionPane.showMessageDialog(rootPane, "Lương phải là số lớn hơn 0");
+			}
+		}
+		else if(!tieude.equals("Nhập dữ liệu") && !luong.equals("Nhập dữ liệu") && !trinhdo.equalsIgnoreCase("Chọn trình độ")) {
+			if(Pattern.compile("^[0-9]+$").matcher(luong).matches()) {
+				tintuyendungDAO.getListTinTuyenDung().clear();
+				String key=tieude+"/"+luong+"/"+trinhdo;
+				tintuyendungDAO.setListTinTuyenDung(tintuyendungDAO.getTinTuyenDungTheo(key,9));
+			}
+			else {
+				JOptionPane.showMessageDialog(rootPane, "Lương phải là số lớn hơn 0");
+			}
+		}
+		else if(!tieude.equals("Nhập dữ liệu") && !luong.equals("Nhập dữ liệu") 
+				&& !ntd.equalsIgnoreCase("Chọn nhà tuyển dụng") && !trinhdo.equalsIgnoreCase("Chọn trình độ")) {
+			if(Pattern.compile("^[0-9]+$").matcher(luong).matches()) {
+				tintuyendungDAO.getListTinTuyenDung().clear();
+				String key=tieude+"/"+luong+"/"+ntd+"/"+trinhdo;
+				tintuyendungDAO.setListTinTuyenDung(tintuyendungDAO.getTinTuyenDungTheo(key,10));
+			}
+			else {
+				JOptionPane.showMessageDialog(rootPane, "Lương phải là số lớn hơn 0");
+			}
+		}
+		loadDataTinTuyenDung();
+		JOptionPane.showMessageDialog(rootPane, "Tìm thấy "+tintuyendungDAO.getListTinTuyenDung().size()+" tin tuyển dụng");
+	}
+	
 //	Trạng thái text chuột không nằm trong ô
 	public void addPlaceHolder(JTextField text) {
 		Font font=text.getFont();
 		font=font.deriveFont(Font.ITALIC);
 		text.setFont(font);
 		text.setForeground(Color.WHITE);
+		text.setText("Nhập dữ liệu");
 	}
 	
 //	Xóa trạng thái text chuột không nằm trong ô
@@ -323,37 +548,43 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 	}
 	
 	public void addActionListener() {
+		btnTimKiem.addActionListener(this);
+		btnLamLai.addActionListener(this);
 	}
 
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		var obj=e.getSource();
-		
+		if(obj.equals(btnTimKiem)) {
+			timkiem();
+		}
+		else if(obj.equals(btnLamLai)) {
+			addPlaceHolder(timkiemTenText);
+			addPlaceHolder(timkiemLuongText);
+			timkiemNTDText.setSelectedIndex(0);
+			timkiemTrinhDoText.setSelectedIndex(0);
+			
+			updateData();
+		}
 	}
 	
-	public void addMouseListener() {
-		for(Component c: updates) {
-			c.addMouseListener(this);
-		}
-		
-		for(Component c: deletes) {
-			c.addMouseListener(this);
-		}
-	}
-
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
 		var obj=e.getSource();
 		for(int i=0; i<updates.size();i++) {
 			if(obj.equals(updates.get(i))) {
-				System.out.println(i);
+				displayChiTietTinTuyenDung(updates.get(i).getName());
 				break;
 			}
 		}
 		for(int i=0; i<deletes.size();i++) {
 			if(obj.equals(deletes.get(i))) {
-				System.out.println(i);
+				int check=JOptionPane.showConfirmDialog(parent, "Có chắc chắn xóa?");
+				if(check==JOptionPane.OK_OPTION) {
+					tintuyendungDAO.delete(deletes.get(i).getName());
+					updateData();
+				}
 				break;
 			}
 		}
