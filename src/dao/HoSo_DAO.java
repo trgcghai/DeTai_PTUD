@@ -239,10 +239,11 @@ public class HoSo_DAO {
 		Connection con = Database.getConnection();
 		
 		try {
-			PreparedStatement stmt = con.prepareStatement("update HoSo set MoTa = ?, TrangThai = ? where MaHS = ?");
+			PreparedStatement stmt = con.prepareStatement("update HoSo set MoTa = ?, TrangThai = ?, MaTTD = ? where MaHS = ?");
 			stmt.setString(1, hs.getMoTa());
 			stmt.setString(2, hs.getTrangThai().getValue());
-			stmt.setString(3, hs.getMaHS());
+			stmt.setString(3, hs.getTinTuyenDung()==null?null:hs.getTinTuyenDung().getMaTTD());
+			stmt.setString(4, hs.getMaHS());
 			n = stmt.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();

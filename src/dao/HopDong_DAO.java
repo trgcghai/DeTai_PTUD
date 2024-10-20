@@ -17,6 +17,20 @@ import entity.UngVien;
 
 public class HopDong_DAO {
 	
+	private ArrayList<HopDong> listHopDong;
+	
+	public HopDong_DAO() {
+		listHopDong=new ArrayList<HopDong>();
+	}
+	
+	public ArrayList<HopDong> getListHopDong() {
+		return listHopDong;
+	}
+
+	public void setListHopDong(ArrayList<HopDong> listHopDong) {
+		this.listHopDong = listHopDong;
+	}
+
 	public ArrayList<HopDong> getDSHopDong() {
 		ArrayList<HopDong> list = new ArrayList<HopDong>();
 		Database.getInstance();
@@ -65,6 +79,26 @@ public class HopDong_DAO {
 			e.printStackTrace();
 		}
 		return list.get(0);
+	}
+	
+	public boolean create(HopDong hd) {
+		int n = 0;
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			PreparedStatement stmt = con.prepareStatement("insert into HopDong values (?, ?, ?, ?, ?, ?)");
+			stmt.setString(1, hd.getMaHD());
+			stmt.setDouble(2, hd.getPhiDichVu());
+			stmt.setDate(3, Date.valueOf(hd.getThoiGian()));
+			stmt.setString(4, hd.getTinTuyenDung().getMaTTD());
+			stmt.setString(5, hd.getUngVien().getMaUV());
+			stmt.setString(6, hd.getNhanVien().getMaNV());
+			n = stmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return n != 0;
 	}
 	
 }

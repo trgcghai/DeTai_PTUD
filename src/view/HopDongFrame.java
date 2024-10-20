@@ -68,7 +68,7 @@ import exception.checkUserPass;
 
 public class HopDongFrame extends JFrame implements ActionListener, MouseListener, FocusListener {
 	
-	String userName;
+	NhanVien userName;
 	HopDongFrame parent;
 	
 //	Component hợp đồng
@@ -88,7 +88,7 @@ public class HopDongFrame extends JFrame implements ActionListener, MouseListene
 				danhsachHoSoPanel, danhsachHoSoNorthPanel, danhsachHoSoCenterPanel;
 	
 	
-	public HopDongFrame(String userName) {
+	public HopDongFrame(NhanVien userName) {
 		this.userName=userName;
 		this.parent=this;
 		
