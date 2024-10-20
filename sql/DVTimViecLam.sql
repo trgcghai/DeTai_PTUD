@@ -198,6 +198,13 @@ where TieuDe Like N'%kỹ sư%' AND Luong=1000 AND TenNTD LIKE '%Shinhan%'
 select * from TinTuyenDung 
 where TrinhDo LIKE N'%Cao đẳng%' AND NganhNghe LIKE N'%IT%'
 
-select * from HopDong
+select * from HopDong where MaTTD = 'TTD01'
 
 delete from HopDong where MaHD='HD03'
+
+select *
+from HoSo hs join TinTuyenDung ttd on hs.MaTTD=ttd.MaTTD
+join HopDong hd on ttd.MaTTD=hd.MaTTD
+where MaHS = 'HS05'
+
+select * from HopDong
