@@ -7,7 +7,7 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Image;
 
-import view.TurnoverDetailCountDialog;
+import view.ChiTietHopDongDialog;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,7 +24,7 @@ public class PDFHelper {
 		}
 	}
 	
-	public static void exportToPdf(TurnoverDetailCountDialog dialog) {
+	public static void exportToPdf(ChiTietHopDongDialog dialog) {
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.showSaveDialog(dialog);
 		File saveFile = fileChooser.getSelectedFile();

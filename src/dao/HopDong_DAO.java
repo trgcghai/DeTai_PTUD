@@ -81,6 +81,59 @@ public class HopDong_DAO {
 		return list.get(0);
 	}
 	
+	public HopDong getHopDongTheoHoSo(String maHS) {
+		ArrayList<HopDong> list = new ArrayList<HopDong>();
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			PreparedStatement stmt = con.prepareStatement("select hd.MaHD, hd.PhiDichVu, hd.ThoiGian, hd.MaTTD, hd.MaUV, hd.MaNV\r\n"
+					+ "from HoSo hs join TinTuyenDung ttd on hs.MaTTD=ttd.MaTTD\r\n"
+					+ "join HopDong hd on ttd.MaTTD=hd.MaTTD\r\n"
+					+ "where MaHS = ?");
+			stmt.setString(1, maHS);
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				String maHD = rs.getString(1);
+				double phiDichVu = rs.getDouble(2);
+				LocalDate thoiGian = rs.getDate(3).toLocalDate();
+				TinTuyenDung tinTuyenDung = new TinTuyenDung(rs.getString(4));
+				UngVien ungVien = new UngVien(rs.getString(5));
+				NhanVien nhanVien  = new NhanVien(rs.getString(6));
+				
+				list.add(new HopDong(maHD, phiDichVu, thoiGian, tinTuyenDung, ungVien, nhanVien));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list.get(0);
+	}
+	
+	public ArrayList<HopDong> getHopDongTheoTinTuyenDung(String maTTD) {
+		ArrayList<HopDong> list = new ArrayList<HopDong>();
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			PreparedStatement stmt = con.prepareStatement("select * from HopDong where MaTTD = ?");
+			stmt.setString(1, maTTD);
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				String maHD = rs.getString(1);
+				double phiDichVu = rs.getDouble(2);
+				LocalDate thoiGian = rs.getDate(3).toLocalDate();
+				TinTuyenDung tinTuyenDung = new TinTuyenDung(rs.getString(4));
+				UngVien ungVien = new UngVien(rs.getString(5));
+				NhanVien nhanVien  = new NhanVien(rs.getString(6));
+				
+				list.add(new HopDong(maHD, phiDichVu, thoiGian, tinTuyenDung, ungVien, nhanVien));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+	
 	public boolean create(HopDong hd) {
 		int n = 0;
 		Database.getInstance();

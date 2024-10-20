@@ -106,18 +106,18 @@ public class ChiTietViecLamDialog extends JDialog implements ActionListener{
 		loadData();
 	}
 	
-//	public ChiTietViecLamDialog(Frame parent, boolean modal, boolean check) {
-//		this(parent, modal);
-//		btnPanel.removeAll();
-//		
-//		btnHuy=new JButton("Hủy"); btnHuy.setFont(new Font("Segoe UI",0,16));
-//		btnHuy.setPreferredSize(new Dimension(120,25));
-//		btnHuy.setBackground(Color.RED);
-//		btnHuy.setForeground(Color.WHITE);
-//		
-//		btnPanel.add(btnHuy);
-//		
-//	}
+	public ChiTietViecLamDialog(Frame parent, boolean modal, TinTuyenDung ttd, HoSo hoso, NhanVien nv, boolean check) {
+		this(parent, modal, ttd, hoso, nv);
+		btnPanel.removeAll();
+		
+		btnHuy=new JButton("Hủy"); btnHuy.setFont(new Font("Segoe UI",0,16));
+		btnHuy.setPreferredSize(new Dimension(120,25));
+		btnHuy.setBackground(Color.RED);
+		btnHuy.setForeground(Color.WHITE);
+		
+		btnPanel.add(btnHuy);
+		addActionListener();
+	}
 	
 	public void initComponent() {
 		inforTinTuyenDungPanel=new GradientPanel(Color.decode("#ABC8CB"), Color.decode("#7CBDBF")); 
