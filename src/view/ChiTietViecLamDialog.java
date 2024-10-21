@@ -12,6 +12,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.Properties;
@@ -21,6 +22,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -33,9 +35,16 @@ import org.jdatepicker.impl.UtilDateModel;
 import component.ComboBoxRenderer;
 import component.GradientPanel;
 import controller.LabelDateFormatter;
+import dao.HoSo_DAO;
+import dao.HopDong_DAO;
 import dao.NhaTuyenDung_DAO;
+import dao.UngVien_DAO;
+import entity.HoSo;
+import entity.HopDong;
 import entity.NhaTuyenDung;
+import entity.NhanVien;
 import entity.TinTuyenDung;
+import entity.UngVien;
 import entity.constraint.GioiTinh;
 import entity.constraint.HinhThucLamViec;
 import entity.constraint.NganhNghe;
@@ -57,10 +66,17 @@ public class ChiTietViecLamDialog extends JDialog implements ActionListener{
 	JButton btnUngTuyen, btnHuy;
 	GridBagConstraints gbc;
 	
+	private Frame parent;
+	private int idMax;
 	private TinTuyenDung ttd;
+	private HoSo hoso;
+	private NhanVien nv;
 	private NhaTuyenDung_DAO nhatuyendungDAO;
+	private UngVien_DAO ungvienDAO;
+	private HopDong_DAO hopdongDAO;
+	private HoSo_DAO hosoDAO;
 	
-	public ChiTietViecLamDialog(Frame parent, boolean modal, TinTuyenDung ttd) {
+	public ChiTietViecLamDialog(Frame parent, boolean modal, TinTuyenDung ttd, HoSo hoso, NhanVien nv) {
 		super(parent, modal);
 		setTitle("Xem chi tiết việc làm");
 		setResizable(false);
@@ -69,8 +85,20 @@ public class ChiTietViecLamDialog extends JDialog implements ActionListener{
 		setLayout(new BorderLayout());
 		setLocationRelativeTo(null);
 		
+		this.parent=parent;
 		this.ttd=ttd;
+		this.hoso=hoso;
+		this.nv=nv;
 		nhatuyendungDAO=new NhaTuyenDung_DAO();
+		ungvienDAO=new UngVien_DAO();
+		hopdongDAO=new HopDong_DAO();
+		hosoDAO=new HoSo_DAO();
+		for(HopDong hd: hopdongDAO.getDSHopDong()) {
+			int numberID=Integer.parseInt(hd.getMaHD().substring(2, hd.getMaHD().length()));
+			if(numberID > idMax) {
+				idMax=numberID;
+			}
+		}
 		
 		initComponent();
 		addActionListener();
@@ -78,8 +106,8 @@ public class ChiTietViecLamDialog extends JDialog implements ActionListener{
 		loadData();
 	}
 	
-	public ChiTietViecLamDialog(Frame parent, boolean modal, boolean check) {
-		this(parent, modal);
+	public ChiTietViecLamDialog(Frame parent, boolean modal, TinTuyenDung ttd, HoSo hoso, NhanVien nv, boolean check) {
+		this(parent, modal, ttd, hoso, nv);
 		btnPanel.removeAll();
 		
 		btnHuy=new JButton("Hủy"); btnHuy.setFont(new Font("Segoe UI",0,16));
@@ -88,7 +116,7 @@ public class ChiTietViecLamDialog extends JDialog implements ActionListener{
 		btnHuy.setForeground(Color.WHITE);
 		
 		btnPanel.add(btnHuy);
-		
+		addActionListener();
 	}
 	
 	public void initComponent() {
@@ -282,6 +310,37 @@ public class ChiTietViecLamDialog extends JDialog implements ActionListener{
 		motaText.setText(ttd.getMoTa());
 	}
 	
+	public void ungtuyen() {
+		int check=JOptionPane.showConfirmDialog(rootPane, "Có chắc chắn ứng tuyển");
+		if(check==JOptionPane.OK_OPTION) {
+			String idHD=(idMax+1)<10?("HD0"+(idMax+1)):("HD"+(idMax+1));
+			UngVien uv=ungvienDAO.getUngVien(hoso.getUngVien().getMaUV());
+			double phi=0;
+			if(ttd.getLuong()<5000000) {
+				phi=ttd.getLuong()*0.02;
+			}
+			else {
+				if(ttd.getLuong()<=10000000) {
+					phi=ttd.getLuong()*0.03;
+				}
+				else {
+					phi=ttd.getLuong()*0.05;
+				}
+			}
+			HopDong hopdong=new HopDong(idHD,phi,LocalDate.now(),ttd,uv,nv);
+			hopdongDAO.create(hopdong);
+			
+			hoso.setTrangThai(TrangThai.CHO);
+			hoso.setTinTuyenDung(ttd);
+			hosoDAO.update(hoso);
+			
+			JOptionPane.showMessageDialog(rootPane, "Ứng tuyển thành công");
+			this.dispose();
+			
+			((TimViecLamFrame)parent).updateData();
+		}
+	}
+	
 	public void addActionListener() {
 		btnHuy.addActionListener(this);
 		btnUngTuyen.addActionListener(this);
@@ -295,7 +354,7 @@ public class ChiTietViecLamDialog extends JDialog implements ActionListener{
 			this.dispose();
 		}
 		else if(obj.equals(btnUngTuyen)) {
-			
+			ungtuyen();
 		}
 	}
 }

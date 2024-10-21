@@ -11,6 +11,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.Properties;
 
@@ -31,13 +32,20 @@ import org.jdatepicker.impl.UtilDateModel;
 import component.ComboBoxRenderer;
 import component.GradientPanel;
 import controller.LabelDateFormatter;
+import controller.PDFHelper;
+import dao.HopDong_DAO;
+import dao.NhaTuyenDung_DAO;
+import dao.NhanVien_DAO;
+import dao.TinTuyenDung_DAO;
+import dao.UngVien_DAO;
+import entity.HopDong;
 import entity.constraint.GioiTinh;
 import entity.constraint.HinhThucLamViec;
 import entity.constraint.NganhNghe;
 import entity.constraint.TrangThai;
 import entity.constraint.TrinhDo;
 
-public class ChiTietHopDongDialog extends JDialog{
+public class ChiTietHopDongDialog extends JDialog implements ActionListener{
 	
 	GradientPanel inforHopDongPanel, btnPanel;
 	JLabel idLabel, tenLabel, ngaylapLabel, tieudeLabel, phiLabel,
@@ -49,7 +57,15 @@ public class ChiTietHopDongDialog extends JDialog{
 	JButton btnLuu, btnHuy;
 	GridBagConstraints gbc;
 	
-	public ChiTietHopDongDialog(Frame parent, boolean modal) {
+	private HopDong_DAO hopdongDAO;
+	private UngVien_DAO ungvienDAO;
+	private NhanVien_DAO nhanvienDAO;
+	private TinTuyenDung_DAO tintuyendungDAO;
+	private NhaTuyenDung_DAO nhatuyendungDAO;
+	
+	private HopDong hd;
+	
+	public ChiTietHopDongDialog(Frame parent, boolean modal, HopDong hd) {
 		super(parent, modal);
 		setTitle("Xem chi tiết hợp đồng");
 		setResizable(false);
@@ -58,7 +74,17 @@ public class ChiTietHopDongDialog extends JDialog{
 		setLayout(new BorderLayout());
 		setLocationRelativeTo(null);
 		
+		this.hd=hd;
+		hopdongDAO=new HopDong_DAO();
+		ungvienDAO=new UngVien_DAO();
+		nhanvienDAO=new NhanVien_DAO();
+		tintuyendungDAO=new TinTuyenDung_DAO();
+		nhatuyendungDAO=new NhaTuyenDung_DAO();
+		
 		initComponent();
+		addActionListener();
+		loadData();
+		loadDataHopDong();
 	}
 	
 	public void initComponent() {
@@ -173,5 +199,47 @@ public class ChiTietHopDongDialog extends JDialog{
 		btnPanel.add(btnLuu); btnPanel.add(btnHuy);
 		
 		add(btnPanel, BorderLayout.SOUTH);
+	}
+
+	public void loadData() {
+		hopdongDAO.setListHopDong(hopdongDAO.getDSHopDong());
+		ungvienDAO.setListUngVien(ungvienDAO.getDSUngVien());
+		nhanvienDAO.setListNhanVien(nhanvienDAO.getDSNhanVien());
+		tintuyendungDAO.setListTinTuyenDung(tintuyendungDAO.getDsTinTuyenDung());
+		nhatuyendungDAO.setListNhatuyenDung(nhatuyendungDAO.getDsNhaTuyenDung());
+	}
+	
+	public void loadDataHopDong() {
+		idText.setText(hd.getMaHD());
+		phiText.setText(String.valueOf(hd.getPhiDichVu()));
+		modelDateNgayLap.setValue(Date.from(hd.getThoiGian().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+		tieudeText.setText(tintuyendungDAO.getTinTuyenDung(hd.getTinTuyenDung().getMaTTD()).getTieuDe());
+		nhatuyendungText.setText(nhatuyendungDAO
+				.getNhaTuyenDung(tintuyendungDAO.getTinTuyenDung(hd.getTinTuyenDung().getMaTTD()).getNhaTuyenDung().getMaNTD())
+				.getTenNTD());
+		luongText.setText(String.valueOf(tintuyendungDAO.getTinTuyenDung(hd.getTinTuyenDung().getMaTTD()).getLuong()));
+		tenText.setText(ungvienDAO.getUngVien(hd.getUngVien().getMaUV()).getTenUV());
+		sdtText.setText(ungvienDAO.getUngVien(hd.getUngVien().getMaUV()).getSoDienThoai());
+		emailText.setText(ungvienDAO.getUngVien(hd.getUngVien().getMaUV()).getEmail());
+		nhanvienText.setText(nhanvienDAO.getNhanVien(hd.getNhanVien().getMaNV()).getTenNV());
+	}
+	
+	public void addActionListener() {
+		btnHuy.addActionListener(this);
+		btnLuu.addActionListener(this);
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		var obj=e.getSource();
+		if(obj.equals(btnHuy)) {
+			this.dispose();
+		}
+		else if(obj.equals(btnLuu)) {
+			btnPanel.removeAll();
+			PDFHelper.exportToPdf(this);
+			btnPanel.add(btnLuu); btnPanel.add(btnHuy);
+		}
 	}
 }

@@ -80,7 +80,7 @@ import exception.checkUserPass;
 
 public class TimViecLamFrame extends JFrame implements ActionListener, MouseListener, FocusListener, ItemListener {
 	
-	String userName;
+	NhanVien userName;
 	TimViecLamFrame parent;
 	
 //	Component tìm việc làm
@@ -103,8 +103,9 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 	
 	private ArrayList<UngVien> ungviens;
 	private ArrayList<NhaTuyenDung> nhatuyendungs;
+	private HoSo currentHoSo;
 	
-	public TimViecLamFrame(String userName) {
+	public TimViecLamFrame(NhanVien userName) {
 		this.userName=userName;
 		this.parent=this;
 		
@@ -115,6 +116,7 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 		
 		ungviens=new ArrayList<UngVien>();
 		nhatuyendungs=new ArrayList<NhaTuyenDung>();
+		currentHoSo=new HoSo();
 		
 //		Tạo component bên phải
 		initComponent();
@@ -126,11 +128,20 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 //		Thêm sự kiện
 		addActionListener();
 		addMouseListener();
-		addItemListener();
 		
 		loadData();
 		loadDataUngVienHoSo();
 		loadDataTinTuyenDungNhaTuyenDung();
+		
+		for(UngVien uv: ungvienDAO.getListUngVien()) {
+			ungvienCombo.addItem(uv.getTenUV());
+			ungviens.add(uv);
+		}
+		
+		for(NhaTuyenDung ntd: nhatuyendungDAO.getListNhatuyenDung()) {
+			nhatuyendungCombo.addItem(ntd.getTenNTD());
+			nhatuyendungs.add(ntd);
+		}
 	}
 	
 	public void initComponent() {
@@ -310,13 +321,6 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 	}
 	
 	public void loadDataUngVienHoSo() {
-		ungviens.clear();
-		ungvienCombo.removeAllItems();
-		for(UngVien uv: ungvienDAO.getListUngVien()) {
-			ungvienCombo.addItem(uv.getTenUV());
-			ungviens.add(uv);
-		}
-		
 		modelTableHoSo.setRowCount(0);
 		for(HoSo i: hosoDAO.getListHoSo()) {
 			if(i.getTrangThai().getValue().equalsIgnoreCase("Chưa nộp")) {
@@ -332,13 +336,6 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 	}
 	
 	public void loadDataTinTuyenDungNhaTuyenDung() {
-		nhatuyendungs.clear();
-		nhatuyendungCombo.removeAllItems();
-		for(NhaTuyenDung ntd: nhatuyendungDAO.getListNhatuyenDung()) {
-			nhatuyendungCombo.addItem(ntd.getTenNTD());
-			nhatuyendungs.add(ntd);
-		}
-		
 		modelTableTinTuyenDung.setRowCount(0);
 		for(TinTuyenDung i: tintuyendungDAO.getListTinTuyenDung()) {
 			Object[] obj=new Object[] {
@@ -348,6 +345,13 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 			modelTableTinTuyenDung.addRow(obj);
 		}
 	}
+	
+	public void updateData() {
+		loadData();
+		loadDataUngVienHoSo();
+		loadDataTinTuyenDungNhaTuyenDung();
+	}
+	
 	
 //	Lấy thông tin trình độ và chuyên ngành trong mô tả hồ sơ
 	public String extracInfor(String text, String key) {
@@ -463,7 +467,7 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 			public void onViewDetail(int row) {
 				// TODO Auto-generated method stub
 				TinTuyenDung ttd=tintuyendungDAO.getTinTuyenDung(tableTinTuyenDung.getValueAt(row, 0).toString());
-				new ChiTietViecLamDialog(parent, rootPaneCheckingEnabled, ttd).setVisible(true);
+				new ChiTietViecLamDialog(parent, rootPaneCheckingEnabled, ttd, currentHoSo, userName).setVisible(true);
 			}
 			
 		};
@@ -519,14 +523,14 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 	}
 	
 //	Listener
-	public void addItemListener() {
-		ungvienCombo.addItemListener(this);
-	}
-	
 	public void addActionListener() {
 		btnHuy.addActionListener(this);
+		ungvienCombo.addActionListener(this);
+		nhatuyendungCombo.addActionListener(this);
 	}
 
+	private boolean flag=true;
+	private boolean check=true;
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		var obj=e.getSource();
@@ -537,6 +541,26 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 			loadData();
 			loadDataUngVienHoSo();
 			loadDataTinTuyenDungNhaTuyenDung();
+		}
+		else if(obj.equals(ungvienCombo)) {
+			if(!flag) {
+				UngVien uv=ungviens.get(ungvienCombo.getSelectedIndex());
+				hosoDAO.setListHoSo(hosoDAO.getHoSoTheoUngVien(uv.getMaUV()));
+				loadDataUngVienHoSo();
+			}
+			else {
+				flag=false;
+			}
+		}
+		else if(obj.equals(nhatuyendungCombo)) {
+			if(!check) {
+				NhaTuyenDung ntd=nhatuyendungs.get(nhatuyendungCombo.getSelectedIndex());
+				tintuyendungDAO.setListTinTuyenDung(tintuyendungDAO.getTinTuyenDungTheoNTD(ntd.getMaNTD(), 1));
+				loadDataTinTuyenDungNhaTuyenDung();
+			}
+			else {
+				check=false;
+			}
 		}
 	}
 	
@@ -552,6 +576,7 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 			int index=tableHoSo.getSelectedRow();
 			if(index!=-1) {
 				HoSo hoso=hosoDAO.getHoSo(tableHoSo.getValueAt(index, 0).toString());
+				currentHoSo=hoso;
 				displayTinTuyenDung(hoso);
 			}
 		}
@@ -599,7 +624,6 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 	@Override
 	public void itemStateChanged(ItemEvent e) {
 		// TODO Auto-generated method stub
-		
 	}
 
 }
