@@ -219,9 +219,6 @@ public class ThongKeHopDongFrame extends JFrame implements ActionListener, Mouse
 		tableHopDong.getTableHeader().setFont(new Font("Segoe UI",1,14));
 		tableHopDong.setFont(new Font("Segoe UI",0,16));
 		tableHopDong.setRowHeight(30);
-		tableHopDong.getColumnModel().getColumn(1).setPreferredWidth(200);
-		tableHopDong.getColumnModel().getColumn(2).setPreferredWidth(150);
-		tableHopDong.getColumnModel().getColumn(3).setPreferredWidth(150);
 		
 		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
 		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
@@ -266,8 +263,8 @@ public class ThongKeHopDongFrame extends JFrame implements ActionListener, Mouse
 		JPanel temp1 = new JPanel();
 		summaryNumberLabel= createLabel("Tổng số lượng hợp đồng:"); 
 		numberLabel = createLabel("");
-		temp1.add(summaryValueLabel);
-		temp1.add(valueLabel);
+		temp1.add(summaryNumberLabel);
+		temp1.add(numberLabel);
 		temp1.setOpaque(false);
 		temp1.setBackground(Color.WHITE);
 		resPanelSummary.add(temp1, BorderLayout.CENTER);
