@@ -80,6 +80,32 @@ public class NhaTuyenDung_DAO {
 		return list.get(0);
 	}
 	
+	public NhaTuyenDung getNhaTuyenDungTheoMaTTD(String ma) {
+		ArrayList<NhaTuyenDung> list = new ArrayList<NhaTuyenDung>();
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			PreparedStatement stmt = con.prepareStatement("select ntd.MaNTD, TenNTD, Email, Logo, DiaChi, SoDienThoai from NhaTuyenDung ntd "
+					+ "join TinTuyenDung ttd on ntd.MaNTD = ttd.MaNTD where MaTTD = ?");
+			stmt.setString(1, ma);
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				String maNTD = rs.getString(1);
+				String tenNTD = rs.getString(2);
+				String email = rs.getString(3);
+				String logo = rs.getString(4);
+				String diaChi = rs.getString(5);
+				String soDienThoai = rs.getString(6);
+				
+				list.add(new NhaTuyenDung(maNTD, tenNTD, email, logo, soDienThoai, diaChi));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list.get(0);
+	}
+	
 	public ArrayList<NhaTuyenDung> getNhaTuyenDungBy(String key, int option) {
 		ArrayList<NhaTuyenDung> list = new ArrayList<NhaTuyenDung>();
 		Database.getInstance();

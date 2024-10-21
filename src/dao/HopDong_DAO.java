@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 import controller.Database;
 import entity.HopDong;
+import entity.NhaTuyenDung;
 import entity.NhanVien;
 import entity.TinTuyenDung;
 import entity.UngVien;
@@ -109,6 +110,31 @@ public class HopDong_DAO {
 		return list.get(0);
 	}
 	
+	public ArrayList<HopDong> getHopDongTheoUngVien(String maUV) {
+		ArrayList<HopDong> list = new ArrayList<HopDong>();
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			PreparedStatement stmt = con.prepareStatement("select * from HopDong where MaUV = ?");
+			stmt.setString(1, maUV);
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				String maHD = rs.getString(1);
+				double phiDichVu = rs.getDouble(2);
+				LocalDate thoiGian = rs.getDate(3).toLocalDate();
+				TinTuyenDung tinTuyenDung = new TinTuyenDung(rs.getString(4));
+				UngVien ungVien = new UngVien(rs.getString(5));
+				NhanVien nhanVien  = new NhanVien(rs.getString(6));
+				
+				list.add(new HopDong(maHD, phiDichVu, thoiGian, tinTuyenDung, ungVien, nhanVien));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+	
 	public ArrayList<HopDong> getHopDongTheoTinTuyenDung(String maTTD) {
 		ArrayList<HopDong> list = new ArrayList<HopDong>();
 		Database.getInstance();
@@ -132,6 +158,95 @@ public class HopDong_DAO {
 			e.printStackTrace();
 		}
 		return list;
+	}
+	
+	public ArrayList<HopDong> getHopDongTheoNhaTuyenDung(String maNTD) {
+		ArrayList<HopDong> list = new ArrayList<HopDong>();
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			PreparedStatement stmt = con.prepareStatement(""
+					+ "select MaHD, PhiDichVu, ThoiGian, ttd.MaTTD, MaUV, MaNV from HopDong hd join TinTuyenDung ttd on hd.MaTTD = ttd.MaTTD join NhaTuyenDung ntd on ttd.MaNTD = ntd.MaNTD\r\n"
+					+ "where ntd.MaNTD = ?");
+			stmt.setString(1, maNTD);
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				String maHD = rs.getString(1);
+				double phiDichVu = rs.getDouble(2);
+				LocalDate thoiGian = rs.getDate(3).toLocalDate();
+				TinTuyenDung tinTuyenDung = new TinTuyenDung(rs.getString(4));
+				UngVien ungVien = new UngVien(rs.getString(5));
+				NhanVien nhanVien  = new NhanVien(rs.getString(6));
+				
+				list.add(new HopDong(maHD, phiDichVu, thoiGian, tinTuyenDung, ungVien, nhanVien));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+	
+	public ArrayList<HopDong> getHopDongTheoUngVienVaNhaTuyenDung(String maUV, String maNTD) {
+		ArrayList<HopDong> list = new ArrayList<HopDong>();
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			PreparedStatement stmt = con.prepareStatement(""
+					+ "select MaHD, PhiDichVu, ThoiGian, ttd.MaTTD, MaUV, MaNV from HopDong hd join TinTuyenDung ttd on hd.MaTTD = ttd.MaTTD join NhaTuyenDung ntd on ttd.MaNTD = ntd.MaNTD\r\n"
+					+ "where ntd.MaNTD = ? and MaUV = ?");
+			stmt.setString(1, maNTD);
+			stmt.setString(2, maUV);
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				String maHD = rs.getString(1);
+				double phiDichVu = rs.getDouble(2);
+				LocalDate thoiGian = rs.getDate(3).toLocalDate();
+				TinTuyenDung tinTuyenDung = new TinTuyenDung(rs.getString(4));
+				UngVien ungVien = new UngVien(rs.getString(5));
+				NhanVien nhanVien  = new NhanVien(rs.getString(6));
+				
+				list.add(new HopDong(maHD, phiDichVu, thoiGian, tinTuyenDung, ungVien, nhanVien));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+	
+	public int getSoLuongHopDong() {
+		int res = 0;
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			PreparedStatement stmt = con.prepareStatement("select count(*) from HopDong");
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				res = rs.getInt(1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return res;
+	}
+	
+	public double getTongGiaTriHopDong() {
+		double res = 0;
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			PreparedStatement stmt = con.prepareStatement("select sum(PhiDichVu) from HopDong");
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				res = rs.getDouble(1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return res;
 	}
 	
 	public boolean create(HopDong hd) {

@@ -12,6 +12,7 @@ import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Properties;
 
@@ -38,15 +39,23 @@ import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
 import component.GradientRoundPanel;
+import controller.ExcelHelper;
 import controller.LabelDateFormatter;
+import dao.HopDong_DAO;
+import dao.NhaTuyenDung_DAO;
+import dao.UngVien_DAO;
+import entity.HopDong;
+import entity.NhaTuyenDung;
+import entity.TinTuyenDung;
+import entity.UngVien;
 
 public class ThongKeHopDongFrame extends JFrame implements ActionListener, MouseListener, FocusListener {
 	String userName;
 	ThongKeHopDongFrame parent;
 	
 //	Component thống kê hợp đồng
-	JPanel menuPanel, timkiemPanel, hopDongPanel,centerPanelHopDong, danhsachPanel, danhsachNorthPanel, danhsachCenterPanel;
-	JLabel titleHopDong, ngayBatDauLabel, ngayKetThucLabel, timkiemNTDLabel, timkiemUVLabel;
+	JPanel menuPanel, timkiemPanel, tongketPanel, hopDongPanel,centerPanelHopDong, danhsachPanel, danhsachNorthPanel, danhsachCenterPanel;
+	JLabel titleHopDong, ngayBatDauLabel, ngayKetThucLabel, timkiemNTDLabel, timkiemUVLabel, summaryValueLabel, summaryNumberLabel, valueLabel, numberLabel;
 	JButton btnTimKiem, btnLamLai, btnExcel;
 	JTable tableHopDong;
 	DefaultTableModel modelTableHopDong;
@@ -56,6 +65,10 @@ public class ThongKeHopDongFrame extends JFrame implements ActionListener, Mouse
 	JComboBox<Object> comboBoxNTD, comboBoxUV;
 	Icon iconBtnSave;
 	
+	private HopDong_DAO hopdong_dao;
+	private NhaTuyenDung_DAO nhatuyendungDAO;
+	private UngVien_DAO ungVienDao;
+	
 	public ThongKeHopDongFrame(String userName) {
 		this.userName=userName;
 		this.parent = this;
@@ -64,9 +77,16 @@ public class ThongKeHopDongFrame extends JFrame implements ActionListener, Mouse
 		initComponent();
 		
 //		Thêm sự kiện
-//		addActionListener();
+		addActionListener();
 //		addMouseListener();
 //		addFocusListener();
+		
+		hopdong_dao = new HopDong_DAO();
+		nhatuyendungDAO = new NhaTuyenDung_DAO();
+		ungVienDao = new UngVien_DAO();
+		
+		loadData();
+		loadDataTable();
 	}
 	
 	public JLabel createLabel(String title) {
@@ -107,9 +127,6 @@ public class ThongKeHopDongFrame extends JFrame implements ActionListener, Mouse
 		comboBoxNTD=new JComboBox<Object>(); 
 		comboBoxNTD.setFont(new Font("Segoe UI",0,16));
 		comboBoxNTD.setOpaque(false);
-		comboBoxNTD.addItem("Nhà tuyển dụng 1");
-		comboBoxNTD.addItem("Nhà tuyển dụng 2");
-		comboBoxNTD.addItem("Nhà tuyển dụng 3");
 		resFormSearch.add(timkiemNTDLabel);
 		resFormSearch.add(comboBoxNTD);
 		
@@ -117,9 +134,6 @@ public class ThongKeHopDongFrame extends JFrame implements ActionListener, Mouse
 		comboBoxUV=new JComboBox<Object>(); 
 		comboBoxUV.setFont(new Font("Segoe UI",0,16));
 		comboBoxUV.setOpaque(false);
-		comboBoxUV.addItem("Ứng viên 1");
-		comboBoxUV.addItem("Ứng viên 2");
-		comboBoxUV.addItem("Ứng viên 3");
 		resFormSearch.add(timkiemUVLabel);
 		resFormSearch.add(comboBoxUV);
 		
@@ -231,11 +245,40 @@ public class ThongKeHopDongFrame extends JFrame implements ActionListener, Mouse
 		resScroll.add(scrollHopDong);
 		danhsachCenterPanel.add(resScroll);
 		
+		tongketPanel=new GradientRoundPanel();
+		tongketPanel.setBackground(Color.WHITE);
+		tongketPanel.setLayout(new BorderLayout());
+		
+		JPanel resPanelSummary = new JPanel();
+		resPanelSummary.setOpaque(false);
+		resPanelSummary.setBackground(Color.WHITE);
+		resPanelSummary.setLayout(new BorderLayout());
+		
+		JPanel temp = new JPanel();
+		summaryValueLabel= createLabel("Tổng giá trị hợp đồng:"); 
+		valueLabel = createLabel("");
+		temp.add(summaryValueLabel);
+		temp.add(valueLabel);
+		temp.setOpaque(false);
+		temp.setBackground(Color.WHITE);
+		resPanelSummary.add(temp, BorderLayout.NORTH);
+		
+		JPanel temp1 = new JPanel();
+		summaryNumberLabel= createLabel("Tổng số lượng hợp đồng:"); 
+		numberLabel = createLabel("");
+		temp1.add(summaryValueLabel);
+		temp1.add(valueLabel);
+		temp1.setOpaque(false);
+		temp1.setBackground(Color.WHITE);
+		resPanelSummary.add(temp1, BorderLayout.CENTER);
+		tongketPanel.add(resPanelSummary, BorderLayout.WEST);
+		
 		danhsachPanel.add(danhsachNorthPanel, BorderLayout.NORTH);
 		danhsachPanel.add(danhsachCenterPanel, BorderLayout.CENTER);
 		
 		centerPanelHopDong.add(timkiemPanel, BorderLayout.NORTH);
 		centerPanelHopDong.add(danhsachPanel, BorderLayout.CENTER);
+		centerPanelHopDong.add(tongketPanel, BorderLayout.SOUTH);
 		
 		hopDongPanel.add(centerPanelHopDong, BorderLayout.CENTER);
 	}
@@ -254,6 +297,82 @@ public class ThongKeHopDongFrame extends JFrame implements ActionListener, Mouse
 		font=font.deriveFont(Font.ITALIC);
 		text.setFont(font);
 		text.setForeground(Color.GRAY);
+	}
+	
+	public void addActionListener() {
+		btnExcel.addActionListener(this);
+		btnTimKiem.addActionListener(this);
+		btnLamLai.addActionListener(this);	
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+				var obj=e.getSource();
+				if(obj.equals(btnExcel)) {
+					ExcelHelper excel = new ExcelHelper();
+					excel.exportData(this, tableHopDong, 0);
+				}
+				else if(obj.equals(btnTimKiem)) {
+					String tenNtd = comboBoxNTD.getSelectedItem().toString();
+					String tenUV = comboBoxUV.getSelectedItem().toString();
+					
+					if (tenNtd.equalsIgnoreCase("Chọn nhà tuyển dụng") && tenUV.equalsIgnoreCase("Chọn ứng viên")) return;
+					
+					if (nhatuyendungDAO.getNhaTuyenDungBy(tenNtd, 1).size() != 0 && ungVienDao.getUngVienBy(tenUV, 1).size() == 0) {
+						NhaTuyenDung ntd = nhatuyendungDAO.getNhaTuyenDungBy(tenNtd, 1).get(0);
+						hopdong_dao.setListHopDong(hopdong_dao.getHopDongTheoNhaTuyenDung(ntd.getMaNTD()));
+						loadDataTable();
+					} else if (nhatuyendungDAO.getNhaTuyenDungBy(tenNtd, 1).size() == 0 && ungVienDao.getUngVienBy(tenUV, 1).size() != 0 ) {
+						UngVien uv = ungVienDao.getUngVienBy(tenUV, 1).get(0);
+						hopdong_dao.setListHopDong(hopdong_dao.getHopDongTheoUngVien(uv.getMaUV()));
+						loadDataTable();
+					} else if (nhatuyendungDAO.getNhaTuyenDungBy(tenNtd, 1).size() != 0 && ungVienDao.getUngVienBy(tenUV, 1).size() != 0) {
+						NhaTuyenDung ntd = nhatuyendungDAO.getNhaTuyenDungBy(tenNtd, 1).get(0);
+						UngVien uv = ungVienDao.getUngVienBy(tenUV, 1).get(0);
+						hopdong_dao.setListHopDong(hopdong_dao.getHopDongTheoUngVienVaNhaTuyenDung(uv.getMaUV(), ntd.getMaNTD()));
+						loadDataTable();
+					}
+					
+				}
+				else if(obj.equals(btnLamLai)) {
+					comboBoxNTD.setSelectedIndex(0);
+					comboBoxUV.setSelectedIndex(0);
+					hopdong_dao.setListHopDong(hopdong_dao.getDSHopDong());
+					loadDataTable();
+				}
+	}
+	
+	public void loadData() {
+		hopdong_dao.setListHopDong(hopdong_dao.getDSHopDong());
+		nhatuyendungDAO.setListNhatuyenDung(nhatuyendungDAO.getDsNhaTuyenDung());
+		ungVienDao.setListUngVien(ungVienDao.getDSUngVien());
+		
+		comboBoxNTD.addItem("Chọn nhà tuyển dụng");
+		for(NhaTuyenDung i: nhatuyendungDAO.getListNhatuyenDung()) {
+			comboBoxNTD.addItem(i.getTenNTD());
+		}
+		
+		comboBoxUV.addItem("Chọn ứng viên");
+		for(UngVien i: ungVienDao.getListUngVien()) {
+			comboBoxUV.addItem(i.getTenUV());
+		}
+		
+		numberLabel.setText(String.valueOf(hopdong_dao.getSoLuongHopDong()));
+		valueLabel.setText(String.valueOf(hopdong_dao.getTongGiaTriHopDong()));
+	}
+	
+	public void loadDataTable() {
+		modelTableHopDong.setRowCount(0);
+		for(HopDong i: hopdong_dao.getListHopDong()) {
+			UngVien uv = ungVienDao.getUngVien(i.getUngVien().getMaUV());
+			NhaTuyenDung ntd = nhatuyendungDAO.getNhaTuyenDungTheoMaTTD(i.getTinTuyenDung().getMaTTD());
+			DateTimeFormatter formatters = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+			Object[] obj=new Object[] {
+					i.getMaHD(), uv.getTenUV(), uv.getSoDienThoai(), ntd.getTenNTD(), i.getPhiDichVu(), i.getThoiGian().format(formatters)
+			};
+			modelTableHopDong.addRow(obj);
+		}
 	}
 
 	@Override
@@ -294,12 +413,6 @@ public class ThongKeHopDongFrame extends JFrame implements ActionListener, Mouse
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
