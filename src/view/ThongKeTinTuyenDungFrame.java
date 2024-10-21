@@ -234,7 +234,7 @@ public class ThongKeTinTuyenDungFrame extends JFrame implements ActionListener, 
         sorter.sort();
 		scrollTinTuyenDung=new JScrollPane(tableTinTuyenDung);
 		scrollTinTuyenDung.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
-		scrollTinTuyenDung.setPreferredSize(new Dimension(1680, 800));
+		scrollTinTuyenDung.setPreferredSize(new Dimension(1280, 570));
 		GradientRoundPanel resScroll=new GradientRoundPanel();
 		resScroll.setBorder(BorderFactory.createEmptyBorder(0,20,20,20));
 		resScroll.setLayout(new BoxLayout(resScroll, BoxLayout.PAGE_AXIS));

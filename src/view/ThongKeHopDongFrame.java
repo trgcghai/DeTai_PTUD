@@ -223,7 +223,7 @@ public class ThongKeHopDongFrame extends JFrame implements ActionListener, Mouse
         sorter.sort();
 		scrollHopDong=new JScrollPane(tableHopDong);
 		scrollHopDong.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
-		scrollHopDong.setPreferredSize(new Dimension(1680, 800));
+		scrollHopDong.setPreferredSize(new Dimension(1280, 570));
 		GradientRoundPanel resScroll=new GradientRoundPanel();
 		resScroll.setBorder(BorderFactory.createEmptyBorder(0,20,20,20));
 		resScroll.setLayout(new BoxLayout(resScroll, BoxLayout.PAGE_AXIS));
