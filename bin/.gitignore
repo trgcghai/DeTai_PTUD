@@ -1,5 +1,6 @@
-/view/
-/dao/
-/image/
+/component/
 /controller/
+/dao/
 /entity/
+/image/
+/view/

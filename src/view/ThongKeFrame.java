@@ -4,19 +4,23 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import component.RoundPanel;
 import component.progress.ProgressBar;
+import entity.NhanVien;
 
-public class ThongKeFrame extends JFrame{
+public class ThongKeFrame extends JFrame implements MouseListener{
 
 	String userName;
 	ThongKeFrame parent;
@@ -42,10 +46,10 @@ public class ThongKeFrame extends JFrame{
 	public void initComponent() {
 		thongkePanel=new JPanel(); 
 		thongkePanel.setLayout(new BorderLayout(5,5));
-		thongkePanel.setBackground(new Color(220, 220, 220));
+		thongkePanel.setBackground(new Color(89, 145, 144));
 		
 		centerPanel=new RoundPanel();
-		centerPanel.setBackground(Color.WHITE);
+		centerPanel.setBackground(new Color(89, 145, 144));
 		
 //		Circle dash board
 		circleDashBoard();
@@ -53,6 +57,48 @@ public class ThongKeFrame extends JFrame{
 		centerPanel.add(circleDashBoardPanel);
 		
 		thongkePanel.add(centerPanel, BorderLayout.CENTER);
+	}
+	
+	public JLabel createLabel(String title) {
+		JLabel label = new JLabel(title);
+		label.setFont(new Font("Segoe UI",0,16));
+		label.setHorizontalAlignment(SwingConstants.CENTER);
+		
+		return label;
+	}
+	
+	public ProgressBar createProgressBar(int value, Color color) {
+		ProgressBar progressCircle = new ProgressBar();
+		progressCircle.setBackground(color);
+		progressCircle.setBorder(BorderFactory.createEmptyBorder());
+		progressCircle.setValue(value);
+		return progressCircle;
+	}
+	
+	public void preparePanelCircle(JPanel panel, ProgressBar progressBar, JLabel label) {
+		GroupLayout layout=new GroupLayout(panel); 
+		panel.setLayout(layout);
+		layout.setHorizontalGroup(
+				layout.createParallelGroup(Alignment.LEADING)
+					   .addGroup(layout.createSequentialGroup()
+							            .addContainerGap()
+							            .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
+							            		         .addComponent(progressBar, GroupLayout.DEFAULT_SIZE,GroupLayout.DEFAULT_SIZE,Short.MAX_VALUE)
+							            		         .addComponent(label, GroupLayout.DEFAULT_SIZE,GroupLayout.DEFAULT_SIZE,Short.MAX_VALUE)
+							            		 )
+							            .addContainerGap()
+				        )
+		);
+		layout.setVerticalGroup(
+				layout.createParallelGroup(Alignment.LEADING)
+				       .addGroup(Alignment.TRAILING, layout.createSequentialGroup()
+				    		   								.addContainerGap()
+				    		   								.addComponent(label)
+				    		   								.addGap(18, 18, 18)
+				    		   								.addComponent(progressBar,GroupLayout.PREFERRED_SIZE,142,GroupLayout.PREFERRED_SIZE)
+				    		   								.addContainerGap()
+				       )
+		);
 	}
 	
 	public void circleDashBoard() {
@@ -70,100 +116,25 @@ public class ThongKeFrame extends JFrame{
 		
 		center= new RoundPanel();
 		
-		panelCircle1=new JPanel(); panelCircle1.setOpaque(false);
-		labelCircle1= new JLabel("Thống kê ứng viên");
-		labelCircle1.setFont(new Font("Segoe UI",0,16));
-		labelCircle1.setHorizontalAlignment(SwingConstants.CENTER);
-		progressCircle1=new ProgressBar();
-		progressCircle1.setBackground(new Color(66, 246, 84));
-		progressCircle1.setBorder(BorderFactory.createEmptyBorder());
-		progressCircle1.setValue(60);
-		GroupLayout layout1=new GroupLayout(panelCircle1); panelCircle1.setLayout(layout1);
-		layout1.setHorizontalGroup(
-				layout1.createParallelGroup(Alignment.LEADING)
-					   .addGroup(layout1.createSequentialGroup()
-							            .addContainerGap()
-							            .addGroup(layout1.createParallelGroup(Alignment.LEADING, false)
-							            		         .addComponent(progressCircle1, GroupLayout.DEFAULT_SIZE,GroupLayout.DEFAULT_SIZE,Short.MAX_VALUE)
-							            		         .addComponent(labelCircle1, GroupLayout.DEFAULT_SIZE,GroupLayout.DEFAULT_SIZE,Short.MAX_VALUE)
-							            		 )
-							            .addContainerGap()
-				        )
-		);
-		layout1.setVerticalGroup(
-				layout1.createParallelGroup(Alignment.LEADING)
-				       .addGroup(Alignment.TRAILING, layout1.createSequentialGroup()
-				    		   								.addContainerGap()
-				    		   								.addComponent(labelCircle1)
-				    		   								.addGap(18, 18, 18)
-				    		   								.addComponent(progressCircle1,GroupLayout.PREFERRED_SIZE,142,GroupLayout.PREFERRED_SIZE)
-				    		   								.addContainerGap()
-				       )
-		);
-		center.add(panelCircle1);
+		panelCircle1=new JPanel(); 
+		panelCircle1.setOpaque(false);
+		labelCircle1= createLabel("Thống kê ứng viên");
+		progressCircle1= createProgressBar(60, new Color(66, 246, 84));
+		preparePanelCircle(panelCircle1, progressCircle1, labelCircle1);
 		
-		panelCircle2=new JPanel(); panelCircle2.setOpaque(false);
-		labelCircle2= new JLabel("Thống kê hồ sơ");
-		labelCircle2.setFont(new Font("Segoe UI",0,16));
-		labelCircle2.setHorizontalAlignment(SwingConstants.CENTER);
-		progressCircle2=new ProgressBar();
-		progressCircle2.setBackground(new Color(132, 66, 246));
-		progressCircle2.setBorder(BorderFactory.createEmptyBorder());
-		progressCircle2.setValue(70);
-		GroupLayout layout2=new GroupLayout(panelCircle2); panelCircle2.setLayout(layout2);
-		layout2.setHorizontalGroup(
-				layout2.createParallelGroup(Alignment.LEADING)
-					   .addGroup(layout2.createSequentialGroup()
-							            .addContainerGap()
-							            .addGroup(layout2.createParallelGroup(Alignment.LEADING, false)
-							            		         .addComponent(progressCircle2, GroupLayout.DEFAULT_SIZE,GroupLayout.DEFAULT_SIZE,Short.MAX_VALUE)
-							            		         .addComponent(labelCircle2, GroupLayout.DEFAULT_SIZE,GroupLayout.DEFAULT_SIZE,Short.MAX_VALUE)
-							            		 )
-							            .addContainerGap()
-				        )
-		);
-		layout2.setVerticalGroup(
-				layout2.createParallelGroup(Alignment.LEADING)
-				       .addGroup(Alignment.TRAILING, layout2.createSequentialGroup()
-				    		   								.addContainerGap()
-				    		   								.addComponent(labelCircle2)
-				    		   								.addGap(18, 18, 18)
-				    		   								.addComponent(progressCircle2,GroupLayout.PREFERRED_SIZE,142,GroupLayout.PREFERRED_SIZE)
-				    		   								.addContainerGap()
-				       )
-		);
-		center.add(panelCircle2);
+		panelCircle2=new JPanel(); 
+		panelCircle2.setOpaque(false);
+		labelCircle2= createLabel("Thống kê tin tuyển dụng");
+		progressCircle2= createProgressBar(70, new Color(132, 66, 246));
+		preparePanelCircle(panelCircle2, progressCircle2, labelCircle2);
 		
 		panelCircle3=new JPanel(); panelCircle3.setOpaque(false);
-		labelCircle3= new JLabel("Thống kê hợp đồng");
-		labelCircle3.setFont(new Font("Segoe UI",0,16));
-		labelCircle3.setHorizontalAlignment(SwingConstants.CENTER);
-		progressCircle3=new ProgressBar();
-		progressCircle3.setBackground(new Color(66, 193, 246));
-		progressCircle3.setBorder(BorderFactory.createEmptyBorder());
-		progressCircle3.setValue(80);
-		GroupLayout layout3=new GroupLayout(panelCircle3); panelCircle3.setLayout(layout3);
-		layout3.setHorizontalGroup(
-				layout3.createParallelGroup(Alignment.LEADING)
-					   .addGroup(layout3.createSequentialGroup()
-							            .addContainerGap()
-							            .addGroup(layout3.createParallelGroup(Alignment.LEADING, false)
-							            		         .addComponent(progressCircle3, GroupLayout.DEFAULT_SIZE,GroupLayout.DEFAULT_SIZE,Short.MAX_VALUE)
-							            		         .addComponent(labelCircle3, GroupLayout.DEFAULT_SIZE,GroupLayout.DEFAULT_SIZE,Short.MAX_VALUE)
-							            		 )
-							            .addContainerGap()
-				        )
-		);
-		layout3.setVerticalGroup(
-				layout3.createParallelGroup(Alignment.LEADING)
-				       .addGroup(Alignment.TRAILING, layout3.createSequentialGroup()
-				    		   								.addContainerGap()
-				    		   								.addComponent(labelCircle3)
-				    		   								.addGap(18, 18, 18)
-				    		   								.addComponent(progressCircle3,GroupLayout.PREFERRED_SIZE,142,GroupLayout.PREFERRED_SIZE)
-				    		   								.addContainerGap()
-				       )
-		);
+		labelCircle3= createLabel("Thống kê hợp đồng");
+		progressCircle3= createProgressBar(80, new Color(66, 193, 246));
+		preparePanelCircle(panelCircle3, progressCircle3, labelCircle3);
+
+		center.add(panelCircle1);
+		center.add(panelCircle2);
 		center.add(panelCircle3);
 		
 		circleDashBoardPanel.add(center, BorderLayout.CENTER);
@@ -173,9 +144,65 @@ public class ThongKeFrame extends JFrame{
 		progressCircle1.start();
 		progressCircle2.start();
 		progressCircle3.start();
+		
+		labelCircle1.addMouseListener(this);
+		labelCircle2.addMouseListener(this);
+		labelCircle3.addMouseListener(this);
 	}
 	
 	public JPanel getPanel() {
 		return this.thongkePanel;
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		var obj=e.getSource();
+		if(obj.getClass().equals(JLabel.class)) {
+			if(((JLabel)obj).getText().equals("Thống kê tin tuyển dụng")) {
+				centerPanel.removeAll();
+				centerPanel.add(new ThongKeTinTuyenDungFrame(userName).getPanel());
+				
+				this.setTitle("Thống kê tin tuyển dụng");
+			}
+			else if(((JLabel)obj).getText().equals("Thống kê hợp đồng")) {
+				centerPanel.removeAll();
+				centerPanel.add(new ThongKeHopDongFrame(userName).getPanel());
+				
+				this.setTitle("Thống kê hợp đồng");
+			}
+			else if(((JLabel)obj).getText().equals("Thống kê ứng viên")) {
+				centerPanel.removeAll();
+				centerPanel.add(new ThongKeUngVienFrame(userName).getPanel());
+				
+				this.setTitle("Ứng viên");
+			}
+			centerPanel.revalidate();
+			centerPanel.repaint();
+		}
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }
