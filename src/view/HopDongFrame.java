@@ -19,6 +19,7 @@ import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -627,24 +628,26 @@ public class HopDongFrame extends JFrame implements ActionListener, MouseListene
 	
 	public void loadDataTinTuyenDung() {
 		modelTableTinTuyenDung.setRowCount(0);
+		DecimalFormat df = new DecimalFormat("#,###");
 		for(TinTuyenDung i: tintuyendungDAO.getListTinTuyenDung()) {
 			Object[] obj=new Object[] {
 					i.getMaTTD(), i.getTieuDe(),
 					i.getTrinhDo().getValue(), 
-					i.getLuong(),null
+					df.format(i.getLuong())+" VNĐ",null
 			};
 			modelTableTinTuyenDung.addRow(obj);
 		}
 	}
 	
 	public void loadDataHopDong() {
+		DecimalFormat df = new DecimalFormat("#,###");
 		DateTimeFormatter format=DateTimeFormatter.ofPattern("dd-MM-yyyy");
 		modelTableHopDong.setRowCount(0);
 		for(HopDong i: hopdongDAO.getListHopDong()) {
 			Object[] obj=new Object[] {
 					i.getMaHD(),
 					tintuyendungDAO.getTinTuyenDung(i.getTinTuyenDung().getMaTTD()).getTieuDe(),
-					tintuyendungDAO.getTinTuyenDung(i.getTinTuyenDung().getMaTTD()).getLuong(), 
+					df.format(tintuyendungDAO.getTinTuyenDung(i.getTinTuyenDung().getMaTTD()).getLuong())+" VNĐ", 
 					ungvienDAO.getUngVien(i.getUngVien().getMaUV()).getTenUV(),
 					format.format(i.getThoiGian()), null
 			};

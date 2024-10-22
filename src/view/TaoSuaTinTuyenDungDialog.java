@@ -231,6 +231,7 @@ public class TaoSuaTinTuyenDungDialog extends JDialog implements ActionListener{
 		motaText=new JTextArea(10, 48); motaText.setFont(new Font("Segoe UI",0,16));
 		motaText.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
 		motaText.setLineWrap(true);
+		motaText.setWrapStyleWord(true);
 		scrollMoTa=new JScrollPane(motaText);
 		inforTinTuyenDungPanel.add(scrollMoTa, gbc);
 		
@@ -284,7 +285,7 @@ public class TaoSuaTinTuyenDungDialog extends JDialog implements ActionListener{
 			}
 		}
 		soluongText.setText(String.valueOf(ttd.getSoLuong()));
-		luongText.setText(String.valueOf(ttd.getLuong()));
+		luongText.setText(String.valueOf((int)ttd.getLuong()));
 		modelDateStart.setValue(Date.from(ttd.getNgayDangTin().atStartOfDay(ZoneId.systemDefault()).toInstant()));
 		modelDateEnd.setValue(Date.from(ttd.getNgayHetHan().atStartOfDay(ZoneId.systemDefault()).toInstant()));
 		motaText.setText(ttd.getMoTa());
@@ -329,33 +330,43 @@ public class TaoSuaTinTuyenDungDialog extends JDialog implements ActionListener{
 			if(Pattern.compile("^[0-9]+$").matcher(soluong).matches()
 				&& Pattern.compile("^[0-9]+$").matcher(luong).matches()) {
 				if(nganhngheBox.getSelectedIndex()!=-1) {
-					if(LocalDate.parse(ngaydangtin).compareTo(LocalDate.now())>=0) {
-						if(LocalDate.parse(ngayhethan).compareTo(LocalDate.now())>0
-								&& LocalDate.parse(ngayhethan).compareTo(LocalDate.parse(ngaydangtin))>0) {
-							
+					if(btnThem.getText().equalsIgnoreCase("Tạo mới")) {
+						if(LocalDate.parse(ngaydangtin).compareTo(LocalDate.now())>=0) {
+							if(LocalDate.parse(ngayhethan).compareTo(LocalDate.now())>0
+									&& LocalDate.parse(ngayhethan).compareTo(LocalDate.parse(ngaydangtin))>0) {
+								
+								TinTuyenDung tintuyendung=new TinTuyenDung(id, tieude, mota,
+										LocalDate.parse(ngaydangtin), LocalDate.parse(ngayhethan), 
+										trinhdo, Integer.parseInt(soluong), Double.parseDouble(luong), 
+										nganhnghe, hinhthuc, trangthai, ntd);
+								
+								tintuyendungDAO.create(tintuyendung);
+								JOptionPane.showMessageDialog(rootPane, "Thêm tin tuyển dụng thành công");								
+								this.dispose();
+							}
+							else {
+								JOptionPane.showMessageDialog(rootPane, 
+										"Ngày hết hạn phải sau ngày hiện tại và ngày đăng tin");
+							}
+						}
+						else {
+							JOptionPane.showMessageDialog(rootPane, "Ngày đăng tin phải sau hoặc bằng ngày hiện tại");
+						}
+					}
+					else if(btnThem.getText().equalsIgnoreCase("Cập nhật")) {
+						if(LocalDate.parse(ngayhethan).compareTo(LocalDate.now())>0) {
 							TinTuyenDung tintuyendung=new TinTuyenDung(id, tieude, mota,
 									LocalDate.parse(ngaydangtin), LocalDate.parse(ngayhethan), 
 									trinhdo, Integer.parseInt(soluong), Double.parseDouble(luong), 
 									nganhnghe, hinhthuc, trangthai, ntd);
-							
-							if(btnThem.getText().equalsIgnoreCase("Tạo mới")) {
-								tintuyendungDAO.create(tintuyendung);
-								JOptionPane.showMessageDialog(rootPane, "Thêm tin tuyển dụng thành công");								
-							}
-							else {
-								tintuyendungDAO.update(tintuyendung);
-								JOptionPane.showMessageDialog(rootPane, "Cập nhật tin tuyển dụng thành công");	
-								((TinTuyenDungFrame)parent).updateData();
-							}
+							tintuyendungDAO.update(tintuyendung);
+							JOptionPane.showMessageDialog(rootPane, "Cập nhật tin tuyển dụng thành công");	
+							((TinTuyenDungFrame)parent).updateData();
 							this.dispose();
 						}
 						else {
-							JOptionPane.showMessageDialog(rootPane, 
-									"Ngày hết hạn phải sau ngày hiện tại và ngày đăng tin");
+							JOptionPane.showMessageDialog(rootPane, "Ngày đăng tin và ngày hết hạn không hợp lệ (Tin tuyển dụng đã hết hạn)");
 						}
-					}
-					else {
-						JOptionPane.showMessageDialog(rootPane, "Ngày đăng tin phải sau hoặc bằng ngày hiện tại");
 					}
 				}
 				else {

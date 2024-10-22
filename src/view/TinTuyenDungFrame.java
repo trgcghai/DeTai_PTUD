@@ -20,6 +20,7 @@ import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -257,6 +258,7 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 	}
 	
 	public RoundPanel panelTinTuyenDung(String tieude, String nhatuyendung, double luong, String logo, String maTTD) {
+		DecimalFormat df = new DecimalFormat("#,###");
 		RoundPanel panel=new RoundPanel();
 		panel.setPreferredSize(new Dimension(400, 100));
 		panel.setBackground(new Color(89, 145, 144));
@@ -265,7 +267,6 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 		
 		logoPanel=new JPanel();
 		logoPanel.setOpaque(false);
-//		logoPanel.setBorder(BorderFactory.createLineBorder(Color.WHITE));
 		logoPanel.setPreferredSize(new Dimension(100,100));
 		if(getClass().getResource("/image/imageNTD/"+logo)!=null) {
 			if(logoPanel.getComponents()!=null) {
@@ -296,7 +297,7 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 		nhatuyendungLabel=new JLabel(nhatuyendung);
 		nhatuyendungLabel.setFont(new Font("Segoe UI",0,16));
 		nhatuyendungLabel.setForeground(Color.WHITE);
-		luongLabel=new JLabel(String.valueOf(luong));
+		luongLabel=new JLabel(df.format(luong)+" VNĐ");
 		luongLabel.setFont(new Font("Segoe UI",0,16));
 		luongLabel.setForeground(Color.WHITE);
 		centerPanel.add(tieudeLabel);

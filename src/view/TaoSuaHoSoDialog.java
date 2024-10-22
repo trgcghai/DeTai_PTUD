@@ -371,9 +371,15 @@ public class TaoSuaHoSoDialog extends JDialog implements ActionListener, FocusLi
 	public void huy() {
 		trangthaiText.setSelectedIndex(0);
 		
-		if(hoso.getTinTuyenDung()==null) {
-			motaText.setText("");			
+		if(hoso==null) {
+			motaText.setText("");	
 		}
+		else {
+			if(hoso.getTinTuyenDung()==null) {
+				motaText.setText("");			
+			}
+		}
+		
 	}
 	
 //	Trạng thái text chuột không nằm trong ô

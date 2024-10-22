@@ -250,6 +250,7 @@ public class ChiTietViecLamDialog extends JDialog implements ActionListener{
 		motaText=new JTextArea(10, 48); motaText.setFont(new Font("Segoe UI",0,16));
 		motaText.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
 		motaText.setLineWrap(true);
+		motaText.setWrapStyleWord(true);
 		motaText.setEditable(false);
 		scrollMoTa=new JScrollPane(motaText);
 		inforTinTuyenDungPanel.add(scrollMoTa, gbc);
@@ -304,7 +305,7 @@ public class ChiTietViecLamDialog extends JDialog implements ActionListener{
 			}
 		}
 		soluongText.setText(String.valueOf(ttd.getSoLuong()));
-		luongText.setText(String.valueOf(ttd.getLuong()));
+		luongText.setText(String.valueOf((int)ttd.getLuong()));
 		modelDateStart.setValue(Date.from(ttd.getNgayDangTin().atStartOfDay(ZoneId.systemDefault()).toInstant()));
 		modelDateEnd.setValue(Date.from(ttd.getNgayHetHan().atStartOfDay(ZoneId.systemDefault()).toInstant()));
 		motaText.setText(ttd.getMoTa());

@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -247,9 +248,10 @@ public class DanhSachTinTuyenDungDialog extends JDialog implements FocusListener
 //	3: theo tiêu đề và trạng thái tin tuyển dụng
 	public void loadDataTable() {
 		modelTableTinTuyenDung.setRowCount(0);
+		DecimalFormat df = new DecimalFormat("#,###");
 		for(TinTuyenDung i: tintuyendungDAO.getTinTuyenDungTheoNTD(ntd.getMaNTD(),1)) {
 			Object[] obj=new Object[] {
-					i.getMaTTD(), i.getTieuDe(), i.getLuong(), 
+					i.getMaTTD(), i.getTieuDe(), df.format(i.getLuong())+" VNĐ", 
 					i.getTrinhDo().getValue(), i.isTrangThai()?"Khả dụng":"Không khả dụng",
 					null
 			};

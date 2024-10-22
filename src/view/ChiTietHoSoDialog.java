@@ -200,6 +200,7 @@ public class ChiTietHoSoDialog extends JDialog implements ActionListener{
 		motaText=new JTextArea(10, 48); motaText.setFont(new Font("Segoe UI",0,16));
 		motaText.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
 		motaText.setLineWrap(true);
+		motaText.setWrapStyleWord(true);
 		motaText.setEditable(false);
 		scrollMoTa=new JScrollPane(motaText);
 		inforUngVienPanel.add(scrollMoTa, gbc);

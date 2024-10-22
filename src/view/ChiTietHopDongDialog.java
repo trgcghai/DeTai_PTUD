@@ -2,6 +2,7 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -11,6 +12,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -209,13 +212,13 @@ public class ChiTietHopDongDialog extends JDialog implements ActionListener{
 	
 	public void loadDataHopDong() {
 		idText.setText(hd.getMaHD());
-		phiText.setText(String.valueOf(hd.getPhiDichVu()));
+		phiText.setText(String.valueOf((int)hd.getPhiDichVu()));
 		modelDateNgayLap.setValue(Date.from(hd.getThoiGian().atStartOfDay(ZoneId.systemDefault()).toInstant()));
 		tieudeText.setText(tintuyendungDAO.getTinTuyenDung(hd.getTinTuyenDung().getMaTTD()).getTieuDe());
 		nhatuyendungText.setText(nhatuyendungDAO
 				.getNhaTuyenDung(tintuyendungDAO.getTinTuyenDung(hd.getTinTuyenDung().getMaTTD()).getNhaTuyenDung().getMaNTD())
 				.getTenNTD());
-		luongText.setText(String.valueOf(tintuyendungDAO.getTinTuyenDung(hd.getTinTuyenDung().getMaTTD()).getLuong()));
+		luongText.setText(String.valueOf((int)tintuyendungDAO.getTinTuyenDung(hd.getTinTuyenDung().getMaTTD()).getLuong()));
 		tenText.setText(ungvienDAO.getUngVien(hd.getUngVien().getMaUV()).getTenUV());
 		sdtText.setText(ungvienDAO.getUngVien(hd.getUngVien().getMaUV()).getSoDienThoai());
 		emailText.setText(ungvienDAO.getUngVien(hd.getUngVien().getMaUV()).getEmail());
@@ -235,6 +238,76 @@ public class ChiTietHopDongDialog extends JDialog implements ActionListener{
 	    fillTableWithData(table, purchaseData);
 	}
 	
+	private String luu() {
+		DateTimeFormatter dft = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+		DecimalFormat df = new DecimalFormat("#,###");
+		Document doc = new Document();
+		 
+        doc.loadFromFile("src/form/form.docx");
+ 
+        doc.replace("#MaHD", hd.getMaHD(), true, true);
+        doc.replace("#Date", hd.getThoiGian().format(dft), true, true);
+        doc.replace("#nhanvien", nhanvienDAO.getNhanVien(hd.getNhanVien().getMaNV()).getTenNV(), true, true);
+        
+        doc.replace("#tenNTD", nhatuyendungDAO
+				.getNhaTuyenDung(tintuyendungDAO.getTinTuyenDung(hd.getTinTuyenDung().getMaTTD()).getNhaTuyenDung().getMaNTD())
+				.getTenNTD(), true, true);
+        doc.replace("#tieude", tintuyendungDAO.getTinTuyenDung(hd.getTinTuyenDung().getMaTTD()).getTieuDe(), true, true);
+        doc.replace("#emailNTD", nhatuyendungDAO
+				.getNhaTuyenDung(tintuyendungDAO.getTinTuyenDung(hd.getTinTuyenDung().getMaTTD()).getNhaTuyenDung().getMaNTD())
+				.getEmail(), true, true);
+        doc.replace("#diachiNTD", nhatuyendungDAO
+				.getNhaTuyenDung(tintuyendungDAO.getTinTuyenDung(hd.getTinTuyenDung().getMaTTD()).getNhaTuyenDung().getMaNTD())
+				.getDiaChi(), true, true);
+        doc.replace("#sodienthoaiNTD", nhatuyendungDAO
+				.getNhaTuyenDung(tintuyendungDAO.getTinTuyenDung(hd.getTinTuyenDung().getMaTTD()).getNhaTuyenDung().getMaNTD())
+				.getSoDienThoai(), true, true);
+        
+        doc.replace("#tenUV", ungvienDAO.getUngVien(hd.getUngVien().getMaUV()).getTenUV(), true, true);
+        doc.replace("#ngaysinh", ungvienDAO.getUngVien(hd.getUngVien().getMaUV()).getNgaySinh().format(dft), true, true);
+        doc.replace("#emailUV", ungvienDAO.getUngVien(hd.getUngVien().getMaUV()).getEmail(), true, true);
+        doc.replace("#diachiUV", ungvienDAO.getUngVien(hd.getUngVien().getMaUV()).getDiaChi(), true, true);
+        doc.replace("#sodienthoaiUV", ungvienDAO.getUngVien(hd.getUngVien().getMaUV()).getSoDienThoai(), true, true);
+        
+        String[][] purchaseData = {
+                new String[]{tintuyendungDAO.getTinTuyenDung(hd.getTinTuyenDung().getMaTTD()).getTieuDe(), 
+                	df.format(tintuyendungDAO.getTinTuyenDung(hd.getTinTuyenDung().getMaTTD()).getLuong())+" VNĐ"}
+        };
+        
+        writeDataToDocument(doc, purchaseData);
+        
+        doc.replace("#luong", df.format(tintuyendungDAO.getTinTuyenDung(hd.getTinTuyenDung().getMaTTD()).getLuong())+" VNĐ", true, true);
+        int tax=(int)(hd.getPhiDichVu()*100/tintuyendungDAO.getTinTuyenDung(hd.getTinTuyenDung().getMaTTD()).getLuong());
+        doc.replace("#number", String.valueOf(tax), true, true);
+        doc.replace("#thanhtien", df.format(hd.getPhiDichVu())+" VNĐ", true, true);
+ 
+        doc.isUpdateFields(true);
+ 
+        int number=new Random().nextInt();
+        
+        String filePath="src"+File.separator+"form"+File.separator+"Invoice_"+number+".pdf";
+        doc.saveToFile(filePath, FileFormat.PDF);
+        
+        return filePath;
+	}
+	
+	public void openFile(String filePath) {
+		try {
+			String filePathNew=filePath.replace("\\", "\\\\");
+            File pdfFile = new File(filePathNew);
+
+            if (Desktop.isDesktopSupported()) {
+                Desktop desktop = Desktop.getDesktop();
+
+                if (pdfFile.exists()) {
+                    desktop.open(pdfFile);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+	}
+	
 	public void addActionListener() {
 		btnHuy.addActionListener(this);
 		btnLuu.addActionListener(this);
@@ -248,55 +321,8 @@ public class ChiTietHopDongDialog extends JDialog implements ActionListener{
 			this.dispose();
 		}
 		else if(obj.equals(btnLuu)) {
-			DateTimeFormatter dft = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-			DecimalFormat df = new DecimalFormat("#,###");
-			Document doc = new Document();
-			 
-	        doc.loadFromFile("src/form/form.docx");
-	 
-	        doc.replace("#MaHD", hd.getMaHD(), true, true);
-	        doc.replace("#Date", hd.getThoiGian().format(dft), true, true);
-	        doc.replace("#nhanvien", nhanvienDAO.getNhanVien(hd.getNhanVien().getMaNV()).getTenNV(), true, true);
-	        
-	        doc.replace("#tenNTD", nhatuyendungDAO
-					.getNhaTuyenDung(tintuyendungDAO.getTinTuyenDung(hd.getTinTuyenDung().getMaTTD()).getNhaTuyenDung().getMaNTD())
-					.getTenNTD(), true, true);
-	        doc.replace("#tieude", tintuyendungDAO.getTinTuyenDung(hd.getTinTuyenDung().getMaTTD()).getTieuDe(), true, true);
-	        doc.replace("#emailNTD", nhatuyendungDAO
-					.getNhaTuyenDung(tintuyendungDAO.getTinTuyenDung(hd.getTinTuyenDung().getMaTTD()).getNhaTuyenDung().getMaNTD())
-					.getEmail(), true, true);
-	        doc.replace("#diachiNTD", nhatuyendungDAO
-					.getNhaTuyenDung(tintuyendungDAO.getTinTuyenDung(hd.getTinTuyenDung().getMaTTD()).getNhaTuyenDung().getMaNTD())
-					.getDiaChi(), true, true);
-	        doc.replace("#sodienthoaiNTD", nhatuyendungDAO
-					.getNhaTuyenDung(tintuyendungDAO.getTinTuyenDung(hd.getTinTuyenDung().getMaTTD()).getNhaTuyenDung().getMaNTD())
-					.getSoDienThoai(), true, true);
-	        
-	        doc.replace("#tenUV", ungvienDAO.getUngVien(hd.getUngVien().getMaUV()).getTenUV(), true, true);
-	        doc.replace("#ngaysinh", ungvienDAO.getUngVien(hd.getUngVien().getMaUV()).getNgaySinh().format(dft), true, true);
-	        doc.replace("#emailUV", ungvienDAO.getUngVien(hd.getUngVien().getMaUV()).getEmail(), true, true);
-	        doc.replace("#diachiUV", ungvienDAO.getUngVien(hd.getUngVien().getMaUV()).getDiaChi(), true, true);
-	        doc.replace("#sodienthoaiUV", ungvienDAO.getUngVien(hd.getUngVien().getMaUV()).getSoDienThoai(), true, true);
-	        
-	        String[][] purchaseData = {
-	                new String[]{tintuyendungDAO.getTinTuyenDung(hd.getTinTuyenDung().getMaTTD()).getTieuDe(), 
-	                	df.format(tintuyendungDAO.getTinTuyenDung(hd.getTinTuyenDung().getMaTTD()).getLuong())+" VNĐ"}
-	        };
-	        
-	        writeDataToDocument(doc, purchaseData);
-	        
-	        doc.replace("#luong", df.format(tintuyendungDAO.getTinTuyenDung(hd.getTinTuyenDung().getMaTTD()).getLuong())+" VNĐ", true, true);
-	        int tax=(int)(hd.getPhiDichVu()*100/tintuyendungDAO.getTinTuyenDung(hd.getTinTuyenDung().getMaTTD()).getLuong());
-	        doc.replace("#number", String.valueOf(tax), true, true);
-	        doc.replace("#thanhtien", df.format(hd.getPhiDichVu())+" VNĐ", true, true);
-	 
-	        doc.isUpdateFields(true);
-	 
-	        int number=new Random().nextInt();
-	        doc.saveToFile("Invoice_"+number+".pdf", FileFormat.PDF);
-	        
-	        JOptionPane.showMessageDialog(rootPane, "In hợp đồng thành công");
-	        this.dispose();
+			openFile(luu());
+			this.dispose();
 		}
 	}
 }

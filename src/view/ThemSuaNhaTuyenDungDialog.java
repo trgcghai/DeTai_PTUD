@@ -12,6 +12,7 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.Date;
 import java.util.Properties;
 import java.util.regex.Pattern;
@@ -181,7 +182,8 @@ public class ThemSuaNhaTuyenDungDialog extends JDialog implements ActionListener
 	}
 
 	public void openFile() {
-		fileChooser=new JFileChooser("D:\\DeadlineIUH\\BaitapPTUD\\Code\\DeTai_PTUD\\src\\image\\imageNTD");
+//		fileChooser=new JFileChooser("D:\\DeadlineIUH\\BaitapPTUD\\Code\\DeTai_PTUD\\src\\image\\imageNTD");
+		JFileChooser fileChooser = new JFileChooser(new File("src/image/imageNTD").getAbsolutePath());
 		int actionResult=fileChooser.showOpenDialog(this);
 		if(actionResult==fileChooser.APPROVE_OPTION) {
 			String path=fileChooser.getSelectedFile().getAbsolutePath();

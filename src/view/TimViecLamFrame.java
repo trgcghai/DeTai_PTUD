@@ -21,6 +21,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -336,13 +337,18 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 	}
 	
 	public void loadDataTinTuyenDungNhaTuyenDung() {
+		DecimalFormat df = new DecimalFormat("#,###");
 		modelTableTinTuyenDung.setRowCount(0);
 		for(TinTuyenDung i: tintuyendungDAO.getListTinTuyenDung()) {
-			Object[] obj=new Object[] {
-					i.getMaTTD(),
-					i.getTieuDe(), i.getTrinhDo().getValue(), i.getLuong(), null
-			};
-			modelTableTinTuyenDung.addRow(obj);
+			if(i.getNgayHetHan().compareTo(LocalDate.now())>0) {
+				if(i.getNgayDangTin().compareTo(LocalDate.now())<=0 && i.isTrangThai()) {
+					Object[] obj=new Object[] {
+							i.getMaTTD(),
+							i.getTieuDe(), i.getTrinhDo().getValue(), df.format(i.getLuong())+" VNĐ", null
+					};
+					modelTableTinTuyenDung.addRow(obj);
+				}
+			}
 		}
 	}
 	
