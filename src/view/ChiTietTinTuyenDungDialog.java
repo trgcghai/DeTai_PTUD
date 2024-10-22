@@ -30,6 +30,7 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
+import component.Button;
 import component.ComboBoxRenderer;
 import component.GradientPanel;
 import controller.LabelDateFormatter;
@@ -53,7 +54,7 @@ public class ChiTietTinTuyenDungDialog extends JDialog implements ActionListener
 	JDatePickerImpl startText, endText;
 	JTextArea motaText;
 	JScrollPane scrollMoTa;
-	JButton btnThem, btnHuy;
+	Button btnThem, btnHuy;
 	GridBagConstraints gbc;
 	
 	private TinTuyenDung ttd;
@@ -222,7 +223,7 @@ public class ChiTietTinTuyenDungDialog extends JDialog implements ActionListener
 		btnPanel.setBackground(Color.WHITE);
 		btnPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 50));
 		
-		btnHuy=new JButton("Hủy"); btnHuy.setFont(new Font("Segoe UI",0,16));
+		btnHuy=new Button("Hủy"); btnHuy.setFont(new Font("Segoe UI",0,16));
 		btnHuy.setPreferredSize(new Dimension(120,25));
 		btnHuy.setBackground(Color.RED);
 		btnHuy.setForeground(Color.WHITE);

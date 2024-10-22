@@ -33,6 +33,7 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
+import component.Button;
 import component.GradientPanel;
 import controller.FilterImp;
 import controller.LabelDateFormatter;
@@ -51,7 +52,7 @@ public class ThemSuaNhaTuyenDungDialog extends JDialog implements ActionListener
 	JComboBox gioitinhText;
 	UtilDateModel modelDate;
 	JDatePickerImpl dateText;
-	JButton btnThem, btnHuy, btnLogo;
+	Button btnThem, btnHuy, btnLogo;
 	JFileChooser fileChooser;
 	String logo;
 	
@@ -123,7 +124,7 @@ public class ThemSuaNhaTuyenDungDialog extends JDialog implements ActionListener
 		inforNhaTuyenDungPanel.add(logoPanel, gbc);
 		
 		gbc.gridx=2; gbc.gridy=1; gbc.gridheight=1;
-		btnLogo=new JButton("Chọn logo");
+		btnLogo=new Button("Chọn logo");
 		btnLogo.setFont(new Font("Segoe UI",0,16));
 		btnLogo.setBackground(new Color(0,102,102));
 		btnLogo.setForeground(Color.WHITE);
@@ -166,12 +167,12 @@ public class ThemSuaNhaTuyenDungDialog extends JDialog implements ActionListener
 		btnPanel.setBackground(Color.WHITE);
 		btnPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 20));
 		
-		btnThem=new JButton("Thêm mới"); btnThem.setFont(new Font("Segoe UI",0,16));
+		btnThem=new Button("Thêm mới"); btnThem.setFont(new Font("Segoe UI",0,16));
 		btnThem.setPreferredSize(new Dimension(120,25));
 		btnThem.setBackground(new Color(0,102,102));
 		btnThem.setForeground(Color.WHITE);
 		
-		btnHuy=new JButton("Hủy"); btnHuy.setFont(new Font("Segoe UI",0,16));
+		btnHuy=new Button("Hủy"); btnHuy.setFont(new Font("Segoe UI",0,16));
 		btnHuy.setPreferredSize(new Dimension(120,25));
 		btnHuy.setBackground(Color.WHITE);
 		btnHuy.setForeground(Color.BLACK);

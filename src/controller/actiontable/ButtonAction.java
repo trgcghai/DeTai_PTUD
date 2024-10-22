@@ -13,6 +13,8 @@ public class ButtonAction extends JButton{
 
     public ButtonAction() {
         setContentAreaFilled(false);
+        setBorderPainted(false);
+        setFocusPainted(false);
         setBorder(new EmptyBorder(3, 3, 3, 3));
         addMouseListener(new MouseAdapter() {
             @Override

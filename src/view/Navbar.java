@@ -10,40 +10,36 @@ import java.awt.GridLayout;
 import java.awt.RenderingHints;
 
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
-import component.GradientPanel;
+import component.ButtonMenu;
 
-public class Navbar extends JMenuBar{
+public class Navbar extends JPanel{
 
 //	Thanh menu
 //	Nhân viên
-	JMenu menuNhanVien;
+	ButtonMenu menuNhanVien;
 //	Tài khoản
-	JMenu menuTaiKhoan;
+	ButtonMenu menuTaiKhoan;
 //	Ứng viên
-	JMenu menuUngVien;
+	ButtonMenu menuUngVien;
 // 	Hồ sơ
-	JMenu menuHoSo;
+	ButtonMenu menuHoSo;
 // 	Nhà tuyển dụng
-	JMenu menuNhaTuyenDung;
+	ButtonMenu menuNhaTuyenDung;
 // 	Tin tuyển dụng
-	JMenu menuTinTuyenDung;
+	ButtonMenu menuTinTuyenDung;
 // 	Hợp đồng
-	JMenu menuHopDong;
+	ButtonMenu menuHopDong;
 //	Tìm việc làm
-	JMenu menuTimViec;
+	ButtonMenu menuTimViec;
 // 	Thống kê
-	JMenu menuThongKe;
+	ButtonMenu menuThongKe;
 //	JMenuItem itemTKNhanVien, itemTKCongTy, itemTKHoSo, itemTKTinTuyenDung;
 // 	Hệ thống
-	JMenu menuUser;
-	JMenu menuHome, menuLogout;
+	ButtonMenu menuUser;
+	ButtonMenu menuHome, menuLogout;
 	JPanel menuPanel;
 	
 	MainFrame parent;
@@ -69,7 +65,6 @@ public class Navbar extends JMenuBar{
 		if(this.parent.getVaiTro().equalsIgnoreCase("Admin")) {
 			add(menuNhanVien);
 			add(menuTaiKhoan);
-			add(menuThongKe);
 		}
 		
 		add(menuUngVien);
@@ -106,13 +101,13 @@ public class Navbar extends JMenuBar{
 	    g2d.fillRect(0, 0, w, h);
 	}
 	
-	private JMenu createMenu(String title, String nameImg) {
-		JMenu menu=new JMenu(title);
+	private ButtonMenu createMenu(String title, String nameImg) {
+		ButtonMenu menu=new ButtonMenu(title);
 		menu.setFont(new Font("Segoe UI",1,16));
 		menu.setForeground(Color.WHITE);
 		menu.setIcon(new ImageIcon(getClass().getResource("/image/"+nameImg+".png")));
 		
 		return menu;
 	}
-
+	
 }

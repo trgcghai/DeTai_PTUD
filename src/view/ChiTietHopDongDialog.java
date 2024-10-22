@@ -37,6 +37,7 @@ import com.spire.doc.Document;
 import com.spire.doc.FileFormat;
 import com.spire.doc.Table;
 
+import component.Button;
 import component.GradientPanel;
 import controller.LabelDateFormatter;
 import dao.HopDong_DAO;
@@ -55,7 +56,7 @@ public class ChiTietHopDongDialog extends JDialog implements ActionListener{
 			luongText, phiText, nhatuyendungText, sdtText, emailText, nhanvienText;
 	UtilDateModel modelDateNgayLap;
 	JDatePickerImpl ngaylapText;
-	JButton btnLuu, btnHuy;
+	Button btnLuu, btnHuy;
 	GridBagConstraints gbc;
 	
 	private HopDong_DAO hopdongDAO;
@@ -187,12 +188,12 @@ public class ChiTietHopDongDialog extends JDialog implements ActionListener{
 		btnPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		btnPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 45));
 		
-		btnLuu=new JButton("In hợp đồng"); btnLuu.setFont(new Font("Segoe UI",0,16));
+		btnLuu=new Button("In hợp đồng"); btnLuu.setFont(new Font("Segoe UI",0,16));
 		btnLuu.setPreferredSize(new Dimension(120,25));
 		btnLuu.setBackground(new Color(0,102,102));
 		btnLuu.setForeground(Color.WHITE);
 		
-		btnHuy=new JButton("Hủy"); btnHuy.setFont(new Font("Segoe UI",0,16));
+		btnHuy=new Button("Hủy"); btnHuy.setFont(new Font("Segoe UI",0,16));
 		btnHuy.setPreferredSize(new Dimension(120,25));
 		btnHuy.setBackground(Color.WHITE);
 		btnHuy.setForeground(Color.BLACK);

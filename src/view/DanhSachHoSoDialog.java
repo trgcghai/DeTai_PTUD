@@ -26,6 +26,7 @@ import javax.swing.SortOrder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
+import component.Button;
 import component.GradientPanel;
 import controller.actiontable.TableActionEvent;
 import controller.actiontable.TableCellEditorDetail;
@@ -46,7 +47,7 @@ public class DanhSachHoSoDialog extends JDialog implements ActionListener{
 	GradientPanel timkiemPanel, danhsachPanel, btnPanel;
 	JLabel timkiemTrangThaiLabel, timkiemNTDLabel;
 	JComboBox timkiemTrangThaiText, timkiemNTDText;
-	JButton btnTimKiem, btnLamLai, btnHuy;
+	Button btnTimKiem, btnLamLai, btnHuy;
 	DefaultTableModel modelTableHoSo;
 	JTable tableHoSo;
 	JScrollPane scrollHoSo;
@@ -106,11 +107,11 @@ public class DanhSachHoSoDialog extends JDialog implements ActionListener{
 		resBtnSearch.setOpaque(false);
 		resBtnSearch.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 5));
 		resBtnSearch.setBackground(Color.WHITE);
-		btnTimKiem=new JButton("Tìm kiếm"); btnTimKiem.setFont(new Font("Segoe UI",0,16));
+		btnTimKiem=new Button("Tìm kiếm"); btnTimKiem.setFont(new Font("Segoe UI",0,16));
 		btnTimKiem.setPreferredSize(new Dimension(120,25));
 		btnTimKiem.setBackground(new Color(0,102,102));
 		btnTimKiem.setForeground(Color.WHITE);
-		btnLamLai=new JButton("Làm lại"); btnLamLai.setFont(new Font("Segoe UI",0,16));
+		btnLamLai=new Button("Làm lại"); btnLamLai.setFont(new Font("Segoe UI",0,16));
 		btnLamLai.setPreferredSize(new Dimension(120,25));
 		btnLamLai.setBackground(Color.RED);
 		btnLamLai.setForeground(Color.WHITE);
@@ -169,7 +170,7 @@ public class DanhSachHoSoDialog extends JDialog implements ActionListener{
 		btnPanel=new GradientPanel(Color.decode("#ABC8CB"), Color.decode("#7CBDBF"));
 		btnPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 20, 0));
 		btnPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
-		btnHuy=new JButton("Hủy"); btnHuy.setFont(new Font("Segoe UI",0,16));
+		btnHuy=new Button("Hủy"); btnHuy.setFont(new Font("Segoe UI",0,16));
 		btnHuy.setPreferredSize(new Dimension(100,30));
 		btnHuy.setBackground(Color.RED);
 		btnHuy.setForeground(Color.WHITE);
