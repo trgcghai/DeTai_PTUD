@@ -11,7 +11,11 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Properties;
@@ -25,6 +29,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -49,7 +54,7 @@ import entity.NhaTuyenDung;
 import entity.TinTuyenDung;
 import entity.UngVien;
 
-public class ThongKeHopDongFrame extends JFrame implements ActionListener, MouseListener, FocusListener {
+public class ThongKeHopDongFrame extends JFrame implements ActionListener {
 	String userName;
 	ThongKeHopDongFrame parent;
 	
@@ -60,7 +65,7 @@ public class ThongKeHopDongFrame extends JFrame implements ActionListener, Mouse
 	JTable tableHopDong;
 	DefaultTableModel modelTableHopDong;
 	JScrollPane scrollHopDong;
-	UtilDateModel modelDate;
+	UtilDateModel modelBatDau, modelKetThuc;
 	JDatePickerImpl ngayBatDau, ngayKetThuc;
 	JComboBox<Object> comboBoxNTD, comboBoxUV;
 	Icon iconBtnSave;
@@ -87,6 +92,7 @@ public class ThongKeHopDongFrame extends JFrame implements ActionListener, Mouse
 		
 		loadData();
 		loadDataTable();
+		loadDataTotal();
 	}
 	
 	public JLabel createLabel(String title) {
@@ -137,21 +143,23 @@ public class ThongKeHopDongFrame extends JFrame implements ActionListener, Mouse
 		resFormSearch.add(timkiemUVLabel);
 		resFormSearch.add(comboBoxUV);
 		
-		modelDate=new UtilDateModel();
+		modelBatDau=new UtilDateModel();
+		modelKetThuc=new UtilDateModel();
 		Properties p=new Properties();
 		p.put("text.day", "Day"); 
 		p.put("text.month", "Month"); 
 		p.put("text.year", "Year");
-		JDatePanelImpl panelDate=new JDatePanelImpl(modelDate, p);
+		JDatePanelImpl panelDateBatDau=new JDatePanelImpl(modelBatDau, p);
+		JDatePanelImpl panelDateKetThuc=new JDatePanelImpl(modelKetThuc, p);
 		
 		ngayBatDauLabel= createLabel("Ngày bắt đầu:"); 
-		ngayBatDau=new JDatePickerImpl(panelDate, new LabelDateFormatter());
+		ngayBatDau=new JDatePickerImpl(panelDateBatDau, new LabelDateFormatter());
 		ngayBatDau.setPreferredSize(new Dimension(150,25));
 		resFormSearch.add(ngayBatDauLabel);
 		resFormSearch.add(ngayBatDau);
 		
 		ngayKetThucLabel= createLabel("Ngày kết thúc:"); 
-		ngayKetThuc=new JDatePickerImpl(panelDate, new LabelDateFormatter());
+		ngayKetThuc=new JDatePickerImpl(panelDateKetThuc, new LabelDateFormatter());
 		ngayKetThuc.setPreferredSize(new Dimension(150,25));
 		resFormSearch.add(ngayKetThucLabel);
 		resFormSearch.add(ngayKetThuc);
@@ -253,7 +261,9 @@ public class ThongKeHopDongFrame extends JFrame implements ActionListener, Mouse
 		
 		JPanel temp = new JPanel();
 		summaryValueLabel= createLabel("Tổng giá trị hợp đồng:"); 
+		summaryValueLabel.setFont(new Font("Segoe UI",1,20));
 		valueLabel = createLabel("");
+		valueLabel.setFont(new Font("Segoe UI",1,20));
 		temp.add(summaryValueLabel);
 		temp.add(valueLabel);
 		temp.setOpaque(false);
@@ -262,7 +272,9 @@ public class ThongKeHopDongFrame extends JFrame implements ActionListener, Mouse
 		
 		JPanel temp1 = new JPanel();
 		summaryNumberLabel= createLabel("Tổng số lượng hợp đồng:"); 
+		summaryNumberLabel.setFont(new Font("Segoe UI",1,20));
 		numberLabel = createLabel("");
+		numberLabel.setFont(new Font("Segoe UI",1,20));
 		temp1.add(summaryNumberLabel);
 		temp1.add(numberLabel);
 		temp1.setOpaque(false);
@@ -302,6 +314,91 @@ public class ThongKeHopDongFrame extends JFrame implements ActionListener, Mouse
 		btnLamLai.addActionListener(this);	
 	}
 	
+	public int getFetchType() {
+		String tenNtd = comboBoxNTD.getSelectedItem().toString();
+		String tenUV = comboBoxUV.getSelectedItem().toString();
+		Object ngayBD = ngayBatDau.getModel().getValue();
+		Object ngayKT = ngayKetThuc.getModel().getValue();
+		
+		if (!tenNtd.equalsIgnoreCase("Chọn nhà tuyển dụng") && !tenUV.equalsIgnoreCase("Chọn ứng viên") && (ngayBD != null && ngayKT != null)) {
+			return 7;
+		} 
+		
+		if (!tenNtd.equalsIgnoreCase("Chọn nhà tuyển dụng") && (ngayBD != null && ngayKT != null)) {
+			return 6;
+		}
+		
+		if (!tenUV.equalsIgnoreCase("Chọn ứng viên") && (ngayBD != null && ngayKT != null)) {
+			return 5;
+		}
+		
+		if (!tenNtd.equalsIgnoreCase("Chọn nhà tuyển dụng") && !tenUV.equalsIgnoreCase("Chọn ứng viên")) {
+			return 4;
+		}
+		
+		if (ngayBD != null && ngayKT != null) {
+			return 3;
+		}
+		
+		if (!tenNtd.equalsIgnoreCase("Chọn nhà tuyển dụng")) {
+			return 2;
+		}
+		
+		if (!tenUV.equalsIgnoreCase("Chọn ứng viên") ) {
+			return 1;
+		}
+		
+		return 0;
+	}
+	
+	public void fetchHopDong(String tenNtd, String tenUV) {
+			ArrayList<NhaTuyenDung> listNtd = nhatuyendungDAO.getNhaTuyenDungBy(tenNtd, 1);
+			ArrayList<UngVien> listUv = ungVienDao.getUngVienBy(tenUV, 1);
+		
+		if (listNtd.size() != 0 && listUv.size() == 0) {
+			NhaTuyenDung ntd = listNtd.get(0);
+			hopdong_dao.setListHopDong(hopdong_dao.getHopDongTheoNhaTuyenDung(ntd.getMaNTD()));
+			return;
+		}
+		if (nhatuyendungDAO.getNhaTuyenDungBy(tenNtd, 1).size() == 0 && ungVienDao.getUngVienBy(tenUV, 1).size() != 0 ) {
+			UngVien uv = listUv.get(0);
+			hopdong_dao.setListHopDong(hopdong_dao.getHopDongTheoUngVien(uv.getMaUV()));
+			return;
+		}
+		if (nhatuyendungDAO.getNhaTuyenDungBy(tenNtd, 1).size() != 0 && ungVienDao.getUngVienBy(tenUV, 1).size() != 0) {
+			NhaTuyenDung ntd = listNtd.get(0);
+			UngVien uv = listUv.get(0);
+			hopdong_dao.setListHopDong(hopdong_dao.getHopDongTheoUngVienVaNhaTuyenDung(uv.getMaUV(), ntd.getMaNTD()));
+			return;
+		}
+	}
+	
+	public void fetchHopDong(String tenNtd, String tenUV, LocalDate ngayBatDau, LocalDate ngayKetThuc) {
+		ArrayList<NhaTuyenDung> listNtd = nhatuyendungDAO.getNhaTuyenDungBy(tenNtd, 1);
+		ArrayList<UngVien> listUv = ungVienDao.getUngVienBy(tenUV, 1);
+	
+		if (listNtd.size() == 0 && listUv.size() == 0) {
+			hopdong_dao.setListHopDong(hopdong_dao.getHopDongTheoThoiGian(ngayBatDau, ngayKetThuc));
+			return;
+		}
+		if (listNtd.size() != 0 && listUv.size() == 0) {
+			NhaTuyenDung ntd = listNtd.get(0);
+			hopdong_dao.setListHopDong(hopdong_dao.getHopDongTheoNhaTuyenDung(ntd.getMaNTD(), ngayBatDau, ngayKetThuc));
+			return;
+		}
+		if (listNtd.size() == 0 && listUv.size() != 0) {
+			UngVien uv = listUv.get(0);
+			hopdong_dao.setListHopDong(hopdong_dao.getHopDongTheoUngVien(uv.getMaUV(), ngayBatDau, ngayKetThuc));
+			return;
+		}
+		if (listNtd.size() != 0 && listUv.size() != 0) {
+			NhaTuyenDung ntd = listNtd.get(0);
+			UngVien uv = listUv.get(0);
+			hopdong_dao.setListHopDong(hopdong_dao.getHopDongTheoUngVienVaNhaTuyenDung(uv.getMaUV(), ntd.getMaNTD(), ngayBatDau, ngayKetThuc));
+			return;
+		}
+}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
@@ -313,30 +410,57 @@ public class ThongKeHopDongFrame extends JFrame implements ActionListener, Mouse
 				else if(obj.equals(btnTimKiem)) {
 					String tenNtd = comboBoxNTD.getSelectedItem().toString();
 					String tenUV = comboBoxUV.getSelectedItem().toString();
+					Object ngayBD = ngayBatDau.getModel().getValue();
+					Object ngayKT = ngayKetThuc.getModel().getValue();
 					
-					if (tenNtd.equalsIgnoreCase("Chọn nhà tuyển dụng") && tenUV.equalsIgnoreCase("Chọn ứng viên")) return;
-					
-					if (nhatuyendungDAO.getNhaTuyenDungBy(tenNtd, 1).size() != 0 && ungVienDao.getUngVienBy(tenUV, 1).size() == 0) {
-						NhaTuyenDung ntd = nhatuyendungDAO.getNhaTuyenDungBy(tenNtd, 1).get(0);
-						hopdong_dao.setListHopDong(hopdong_dao.getHopDongTheoNhaTuyenDung(ntd.getMaNTD()));
-						loadDataTable();
-					} else if (nhatuyendungDAO.getNhaTuyenDungBy(tenNtd, 1).size() == 0 && ungVienDao.getUngVienBy(tenUV, 1).size() != 0 ) {
-						UngVien uv = ungVienDao.getUngVienBy(tenUV, 1).get(0);
-						hopdong_dao.setListHopDong(hopdong_dao.getHopDongTheoUngVien(uv.getMaUV()));
-						loadDataTable();
-					} else if (nhatuyendungDAO.getNhaTuyenDungBy(tenNtd, 1).size() != 0 && ungVienDao.getUngVienBy(tenUV, 1).size() != 0) {
-						NhaTuyenDung ntd = nhatuyendungDAO.getNhaTuyenDungBy(tenNtd, 1).get(0);
-						UngVien uv = ungVienDao.getUngVienBy(tenUV, 1).get(0);
-						hopdong_dao.setListHopDong(hopdong_dao.getHopDongTheoUngVienVaNhaTuyenDung(uv.getMaUV(), ntd.getMaNTD()));
-						loadDataTable();
+					// 7 fetch data theo nhà tuyển dụng, ứng viên và thời gian
+					// 6 fetch data theo nhà tuyển dụng và thời gian
+					// 5 fetch data theo ứng viên và thời gian
+					// 4 fetch data theo nhà tuyển dụng và ứng viên
+					// 3 fetch data theo thời gian
+					// 2 fetch data theo nhà tuyển dụng
+					// 1 fetch data theo ứng viên
+					switch(getFetchType()) {
+					case 7:
+					case 6:
+					case 5:
+					case 3:
+						SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+						LocalDate ngayBatDau = null;
+						LocalDate ngayKetThuc = null;
+						try {
+							ngayKetThuc = sdf.parse(ngayKT.toString()).toInstant()
+							 .atZone(ZoneId.systemDefault())
+							 .toLocalDate();
+							ngayBatDau = sdf.parse(ngayBD.toString()).toInstant()
+	                        .atZone(ZoneId.systemDefault())
+	                        .toLocalDate();
+						} catch (ParseException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						fetchHopDong(tenNtd, tenUV, ngayBatDau, ngayKetThuc);
+						break;
+					case 4:
+					case 2:
+					case 1:
+						fetchHopDong(tenNtd, tenUV);
+						break;
+					default:
 					}
 					
+					loadDataTable();
+					loadDataTotal();
 				}
 				else if(obj.equals(btnLamLai)) {
 					comboBoxNTD.setSelectedIndex(0);
 					comboBoxUV.setSelectedIndex(0);
 					hopdong_dao.setListHopDong(hopdong_dao.getDSHopDong());
+					ngayBatDau.getModel().setValue(null);
+					ngayKetThuc.getModel().setValue(null);
+					
 					loadDataTable();
+					loadDataTotal();
 				}
 	}
 	
@@ -354,9 +478,16 @@ public class ThongKeHopDongFrame extends JFrame implements ActionListener, Mouse
 		for(UngVien i: ungVienDao.getListUngVien()) {
 			comboBoxUV.addItem(i.getTenUV());
 		}
-		
-		numberLabel.setText(String.valueOf(hopdong_dao.getSoLuongHopDong()));
-		valueLabel.setText(String.valueOf(hopdong_dao.getTongGiaTriHopDong()));
+	}
+	
+	public void loadDataTotal() {
+		DecimalFormat format = new DecimalFormat("#,### VNĐ");
+		double totalHopDong = 0;
+		for (HopDong hd : hopdong_dao.getListHopDong()) {
+			totalHopDong += hd.getPhiDichVu();
+		}
+		valueLabel.setText(String.valueOf(format.format(totalHopDong)));
+		numberLabel.setText(String.valueOf(hopdong_dao.getListHopDong().size()));
 	}
 	
 	public void loadDataTable() {
@@ -365,53 +496,12 @@ public class ThongKeHopDongFrame extends JFrame implements ActionListener, Mouse
 			UngVien uv = ungVienDao.getUngVien(i.getUngVien().getMaUV());
 			NhaTuyenDung ntd = nhatuyendungDAO.getNhaTuyenDungTheoMaTTD(i.getTinTuyenDung().getMaTTD());
 			DateTimeFormatter formatters = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+			DecimalFormat formatLuong = new DecimalFormat("#,### VNĐ");
 			Object[] obj=new Object[] {
-					i.getMaHD(), uv.getTenUV(), uv.getSoDienThoai(), ntd.getTenNTD(), i.getPhiDichVu(), i.getThoiGian().format(formatters)
+					i.getMaHD(), uv.getTenUV(), uv.getSoDienThoai(), ntd.getTenNTD(), formatLuong.format(i.getPhiDichVu()), i.getThoiGian().format(formatters)
 			};
 			modelTableHopDong.addRow(obj);
 		}
-	}
-
-	@Override
-	public void focusGained(FocusEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void focusLost(FocusEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	public JPanel getPanel() {

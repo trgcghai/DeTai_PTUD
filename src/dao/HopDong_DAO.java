@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import controller.Database;
@@ -110,6 +111,58 @@ public class HopDong_DAO {
 		return list.get(0);
 	}
 	
+	public ArrayList<HopDong> getHopDongTheoTinTuyenDung(String maTTD) {
+		ArrayList<HopDong> list = new ArrayList<HopDong>();
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			PreparedStatement stmt = con.prepareStatement("select * from HopDong where MaTTD = ?");
+			stmt.setString(1, maTTD);
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				String maHD = rs.getString(1);
+				double phiDichVu = rs.getDouble(2);
+				LocalDate thoiGian = rs.getDate(3).toLocalDate();
+				TinTuyenDung tinTuyenDung = new TinTuyenDung(rs.getString(4));
+				UngVien ungVien = new UngVien(rs.getString(5));
+				NhanVien nhanVien  = new NhanVien(rs.getString(6));
+				
+				list.add(new HopDong(maHD, phiDichVu, thoiGian, tinTuyenDung, ungVien, nhanVien));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+	
+	public ArrayList<HopDong> getHopDongTheoThoiGian(LocalDate ngayBatDau, LocalDate ngayKetThuc) {
+		ArrayList<HopDong> list = new ArrayList<HopDong>();
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			DateTimeFormatter formater = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			PreparedStatement stmt = con.prepareStatement("select * from HopDong where ThoiGian between ? and ?");
+			stmt.setString(1, formater.format(ngayBatDau));
+			stmt.setString(2, formater.format(ngayKetThuc));
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				String maHD = rs.getString(1);
+				double phiDichVu = rs.getDouble(2);
+				LocalDate thoiGian = rs.getDate(3).toLocalDate();
+				TinTuyenDung tinTuyenDung = new TinTuyenDung(rs.getString(4));
+				UngVien ungVien = new UngVien(rs.getString(5));
+				NhanVien nhanVien  = new NhanVien(rs.getString(6));
+				
+				list.add(new HopDong(maHD, phiDichVu, thoiGian, tinTuyenDung, ungVien, nhanVien));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+	
 	public ArrayList<HopDong> getHopDongTheoUngVien(String maUV) {
 		ArrayList<HopDong> list = new ArrayList<HopDong>();
 		Database.getInstance();
@@ -135,14 +188,17 @@ public class HopDong_DAO {
 		return list;
 	}
 	
-	public ArrayList<HopDong> getHopDongTheoTinTuyenDung(String maTTD) {
+	public ArrayList<HopDong> getHopDongTheoUngVien(String maUV, LocalDate ngayBatDau, LocalDate ngayKetThuc) {
 		ArrayList<HopDong> list = new ArrayList<HopDong>();
 		Database.getInstance();
 		Connection con = Database.getConnection();
 		
 		try {
-			PreparedStatement stmt = con.prepareStatement("select * from HopDong where MaTTD = ?");
-			stmt.setString(1, maTTD);
+			DateTimeFormatter formater = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			PreparedStatement stmt = con.prepareStatement("select * from HopDong where MaUV = ? and ThoiGian between ? and ?");
+			stmt.setString(1, maUV);
+			stmt.setString(2, formater.format(ngayBatDau));
+			stmt.setString(3, formater.format(ngayKetThuc));
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
 				String maHD = rs.getString(1);
@@ -187,6 +243,36 @@ public class HopDong_DAO {
 		return list;
 	}
 	
+	public ArrayList<HopDong> getHopDongTheoNhaTuyenDung(String maNTD, LocalDate ngayBatDau, LocalDate ngayKetThuc) {
+		ArrayList<HopDong> list = new ArrayList<HopDong>();
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			DateTimeFormatter formater = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			PreparedStatement stmt = con.prepareStatement(""
+					+ "select MaHD, PhiDichVu, ThoiGian, ttd.MaTTD, MaUV, MaNV from HopDong hd join TinTuyenDung ttd on hd.MaTTD = ttd.MaTTD join NhaTuyenDung ntd on ttd.MaNTD = ntd.MaNTD\r\n"
+					+ "where ntd.MaNTD = ? and ThoiGian between ? and ? ");
+			stmt.setString(1, maNTD);
+			stmt.setString(2, formater.format(ngayBatDau));
+			stmt.setString(3, formater.format(ngayKetThuc));
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				String maHD = rs.getString(1);
+				double phiDichVu = rs.getDouble(2);
+				LocalDate thoiGian = rs.getDate(3).toLocalDate();
+				TinTuyenDung tinTuyenDung = new TinTuyenDung(rs.getString(4));
+				UngVien ungVien = new UngVien(rs.getString(5));
+				NhanVien nhanVien  = new NhanVien(rs.getString(6));
+				
+				list.add(new HopDong(maHD, phiDichVu, thoiGian, tinTuyenDung, ungVien, nhanVien));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+	
 	public ArrayList<HopDong> getHopDongTheoUngVienVaNhaTuyenDung(String maUV, String maNTD) {
 		ArrayList<HopDong> list = new ArrayList<HopDong>();
 		Database.getInstance();
@@ -198,6 +284,37 @@ public class HopDong_DAO {
 					+ "where ntd.MaNTD = ? and MaUV = ?");
 			stmt.setString(1, maNTD);
 			stmt.setString(2, maUV);
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				String maHD = rs.getString(1);
+				double phiDichVu = rs.getDouble(2);
+				LocalDate thoiGian = rs.getDate(3).toLocalDate();
+				TinTuyenDung tinTuyenDung = new TinTuyenDung(rs.getString(4));
+				UngVien ungVien = new UngVien(rs.getString(5));
+				NhanVien nhanVien  = new NhanVien(rs.getString(6));
+				
+				list.add(new HopDong(maHD, phiDichVu, thoiGian, tinTuyenDung, ungVien, nhanVien));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+	
+	public ArrayList<HopDong> getHopDongTheoUngVienVaNhaTuyenDung(String maUV, String maNTD, LocalDate ngayBatDau, LocalDate ngayKetThuc) {
+		ArrayList<HopDong> list = new ArrayList<HopDong>();
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			DateTimeFormatter formater = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			PreparedStatement stmt = con.prepareStatement(""
+					+ "select MaHD, PhiDichVu, ThoiGian, ttd.MaTTD, MaUV, MaNV from HopDong hd join TinTuyenDung ttd on hd.MaTTD = ttd.MaTTD join NhaTuyenDung ntd on ttd.MaNTD = ntd.MaNTD\r\n"
+					+ "where ntd.MaNTD = ? and MaUV = ? and ThoiGian between ? and ?");
+			stmt.setString(1, maNTD);
+			stmt.setString(2, maUV);
+			stmt.setString(3, formater.format(ngayBatDau));
+			stmt.setString(4, formater.format(ngayKetThuc));
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
 				String maHD = rs.getString(1);
