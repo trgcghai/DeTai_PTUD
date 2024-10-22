@@ -100,6 +100,11 @@ public class HopDong {
 		this.nhanVien = nhanVien;
 	}
 
+	public HopDong(String maHD) {
+		super();
+		this.maHD = maHD;
+	}
+	
 	public HopDong() {
 		super();
 	}

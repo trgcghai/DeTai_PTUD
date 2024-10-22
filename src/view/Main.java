@@ -4,6 +4,7 @@ import javax.swing.JLabel;
 
 import controller.Database;
 import dao.NhanVien_DAO;
+import entity.HopDong;
 import entity.NhanVien;
 import entity.TaiKhoan;
 
@@ -11,6 +12,7 @@ public class Main {
 	public static void main(String[] args) {		
 //============================================================================================
 		new LoginFrame().setVisible(true);
+//		new ReportHopDongDialog(new NhanVienFrame(new NhanVien("NV01")), true).setVisible(true);;
 //		new MainFrame("Nguyễn Thắng Minh Đạt","Admin").setVisible(true);
 //		new LoginFrame().setVisible(true);
 //		new MainFrame("MinhDat").setVisible(true);

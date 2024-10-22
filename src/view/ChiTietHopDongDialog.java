@@ -11,39 +11,37 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Properties;
+import java.util.Random;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
-import component.ComboBoxRenderer;
+import com.spire.doc.Document;
+import com.spire.doc.FileFormat;
+import com.spire.doc.Table;
+
 import component.GradientPanel;
 import controller.LabelDateFormatter;
-import controller.PDFHelper;
 import dao.HopDong_DAO;
 import dao.NhaTuyenDung_DAO;
 import dao.NhanVien_DAO;
 import dao.TinTuyenDung_DAO;
 import dao.UngVien_DAO;
 import entity.HopDong;
-import entity.constraint.GioiTinh;
-import entity.constraint.HinhThucLamViec;
-import entity.constraint.NganhNghe;
-import entity.constraint.TrangThai;
-import entity.constraint.TrinhDo;
 
 public class ChiTietHopDongDialog extends JDialog implements ActionListener{
 	
@@ -224,6 +222,19 @@ public class ChiTietHopDongDialog extends JDialog implements ActionListener{
 		nhanvienText.setText(nhanvienDAO.getNhanVien(hd.getNhanVien().getMaNV()).getTenNV());
 	}
 	
+	private void fillTableWithData(Table table, String[][] data) {
+	    for (int r = 0; r < data.length; r++) {
+	        for (int c = 0; c < data[r].length; c++) {
+	            table.getRows().get(r + 1).getCells().get(c).getParagraphs().get(0).setText(data[r][c]);
+	        }
+	    }
+	}
+	
+	private void writeDataToDocument(Document doc, String[][] purchaseData) {
+	    Table table = doc.getSections().get(0).getTables().get(2);
+	    fillTableWithData(table, purchaseData);
+	}
+	
 	public void addActionListener() {
 		btnHuy.addActionListener(this);
 		btnLuu.addActionListener(this);
@@ -237,9 +248,55 @@ public class ChiTietHopDongDialog extends JDialog implements ActionListener{
 			this.dispose();
 		}
 		else if(obj.equals(btnLuu)) {
-			btnPanel.removeAll();
-			PDFHelper.exportToPdf(this);
-			btnPanel.add(btnLuu); btnPanel.add(btnHuy);
+			DateTimeFormatter dft = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+			DecimalFormat df = new DecimalFormat("#,###");
+			Document doc = new Document();
+			 
+	        doc.loadFromFile("src/form/form.docx");
+	 
+	        doc.replace("#MaHD", hd.getMaHD(), true, true);
+	        doc.replace("#Date", hd.getThoiGian().format(dft), true, true);
+	        doc.replace("#nhanvien", nhanvienDAO.getNhanVien(hd.getNhanVien().getMaNV()).getTenNV(), true, true);
+	        
+	        doc.replace("#tenNTD", nhatuyendungDAO
+					.getNhaTuyenDung(tintuyendungDAO.getTinTuyenDung(hd.getTinTuyenDung().getMaTTD()).getNhaTuyenDung().getMaNTD())
+					.getTenNTD(), true, true);
+	        doc.replace("#tieude", tintuyendungDAO.getTinTuyenDung(hd.getTinTuyenDung().getMaTTD()).getTieuDe(), true, true);
+	        doc.replace("#emailNTD", nhatuyendungDAO
+					.getNhaTuyenDung(tintuyendungDAO.getTinTuyenDung(hd.getTinTuyenDung().getMaTTD()).getNhaTuyenDung().getMaNTD())
+					.getEmail(), true, true);
+	        doc.replace("#diachiNTD", nhatuyendungDAO
+					.getNhaTuyenDung(tintuyendungDAO.getTinTuyenDung(hd.getTinTuyenDung().getMaTTD()).getNhaTuyenDung().getMaNTD())
+					.getDiaChi(), true, true);
+	        doc.replace("#sodienthoaiNTD", nhatuyendungDAO
+					.getNhaTuyenDung(tintuyendungDAO.getTinTuyenDung(hd.getTinTuyenDung().getMaTTD()).getNhaTuyenDung().getMaNTD())
+					.getSoDienThoai(), true, true);
+	        
+	        doc.replace("#tenUV", ungvienDAO.getUngVien(hd.getUngVien().getMaUV()).getTenUV(), true, true);
+	        doc.replace("#ngaysinh", ungvienDAO.getUngVien(hd.getUngVien().getMaUV()).getNgaySinh().format(dft), true, true);
+	        doc.replace("#emailUV", ungvienDAO.getUngVien(hd.getUngVien().getMaUV()).getEmail(), true, true);
+	        doc.replace("#diachiUV", ungvienDAO.getUngVien(hd.getUngVien().getMaUV()).getDiaChi(), true, true);
+	        doc.replace("#sodienthoaiUV", ungvienDAO.getUngVien(hd.getUngVien().getMaUV()).getSoDienThoai(), true, true);
+	        
+	        String[][] purchaseData = {
+	                new String[]{tintuyendungDAO.getTinTuyenDung(hd.getTinTuyenDung().getMaTTD()).getTieuDe(), 
+	                	df.format(tintuyendungDAO.getTinTuyenDung(hd.getTinTuyenDung().getMaTTD()).getLuong())+" VNĐ"}
+	        };
+	        
+	        writeDataToDocument(doc, purchaseData);
+	        
+	        doc.replace("#luong", df.format(tintuyendungDAO.getTinTuyenDung(hd.getTinTuyenDung().getMaTTD()).getLuong())+" VNĐ", true, true);
+	        int tax=(int)(hd.getPhiDichVu()*100/tintuyendungDAO.getTinTuyenDung(hd.getTinTuyenDung().getMaTTD()).getLuong());
+	        doc.replace("#number", String.valueOf(tax), true, true);
+	        doc.replace("#thanhtien", df.format(hd.getPhiDichVu())+" VNĐ", true, true);
+	 
+	        doc.isUpdateFields(true);
+	 
+	        int number=new Random().nextInt();
+	        doc.saveToFile("Invoice_"+number+".pdf", FileFormat.PDF);
+	        
+	        JOptionPane.showMessageDialog(rootPane, "In hợp đồng thành công");
+	        this.dispose();
 		}
 	}
 }
