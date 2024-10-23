@@ -413,6 +413,16 @@ public class ThongKeHopDongFrame extends JFrame implements ActionListener {
 					Object ngayBD = ngayBatDau.getModel().getValue();
 					Object ngayKT = ngayKetThuc.getModel().getValue();
 					
+					if (tenNtd.equalsIgnoreCase("Chọn nhà tuyển dụng") && tenUV.equalsIgnoreCase("Chọn ứng viên") && (ngayBD == null && ngayKT == null )) {
+						return;
+					}
+					
+					if ((ngayBD == null && ngayKT != null) ||
+						(ngayBD != null && ngayKT == null)) {
+						JOptionPane.showMessageDialog(this, "Phải chọn cả ngày bắt đầu và ngày kết thúc");
+						return;
+					}
+					
 					// 7 fetch data theo nhà tuyển dụng, ứng viên và thời gian
 					// 6 fetch data theo nhà tuyển dụng và thời gian
 					// 5 fetch data theo ứng viên và thời gian
@@ -439,6 +449,12 @@ public class ThongKeHopDongFrame extends JFrame implements ActionListener {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
+						
+						if (ngayBatDau.isAfter(ngayKetThuc)) {
+							JOptionPane.showMessageDialog(this, "Ngày bắt đầu phải trước ngày kết thúc");
+							return;
+						}
+						
 						fetchHopDong(tenNtd, tenUV, ngayBatDau, ngayKetThuc);
 						break;
 					case 4:
