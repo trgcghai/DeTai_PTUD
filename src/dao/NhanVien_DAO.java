@@ -264,6 +264,4 @@ public class NhanVien_DAO {
 		}
 		return n != 0;
 	}
-
-
 }

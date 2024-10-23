@@ -118,13 +118,13 @@ public class ThongKeFrame extends JFrame implements MouseListener{
 		
 		panelCircle1=new JPanel(); 
 		panelCircle1.setOpaque(false);
-		labelCircle1= createLabel("Thống kê ứng viên");
+		labelCircle1= createLabel("Thống kê nhân viên");
 		progressCircle1= createProgressBar(60, new Color(66, 246, 84));
 		preparePanelCircle(panelCircle1, progressCircle1, labelCircle1);
 		
 		panelCircle2=new JPanel(); 
 		panelCircle2.setOpaque(false);
-		labelCircle2= createLabel("Thống kê tin tuyển dụng");
+		labelCircle2= createLabel("Thống kê nhà tuyển dụng");
 		progressCircle2= createProgressBar(70, new Color(132, 66, 246));
 		preparePanelCircle(panelCircle2, progressCircle2, labelCircle2);
 		
@@ -159,23 +159,17 @@ public class ThongKeFrame extends JFrame implements MouseListener{
 		// TODO Auto-generated method stub
 		var obj=e.getSource();
 		if(obj.getClass().equals(JLabel.class)) {
-			if(((JLabel)obj).getText().equals("Thống kê tin tuyển dụng")) {
+			if(((JLabel)obj).getText().equals("Thống kê nhà tuyển dụng")) {
 				centerPanel.removeAll();
-				centerPanel.add(new ThongKeTinTuyenDungFrame(userName).getPanel());
-				
-				this.setTitle("Thống kê tin tuyển dụng");
+				centerPanel.add(new ThongKeNhaTuyenDungFrame(userName).getPanel());
 			}
 			else if(((JLabel)obj).getText().equals("Thống kê hợp đồng")) {
 				centerPanel.removeAll();
 				centerPanel.add(new ThongKeHopDongFrame(userName).getPanel());
-				
-				this.setTitle("Thống kê hợp đồng");
 			}
-			else if(((JLabel)obj).getText().equals("Thống kê ứng viên")) {
+			else if(((JLabel)obj).getText().equals("Thống kê nhân viên")) {
 				centerPanel.removeAll();
-				centerPanel.add(new ThongKeUngVienFrame(userName).getPanel());
-				
-				this.setTitle("Ứng viên");
+				centerPanel.add(new ThongKeNhanVienFrame(userName).getPanel());
 			}
 			centerPanel.revalidate();
 			centerPanel.repaint();

@@ -16,6 +16,7 @@ import entity.NhaTuyenDung;
 import entity.NhanVien;
 import entity.TinTuyenDung;
 import entity.UngVien;
+import entity.constraint.GioiTinh;
 
 public class HopDong_DAO {
 	
@@ -364,6 +365,409 @@ public class HopDong_DAO {
 			e.printStackTrace();
 		}
 		return res;
+	}
+	
+	public ArrayList<Object[]> thongKeHopDongTheoNhanVien() {
+		ArrayList<Object[]> result = new ArrayList<Object[]>();
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			PreparedStatement stmt = con.prepareStatement(""
+					+ "select nv.Manv, TenNV, SoDienThoai, GioiTinh, NgaySinh, count(*), sum(PhiDichVu) from HopDong hd \r\n"
+					+ "join NhanVien nv on hd.MaNV = nv.MaNV\r\n"
+					+ "group by nv.Manv, TenNV, SoDienThoai, GioiTinh, NgaySinh");
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				String maNV = rs.getString(1);
+				String tenNV = rs.getString(2);
+				String dienThoai = rs.getString(3);
+				GioiTinh gioitinh=GioiTinh.KHAC;
+				for(GioiTinh g: GioiTinh.class.getEnumConstants()) {
+					if(g.getValue().equalsIgnoreCase(rs.getString(4))) {
+						gioitinh=g;
+					}
+				}
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+				LocalDate ngaySinh = rs.getDate(5).toLocalDate();
+				int tongHopDong = rs.getInt(6);
+				double tongGiaTriHD = rs.getDouble(7);
+				
+				result.add(new Object[] {maNV, tenNV, dienThoai, gioitinh.getValue(), ngaySinh.format(formatter), tongHopDong, tongGiaTriHD});
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	public ArrayList<Object[]> thongKeHopDongTheoNhanVien(String gioiTinh) {
+		ArrayList<Object[]> result = new ArrayList<Object[]>();
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			PreparedStatement stmt = con.prepareStatement(""
+					+ "select nv.Manv, TenNV, SoDienThoai, GioiTinh, NgaySinh, count(*), sum(PhiDichVu) from HopDong hd \r\n"
+					+ "join NhanVien nv on hd.MaNV = nv.MaNV\r\n where GioiTinh = ? \r\n"
+					+ "group by nv.Manv, TenNV, SoDienThoai, GioiTinh, NgaySinh");
+			stmt.setString(1, gioiTinh);
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				String maNV = rs.getString(1);
+				String tenNV = rs.getString(2);
+				String dienThoai = rs.getString(3);
+				GioiTinh gioitinh=GioiTinh.KHAC;
+				for(GioiTinh g: GioiTinh.class.getEnumConstants()) {
+					if(g.getValue().equalsIgnoreCase(rs.getString(4))) {
+						gioitinh=g;
+					}
+				}
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+				LocalDate ngaySinh = rs.getDate(5).toLocalDate();
+				int tongHopDong = rs.getInt(6);
+				double tongGiaTriHD = rs.getDouble(7);
+				
+				result.add(new Object[] {maNV, tenNV, dienThoai, gioitinh.getValue(), ngaySinh.format(formatter), tongHopDong, tongGiaTriHD});
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	public ArrayList<Object[]> thongKeHopDongTheoTenNhanVien(String tenNhanVien) {
+		ArrayList<Object[]> result = new ArrayList<Object[]>();
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			PreparedStatement stmt = con.prepareStatement(""
+					+ "select nv.Manv, TenNV, SoDienThoai, GioiTinh, NgaySinh, count(*), sum(PhiDichVu) from HopDong hd \r\n"
+					+ "join NhanVien nv on hd.MaNV = nv.MaNV\r\n where TenNV = ? \r\n"
+					+ "group by nv.Manv, TenNV, SoDienThoai, GioiTinh, NgaySinh");
+			stmt.setString(1, tenNhanVien);
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				String maNV = rs.getString(1);
+				String tenNV = rs.getString(2);
+				String dienThoai = rs.getString(3);
+				GioiTinh gioitinh=GioiTinh.KHAC;
+				for(GioiTinh g: GioiTinh.class.getEnumConstants()) {
+					if(g.getValue().equalsIgnoreCase(rs.getString(4))) {
+						gioitinh=g;
+					}
+				}
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+				LocalDate ngaySinh = rs.getDate(5).toLocalDate();
+				int tongHopDong = rs.getInt(6);
+				double tongGiaTriHD = rs.getDouble(7);
+				
+				result.add(new Object[] {maNV, tenNV, dienThoai, gioitinh.getValue(), ngaySinh.format(formatter), tongHopDong, tongGiaTriHD});
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	public ArrayList<Object[]> thongKeHopDongTheoNhanVien(LocalDate ngayBatDau, LocalDate ngayKetThuc) {
+		ArrayList<Object[]> result = new ArrayList<Object[]>();
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			DateTimeFormatter formater = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			PreparedStatement stmt = con.prepareStatement(""
+					+ "select nv.Manv, TenNV, SoDienThoai, GioiTinh, NgaySinh, count(*), sum(PhiDichVu) from HopDong hd \r\n"
+					+ "join NhanVien nv on hd.MaNV = nv.MaNV\r\n where ThoiGian between ? and ? \r\n"
+					+ "group by nv.Manv, TenNV, SoDienThoai, GioiTinh, NgaySinh");
+			stmt.setString(1, formater.format(ngayBatDau));
+			stmt.setString(2, formater.format(ngayKetThuc));
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				String maNV = rs.getString(1);
+				String tenNV = rs.getString(2);
+				String dienThoai = rs.getString(3);
+				GioiTinh gioitinh=GioiTinh.KHAC;
+				for(GioiTinh g: GioiTinh.class.getEnumConstants()) {
+					if(g.getValue().equalsIgnoreCase(rs.getString(4))) {
+						gioitinh=g;
+					}
+				}
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+				LocalDate ngaySinh = rs.getDate(5).toLocalDate();
+				int tongHopDong = rs.getInt(6);
+				double tongGiaTriHD = rs.getDouble(7);
+				
+				result.add(new Object[] {maNV, tenNV, dienThoai, gioitinh.getValue(), ngaySinh.format(formatter), tongHopDong, tongGiaTriHD});
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	public ArrayList<Object[]> thongKeHopDongTheoNhanVien(String gioiTinh, LocalDate ngayBatDau, LocalDate ngayKetThuc) {
+		ArrayList<Object[]> result = new ArrayList<Object[]>();
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			DateTimeFormatter formater = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			PreparedStatement stmt = con.prepareStatement(""
+					+ "select nv.Manv, TenNV, SoDienThoai, GioiTinh, NgaySinh, count(*), sum(PhiDichVu) from HopDong hd \r\n"
+					+ "join NhanVien nv on hd.MaNV = nv.MaNV\r\n where GioiTinh = ? and ThoiGian between ? and ? \r\n"
+					+ "group by nv.Manv, TenNV, SoDienThoai, GioiTinh, NgaySinh");
+			stmt.setString(1, gioiTinh);
+			stmt.setString(2, formater.format(ngayBatDau));
+			stmt.setString(3, formater.format(ngayKetThuc));
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				String maNV = rs.getString(1);
+				String tenNV = rs.getString(2);
+				String dienThoai = rs.getString(3);
+				GioiTinh gioitinh=GioiTinh.KHAC;
+				for(GioiTinh g: GioiTinh.class.getEnumConstants()) {
+					if(g.getValue().equalsIgnoreCase(rs.getString(4))) {
+						gioitinh=g;
+					}
+				}
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+				LocalDate ngaySinh = rs.getDate(5).toLocalDate();
+				int tongHopDong = rs.getInt(6);
+				double tongGiaTriHD = rs.getDouble(7);
+				
+				result.add(new Object[] {maNV, tenNV, dienThoai, gioitinh.getValue(), ngaySinh.format(formatter), tongHopDong, tongGiaTriHD});
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	public ArrayList<Object[]> thongKeHopDongTheoTenNhanVien(String tenNhanVien, LocalDate ngayBatDau, LocalDate ngayKetThuc) {
+		ArrayList<Object[]> result = new ArrayList<Object[]>();
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			DateTimeFormatter formater = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			PreparedStatement stmt = con.prepareStatement(""
+					+ "select nv.Manv, TenNV, SoDienThoai, GioiTinh, NgaySinh, count(*), sum(PhiDichVu) from HopDong hd \r\n"
+					+ "join NhanVien nv on hd.MaNV = nv.MaNV\r\n where TenNV = ? and ThoiGian between ? and ? \r\n"
+					+ "group by nv.Manv, TenNV, SoDienThoai, GioiTinh, NgaySinh");
+			stmt.setString(1, tenNhanVien);
+			stmt.setString(2, formater.format(ngayBatDau));
+			stmt.setString(3, formater.format(ngayKetThuc));
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				String maNV = rs.getString(1);
+				String tenNV = rs.getString(2);
+				String dienThoai = rs.getString(3);
+				GioiTinh gioitinh=GioiTinh.KHAC;
+				for(GioiTinh g: GioiTinh.class.getEnumConstants()) {
+					if(g.getValue().equalsIgnoreCase(rs.getString(4))) {
+						gioitinh=g;
+					}
+				}
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+				LocalDate ngaySinh = rs.getDate(5).toLocalDate();
+				int tongHopDong = rs.getInt(6);
+				double tongGiaTriHD = rs.getDouble(7);
+				
+				result.add(new Object[] {maNV, tenNV, dienThoai, gioitinh.getValue(), ngaySinh.format(formatter), tongHopDong, tongGiaTriHD});
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	public ArrayList<Object[]> thongKeHopDongTheoNhanVien(String tenNhanVien, String gioiTinh) {
+		ArrayList<Object[]> result = new ArrayList<Object[]>();
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			PreparedStatement stmt = con.prepareStatement(""
+					+ "select nv.Manv, TenNV, SoDienThoai, GioiTinh, NgaySinh, count(*), sum(PhiDichVu) from HopDong hd \r\n"
+					+ "join NhanVien nv on hd.MaNV = nv.MaNV\r\n where TenNV = ? and GioiTinh = ? \r\n"
+					+ "group by nv.Manv, TenNV, SoDienThoai, GioiTinh, NgaySinh");
+			stmt.setString(1, tenNhanVien);
+			stmt.setString(2, gioiTinh);
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				String maNV = rs.getString(1);
+				String tenNV = rs.getString(2);
+				String dienThoai = rs.getString(3);
+				GioiTinh gioitinh=GioiTinh.KHAC;
+				for(GioiTinh g: GioiTinh.class.getEnumConstants()) {
+					if(g.getValue().equalsIgnoreCase(rs.getString(4))) {
+						gioitinh=g;
+					}
+				}
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+				LocalDate ngaySinh = rs.getDate(5).toLocalDate();
+				int tongHopDong = rs.getInt(6);
+				double tongGiaTriHD = rs.getDouble(7);
+				
+				result.add(new Object[] {maNV, tenNV, dienThoai, gioitinh.getValue(), ngaySinh.format(formatter), tongHopDong, tongGiaTriHD});
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	public ArrayList<Object[]> thongKeHopDongTheoNhanVien(String tenNhanVien, String gioiTinh, LocalDate ngayBatDau, LocalDate ngayKetThuc) {
+		ArrayList<Object[]> result = new ArrayList<Object[]>();
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			DateTimeFormatter formater = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			PreparedStatement stmt = con.prepareStatement(""
+					+ "select nv.Manv, TenNV, SoDienThoai, GioiTinh, NgaySinh, count(*), sum(PhiDichVu) from HopDong hd \r\n"
+					+ "join NhanVien nv on hd.MaNV = nv.MaNV\r\n where TenNV = ? and GioiTinh = ? and ThoiGian between ? and ? \r\n"
+					+ "group by nv.Manv, TenNV, SoDienThoai, GioiTinh, NgaySinh");
+			stmt.setString(1, tenNhanVien);
+			stmt.setString(2, gioiTinh);
+			stmt.setString(3, formater.format(ngayBatDau));
+			stmt.setString(4, formater.format(ngayKetThuc));
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				String maNV = rs.getString(1);
+				String tenNV = rs.getString(2);
+				String dienThoai = rs.getString(3);
+				GioiTinh gioitinh=GioiTinh.KHAC;
+				for(GioiTinh g: GioiTinh.class.getEnumConstants()) {
+					if(g.getValue().equalsIgnoreCase(rs.getString(4))) {
+						gioitinh=g;
+					}
+				}
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+				LocalDate ngaySinh = rs.getDate(5).toLocalDate();
+				int tongHopDong = rs.getInt(6);
+				double tongGiaTriHD = rs.getDouble(7);
+				
+				result.add(new Object[] {maNV, tenNV, dienThoai, gioitinh.getValue(), ngaySinh.format(formatter), tongHopDong, tongGiaTriHD});
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	public ArrayList<Object[]> thongKeHopDongTheoNTD() {
+		ArrayList<Object[]> result = new ArrayList<Object[]>();
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			PreparedStatement stmt = con.prepareStatement("select ntd.MaNTD, TenNTD, Email, SoDienThoai, count(MaTTD) from NhaTuyenDung ntd "
+					+ "join TinTuyenDung ttd on ntd.MaNTD = ttd.MaNTD\r\n"
+					+ "group by ntd.MaNTD, TenNTD, Email, SoDienThoai");
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				String maNtd = rs.getString(1);
+				String tenNtd = rs.getString(2);
+				String email = rs.getString(3);
+				String dienThoai = rs.getString(4);
+				int soLuongTtd = rs.getInt(5);
+				
+				result.add(new Object[] {maNtd, tenNtd, email, dienThoai, soLuongTtd});
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	public ArrayList<Object[]> thongKeHopDongTheoNTD(LocalDate ngayBatDau, LocalDate ngayKetThuc) {
+		ArrayList<Object[]> result = new ArrayList<Object[]>();
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			DateTimeFormatter formater = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			PreparedStatement stmt = con.prepareStatement("select ntd.MaNTD, TenNTD, Email, SoDienThoai, count(MaTTD) from NhaTuyenDung ntd \r\n"
+					+ "join TinTuyenDung ttd on ntd.MaNTD = ttd.MaNTD\r\n"
+					+ "where NgayDangTin between ? and ?\r\n"
+					+ "group by ntd.MaNTD, TenNTD, Email, SoDienThoai");
+			stmt.setString(1, formater.format(ngayBatDau));
+			stmt.setString(2, formater.format(ngayKetThuc));
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				String maNtd = rs.getString(1);
+				String tenNtd = rs.getString(2);
+				String email = rs.getString(3);
+				String dienThoai = rs.getString(4);
+				int soLuongTtd = rs.getInt(5);
+				
+				result.add(new Object[] {maNtd, tenNtd, email, dienThoai, soLuongTtd});
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	public ArrayList<Object[]> thongKeHopDongTheoNTD(String tenNTD) {
+		ArrayList<Object[]> result = new ArrayList<Object[]>();
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			PreparedStatement stmt = con.prepareStatement("select ntd.MaNTD, TenNTD, Email, SoDienThoai, count(MaTTD) from NhaTuyenDung ntd \r\n"
+					+ "join TinTuyenDung ttd on ntd.MaNTD = ttd.MaNTD\r\n"
+					+ "where TenNTD = ?\r\n"
+					+ "group by ntd.MaNTD, TenNTD, Email, SoDienThoai");
+			stmt.setString(1, tenNTD);
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				String maNtd = rs.getString(1);
+				String tenNtd = rs.getString(2);
+				String email = rs.getString(3);
+				String dienThoai = rs.getString(4);
+				int soLuongTtd = rs.getInt(5);
+				
+				result.add(new Object[] {maNtd, tenNtd, email, dienThoai, soLuongTtd});
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	public ArrayList<Object[]> thongKeHopDongTheoNTD(String tenNTD, LocalDate ngayBatDau, LocalDate ngayKetThuc) {
+		ArrayList<Object[]> result = new ArrayList<Object[]>();
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			DateTimeFormatter formater = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			PreparedStatement stmt = con.prepareStatement("select ntd.MaNTD, TenNTD, Email, SoDienThoai, count(MaTTD) from NhaTuyenDung ntd \r\n"
+					+ "join TinTuyenDung ttd on ntd.MaNTD = ttd.MaNTD\r\n"
+					+ "where TenNTD = ? and NgayDangTin between ? and ?\r\n"
+					+ "group by ntd.MaNTD, TenNTD, Email, SoDienThoai");
+			stmt.setString(1, tenNTD);
+			stmt.setString(2, formater.format(ngayBatDau));
+			stmt.setString(3, formater.format(ngayKetThuc));
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				String maNtd = rs.getString(1);
+				String tenNtd = rs.getString(2);
+				String email = rs.getString(3);
+				String dienThoai = rs.getString(4);
+				int soLuongTtd = rs.getInt(5);
+				
+				result.add(new Object[] {maNtd, tenNtd, email, dienThoai, soLuongTtd});
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return result;
 	}
 	
 	public boolean create(HopDong hd) {
