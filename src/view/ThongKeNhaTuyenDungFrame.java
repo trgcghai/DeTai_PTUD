@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Properties;
 
 import javax.swing.BorderFactory;
@@ -38,6 +39,7 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
+import component.Button;
 import component.GradientRoundPanel;
 import controller.ExcelHelper;
 import controller.LabelDateFormatter;
@@ -45,16 +47,17 @@ import dao.HopDong_DAO;
 import dao.NhaTuyenDung_DAO;
 import dao.TinTuyenDung_DAO;
 import entity.NhaTuyenDung;
+import entity.NhanVien;
 import entity.TinTuyenDung;
 
 public class ThongKeNhaTuyenDungFrame  extends JFrame implements ActionListener {
-	String userName;
+	NhanVien userName;
 	ThongKeNhaTuyenDungFrame parent;
 	
 //	Component thống kê tin tuyển dụng
 	JPanel menuPanel, timkiemPanel,nhaTuyenDungPanel,centerPanelNhaTuyenDung, danhsachPanel, danhsachNorthPanel, danhsachCenterPanel;
 	JLabel titleNhaTuyenDung, ngayBatDauLabel, ngayKetThucLabel, timkiemTenLabel;
-	JButton btnTimKiem, btnLamLai, btnExcel;
+	Button btnTimKiem, btnLamLai, btnExcel;
 	JTable tableNhaTuyenDung;
 	DefaultTableModel modeltableNhaTuyenDung;
 	JScrollPane scrollNhaTuyenDung;
@@ -66,7 +69,7 @@ public class ThongKeNhaTuyenDungFrame  extends JFrame implements ActionListener 
 	private HopDong_DAO hopDong_DAO;
 	private NhaTuyenDung_DAO nhaTuyenDung_DAO;
 	
-	public ThongKeNhaTuyenDungFrame(String userName) {
+	public ThongKeNhaTuyenDungFrame(NhanVien userName) {
 		this.userName=userName;
 		this.parent = this;
 		
@@ -75,8 +78,6 @@ public class ThongKeNhaTuyenDungFrame  extends JFrame implements ActionListener 
 		
 //		Thêm sự kiện
 		addActionListener();
-//		addMouseListener();
-//		addFocusListener();
 		
 		hopDong_DAO=new HopDong_DAO();
 		nhaTuyenDung_DAO=new NhaTuyenDung_DAO();
@@ -92,8 +93,8 @@ public class ThongKeNhaTuyenDungFrame  extends JFrame implements ActionListener 
 		return label;
 	}
 	
-	public JButton createButton(String title, Color bgColor, Color fgColor) {
-		JButton button = new JButton(title); 
+	public Button createButton(String title, Color bgColor, Color fgColor) {
+		Button button = new Button(title); 
 		button.setFont(new Font("Segoe UI",0,16));
 		button.setPreferredSize(new Dimension(120,25));
 		button.setBackground(bgColor);
@@ -110,22 +111,16 @@ public class ThongKeNhaTuyenDungFrame  extends JFrame implements ActionListener 
 		centerPanelNhaTuyenDung.setLayout(new BorderLayout(10, 10));
 		centerPanelNhaTuyenDung.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		centerPanelNhaTuyenDung.setBackground(new Color(89, 145, 144));
+
 //		Thống kê tin tuyển dụng
 		timkiemPanel=new GradientRoundPanel();
-		timkiemPanel.setBackground(Color.WHITE);
-		timkiemPanel.setLayout(new BorderLayout());
+		timkiemPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 15, 5));
 		
-		JPanel resFormSearch = new JPanel();
-		resFormSearch.setOpaque(false);
-		resFormSearch.setBackground(Color.WHITE);
-		
-		timkiemTenLabel= createLabel("Nhà tuyển dụng:"); 
 		comboBoxNTD=new JComboBox<Object>(); 
 		comboBoxNTD.setFont(new Font("Segoe UI",0,16));
+//		comboBoxNTD.setPreferredSize(new Dimension(250,30));
 		comboBoxNTD.setOpaque(false);
 		comboBoxNTD.addItem("Chọn nhà tuyển dụng");
-		resFormSearch.add(timkiemTenLabel);
-		resFormSearch.add(comboBoxNTD);
 		
 		modelBatDau=new UtilDateModel();
 		modelKetThuc=new UtilDateModel();
@@ -137,20 +132,17 @@ public class ThongKeNhaTuyenDungFrame  extends JFrame implements ActionListener 
 		
 		ngayBatDauLabel= createLabel("Ngày bắt đầu:"); 
 		ngayBatDau=new JDatePickerImpl(panelDate, new LabelDateFormatter());
-		ngayBatDau.setPreferredSize(new Dimension(150,25));
-		resFormSearch.add(ngayBatDauLabel);
-		resFormSearch.add(ngayBatDau);
+		ngayBatDau.setPreferredSize(new Dimension(130,25));
+		modelBatDau.setValue(new Date());
 		
 		panelDate=new JDatePanelImpl(modelKetThuc, p);
 		ngayKetThucLabel= createLabel("Ngày kết thúc:"); 
 		ngayKetThuc=new JDatePickerImpl(panelDate, new LabelDateFormatter());
-		ngayKetThuc.setPreferredSize(new Dimension(150,25));
-		resFormSearch.add(ngayKetThucLabel);
-		resFormSearch.add(ngayKetThuc);
+		ngayKetThuc.setPreferredSize(new Dimension(130,25));
+		modelKetThuc.setValue(new Date());
 		
 		JPanel resBtnSearch=new JPanel();
 		resBtnSearch.setOpaque(false);
-		resBtnSearch.setPreferredSize(new Dimension(350, 35));
 		resBtnSearch.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 5));
 		resBtnSearch.setBackground(Color.WHITE);
 		
@@ -159,8 +151,10 @@ public class ThongKeNhaTuyenDungFrame  extends JFrame implements ActionListener 
 		resBtnSearch.add(btnTimKiem); 
 		resBtnSearch.add(btnLamLai);
 		
-		timkiemPanel.add(resFormSearch, BorderLayout.WEST);
-		timkiemPanel.add(resBtnSearch, BorderLayout.EAST);
+		timkiemPanel.add(comboBoxNTD);
+		timkiemPanel.add(ngayBatDauLabel); timkiemPanel.add(ngayBatDau);
+		timkiemPanel.add(ngayKetThucLabel); timkiemPanel.add(ngayKetThuc);
+		timkiemPanel.add(resBtnSearch);
 		
 //		Danh sách tin tuyển dụng
 		danhsachPanel=new GradientRoundPanel();
@@ -176,7 +170,9 @@ public class ThongKeNhaTuyenDungFrame  extends JFrame implements ActionListener 
 		resBtnThem.setBorder(BorderFactory.createEmptyBorder(10,10,0,20));
 		resBtnThem.setBackground(Color.WHITE);
 		
-		btnExcel=new JButton("Xuất Excel", iconBtnSave); btnExcel.setFont(new Font("Segoe UI",0,16));
+		btnExcel=new Button("Xuất Excel");
+		btnExcel.setIcon(iconBtnSave);
+		btnExcel.setFont(new Font("Segoe UI",0,16));
 		btnExcel.setPreferredSize(new Dimension(140,30));
 		btnExcel.setBackground(new Color(51,51,255));
 		btnExcel.setForeground(Color.WHITE);
@@ -227,7 +223,7 @@ public class ThongKeNhaTuyenDungFrame  extends JFrame implements ActionListener 
         sorter.sort();
 		scrollNhaTuyenDung=new JScrollPane(tableNhaTuyenDung);
 		scrollNhaTuyenDung.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
-		scrollNhaTuyenDung.setPreferredSize(new Dimension(600, 570));
+		scrollNhaTuyenDung.setPreferredSize(new Dimension(1280, 480));
 		GradientRoundPanel resScroll=new GradientRoundPanel();
 		resScroll.setBorder(BorderFactory.createEmptyBorder(0,20,20,20));
 		resScroll.setLayout(new BoxLayout(resScroll, BoxLayout.PAGE_AXIS));
@@ -371,8 +367,8 @@ public class ThongKeNhaTuyenDungFrame  extends JFrame implements ActionListener 
 		}
 		else if(obj.equals(btnLamLai)) {
 			comboBoxNTD.setSelectedIndex(0);
-			ngayBatDau.getModel().setValue(null);
-			ngayKetThuc.getModel().setValue(null);
+			modelBatDau.setValue(new Date());
+			modelKetThuc.setValue(new Date());
 			loadDataTable();
 		}
 	}

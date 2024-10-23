@@ -22,7 +22,7 @@ import entity.NhanVien;
 
 public class ThongKeFrame extends JFrame implements MouseListener{
 
-	String userName;
+	NhanVien userName;
 	ThongKeFrame parent;
 	
 //	Component thống kê
@@ -32,7 +32,7 @@ public class ThongKeFrame extends JFrame implements MouseListener{
 		circleDashBoardPanel, north, center;
 	ProgressBar progressCircle1, progressCircle2, progressCircle3;
 	
-	public ThongKeFrame(String userName) {
+	public ThongKeFrame(NhanVien userName) {
 		this.userName=userName;
 		this.parent=this;
 		
