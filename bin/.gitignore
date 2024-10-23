@@ -1,2 +1,8 @@
 /view/
+<<<<<<< HEAD
 /dao/
+=======
+/controller/
+/form/
+/component/
+>>>>>>> 5ab76dcf88fc8fd2087d172939bbef0a901e5798

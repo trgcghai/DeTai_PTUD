@@ -38,6 +38,7 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
+import component.Button;
 import component.ComboBoxRenderer;
 import component.GradientPanel;
 import component.GradientRoundPanel;
@@ -72,7 +73,7 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
 		nhanvienPanel,northPanelNhanVien, centerPanelNhanVien; 
 	JLabel userLabel, iconUserLabel,timkiemTenLabel, timkiemSDTLabel, titleNhanVien,vaitroLeftLabel;
 	JTextField timkiemTenText, timkiemSDTText;
-	JButton btnTimKiem, btnLamLai,btnThem,btnLuu;
+	Button btnTimKiem, btnLamLai,btnThem,btnLuu;
 	JTable tableNhanVien;
 	DefaultTableModel modelTableNhanVien;
 	JScrollPane scrollNhanVien;
@@ -133,11 +134,11 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
 		resBtnSearch.setPreferredSize(new Dimension(350, 35));
 		resBtnSearch.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 5));
 		resBtnSearch.setOpaque(false);;
-		btnTimKiem=new JButton("Tìm kiếm"); btnTimKiem.setFont(new Font("Segoe UI",0,16));
+		btnTimKiem=new Button("Tìm kiếm"); btnTimKiem.setFont(new Font("Segoe UI",0,16));
 		btnTimKiem.setPreferredSize(new Dimension(120,25));
 		btnTimKiem.setBackground(new Color(0,102,102));
 		btnTimKiem.setForeground(Color.WHITE);
-		btnLamLai=new JButton("Làm lại"); btnLamLai.setFont(new Font("Segoe UI",0,16));
+		btnLamLai=new Button("Làm lại"); btnLamLai.setFont(new Font("Segoe UI",0,16));
 		btnLamLai.setPreferredSize(new Dimension(120,25));
 		btnLamLai.setBackground(Color.RED);
 		btnLamLai.setForeground(Color.WHITE);
@@ -157,11 +158,15 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
 		JPanel resBtnThem=new JPanel();
 		resBtnThem.setOpaque(false);
 		resBtnThem.setBorder(BorderFactory.createEmptyBorder(10,10,0,20));
-		btnThem=new JButton("Thêm mới", iconBtnAdd); btnThem.setFont(new Font("Segoe UI",0,16));
+		btnThem=new Button("Thêm mới"); 
+		btnThem.setIcon(iconBtnAdd);
+		btnThem.setFont(new Font("Segoe UI",0,16));
 		btnThem.setPreferredSize(new Dimension(140,30));
 		btnThem.setBackground(new Color(0,102,102));
 		btnThem.setForeground(Color.WHITE);
-		btnLuu=new JButton("Xuất Excel", iconBtnSave); btnLuu.setFont(new Font("Segoe UI",0,16));
+		btnLuu=new Button("Xuất Excel"); 
+		btnLuu.setIcon(iconBtnSave);
+		btnLuu.setFont(new Font("Segoe UI",0,16));
 		btnLuu.setPreferredSize(new Dimension(140,30));
 		btnLuu.setBackground(new Color(51,51,255));
 		btnLuu.setForeground(Color.WHITE);

@@ -32,6 +32,7 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
+import component.Button;
 import component.ComboBoxRenderer;
 import component.GradientPanel;
 import controller.LabelDateFormatter;
@@ -63,7 +64,7 @@ public class ChiTietViecLamDialog extends JDialog implements ActionListener{
 	JDatePickerImpl startText, endText;
 	JTextArea motaText;
 	JScrollPane scrollMoTa;
-	JButton btnUngTuyen, btnHuy;
+	Button btnUngTuyen, btnHuy;
 	GridBagConstraints gbc;
 	
 	private Frame parent;
@@ -110,7 +111,7 @@ public class ChiTietViecLamDialog extends JDialog implements ActionListener{
 		this(parent, modal, ttd, hoso, nv);
 		btnPanel.removeAll();
 		
-		btnHuy=new JButton("Hủy"); btnHuy.setFont(new Font("Segoe UI",0,16));
+		btnHuy=new Button("Hủy"); btnHuy.setFont(new Font("Segoe UI",0,16));
 		btnHuy.setPreferredSize(new Dimension(120,25));
 		btnHuy.setBackground(Color.RED);
 		btnHuy.setForeground(Color.WHITE);
@@ -263,12 +264,12 @@ public class ChiTietViecLamDialog extends JDialog implements ActionListener{
 		btnPanel.setBackground(Color.WHITE);
 		btnPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 50));
 		
-		btnUngTuyen=new JButton("Ứng tuyển"); btnUngTuyen.setFont(new Font("Segoe UI",0,16));
+		btnUngTuyen=new Button("Ứng tuyển"); btnUngTuyen.setFont(new Font("Segoe UI",0,16));
 		btnUngTuyen.setPreferredSize(new Dimension(120,25));
 		btnUngTuyen.setBackground(new Color(0,102,102));
 		btnUngTuyen.setForeground(Color.WHITE);
 		
-		btnHuy=new JButton("Hủy"); btnHuy.setFont(new Font("Segoe UI",0,16));
+		btnHuy=new Button("Hủy"); btnHuy.setFont(new Font("Segoe UI",0,16));
 		btnHuy.setPreferredSize(new Dimension(120,25));
 		btnHuy.setBackground(Color.WHITE);
 		btnHuy.setForeground(Color.BLACK);

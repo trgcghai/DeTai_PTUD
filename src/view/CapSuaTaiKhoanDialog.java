@@ -28,6 +28,7 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
+import component.Button;
 import component.ComboBoxRenderer;
 import component.GradientPanel;
 import controller.FilterImp;
@@ -49,7 +50,7 @@ public class CapSuaTaiKhoanDialog extends JDialog implements ActionListener{
 	JComboBox gioitinhText, vaitroText;
 	UtilDateModel modelDate, modelDateWork;
 	JDatePickerImpl dateText, dateWorkText;
-	JButton btnThem, btnHuy;
+	Button btnThem, btnHuy;
 	GridBagConstraints gbc;
 	
 	private int idMax=0;
@@ -206,12 +207,12 @@ public class CapSuaTaiKhoanDialog extends JDialog implements ActionListener{
 		btnPanel.setBackground(Color.WHITE);
 		btnPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 47));
 		
-		btnThem=new JButton("Cấp tài khoản"); btnThem.setFont(new Font("Segoe UI",0,16));
+		btnThem=new Button("Cấp tài khoản"); btnThem.setFont(new Font("Segoe UI",0,16));
 		btnThem.setPreferredSize(new Dimension(135,25));
 		btnThem.setBackground(new Color(0,102,102));
 		btnThem.setForeground(Color.WHITE);
 		
-		btnHuy=new JButton("Hủy"); btnHuy.setFont(new Font("Segoe UI",0,16));
+		btnHuy=new Button("Hủy"); btnHuy.setFont(new Font("Segoe UI",0,16));
 		btnHuy.setPreferredSize(new Dimension(135,25));
 		btnHuy.setBackground(Color.WHITE);
 		btnHuy.setForeground(Color.BLACK);

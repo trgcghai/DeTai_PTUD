@@ -31,6 +31,7 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
+import component.Button;
 import component.GradientPanel;
 import controller.LabelDateFormatter;
 import dao.NhaTuyenDung_DAO;
@@ -55,7 +56,7 @@ public class ChiTietHoSoDialog extends JDialog implements ActionListener{
 	JDatePickerImpl dateText;
 	JTextArea motaText;
 	JScrollPane scrollMoTa;
-	JButton btnThem, btnHuy;
+	Button btnThem, btnHuy;
 	GridBagConstraints gbc;
 	
 	private HoSo hsDialog;
@@ -229,7 +230,7 @@ public class ChiTietHoSoDialog extends JDialog implements ActionListener{
 		btnPanel.setBackground(Color.WHITE);
 		btnPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 50));
 		
-		btnHuy=new JButton("Hủy"); btnHuy.setFont(new Font("Segoe UI",0,16));
+		btnHuy=new Button("Hủy"); btnHuy.setFont(new Font("Segoe UI",0,16));
 		btnHuy.setPreferredSize(new Dimension(120,25));
 		btnHuy.setBackground(Color.RED);
 		btnHuy.setForeground(Color.WHITE);

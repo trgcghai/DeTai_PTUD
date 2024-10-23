@@ -42,6 +42,7 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
+import component.Button;
 import component.ComboBoxRenderer;
 import component.GradientRoundPanel;
 import component.RoundPanel;
@@ -92,7 +93,7 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 	DefaultTableModel modelTableTinTuyenDung, modelTableHoSo;
 	JScrollPane scrollTinTuyenDung, scrollHoSo;
 	JComboBox nhatuyendungCombo, ungvienCombo;
-	JButton btnHuy;
+	Button btnHuy;
 	
 	GradientRoundPanel danhsachTTDPanel, danhsachTTDNorthPanel, danhsachTTDCenterPanel,
 				danhsachHoSoPanel, danhsachHoSoNorthPanel, danhsachHoSoCenterPanel;
@@ -153,7 +154,7 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 		northPanelTimViec=new JPanel();
 		northPanelTimViec.setLayout(new FlowLayout(FlowLayout.RIGHT,10,0));
 		northPanelTimViec.setBackground(new Color(89, 145, 144));
-		btnHuy=new JButton("Hủy"); btnHuy.setFont(new Font("Segoe UI",0,16));
+		btnHuy=new Button("Hủy"); btnHuy.setFont(new Font("Segoe UI",0,16));
 		btnHuy.setPreferredSize(new Dimension(120,25));
 		btnHuy.setBackground(Color.RED);
 		btnHuy.setForeground(Color.WHITE);

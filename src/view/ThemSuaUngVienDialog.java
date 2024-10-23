@@ -30,6 +30,7 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
+import component.Button;
 import component.GradientPanel;
 import controller.FilterImp;
 import controller.LabelDateFormatter;
@@ -51,7 +52,7 @@ public class ThemSuaUngVienDialog extends JDialog implements ActionListener{
 	JComboBox gioitinhText;
 	UtilDateModel modelDate;
 	JDatePickerImpl dateText;
-	JButton btnThem, btnHuy;
+	Button btnThem, btnHuy;
 	
 	private int idMax=0;
 	private UngVien uv;
@@ -169,12 +170,12 @@ public class ThemSuaUngVienDialog extends JDialog implements ActionListener{
 		btnPanel.setBackground(Color.WHITE);
 		btnPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 35));
 		
-		btnThem=new JButton("Thêm mới"); btnThem.setFont(new Font("Segoe UI",0,16));
+		btnThem=new Button("Thêm mới"); btnThem.setFont(new Font("Segoe UI",0,16));
 		btnThem.setPreferredSize(new Dimension(120,25));
 		btnThem.setBackground(new Color(0,102,102));
 		btnThem.setForeground(Color.WHITE);
 		
-		btnHuy=new JButton("Hủy"); btnHuy.setFont(new Font("Segoe UI",0,16));
+		btnHuy=new Button("Hủy"); btnHuy.setFont(new Font("Segoe UI",0,16));
 		btnHuy.setPreferredSize(new Dimension(120,25));
 		btnHuy.setBackground(Color.WHITE);
 		btnHuy.setForeground(Color.BLACK);
