@@ -2,62 +2,208 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import component.Button;
 import component.RoundPanel;
 import component.progress.ProgressBar;
+import dao.NhanVien_DAO;
+import dao.TinTuyenDung_DAO;
 import entity.NhanVien;
+import entity.constraint.GioiTinh;
 
-public class ThongKeFrame extends JFrame implements MouseListener{
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PiePlot;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.general.DefaultPieDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.chart.axis.StandardTickUnitSource;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.CategoryPlot;
+
+
+public class ThongKeFrame extends JFrame implements ActionListener {
 
 	String userName;
 	ThongKeFrame parent;
 	
 //	Component thống kê
-	JPanel thongkePanel, panelCircle1, panelCircle2, panelCircle3;
-	JLabel titleLabel, labelCircle1, labelCircle2, labelCircle3;
-	RoundPanel centerPanel, 
-		circleDashBoardPanel, north, center;
-	ProgressBar progressCircle1, progressCircle2, progressCircle3;
+	JPanel thongKePanel, northPanel, centerPanel, northWestPanel, northEastPanel, northNorthPanel, wrapPanel;
+	JButton btnThongKeNV, btnThongKeNTD, btnThongKeHD;
+	private static TinTuyenDung_DAO tinTuyenDung_DAO;
 	
 	public ThongKeFrame(String userName) {
 		this.userName=userName;
 		this.parent=this;
 		
+		tinTuyenDung_DAO = new TinTuyenDung_DAO();
+		
 //		Tạo component bên phải
 		initComponent();
-
-//		Chạy số liệu
-		init();
+		
+		addActionListener();
+	}
+	
+	public JButton createButton(String title) {
+		JButton btn=new JButton(title); 
+		btn.setFont(new Font("Segoe UI",0,16));
+		btn.setPreferredSize(new Dimension(240,25));
+		btn.setBackground(new Color(0,102,102));
+		btn.setForeground(Color.WHITE);
+		return btn;
 	}
 		
+	public void addActionListener() {
+		btnThongKeHD.addActionListener(this);
+		btnThongKeNTD.addActionListener(this);
+		btnThongKeNV.addActionListener(this);
+	}
+	
 	public void initComponent() {
-		thongkePanel=new JPanel(); 
-		thongkePanel.setLayout(new BorderLayout(5,5));
-		thongkePanel.setBackground(new Color(89, 145, 144));
+		thongKePanel=new JPanel(); 
+		thongKePanel.setLayout(new BorderLayout(5,5));
+		thongKePanel.setBackground(new Color(89, 145, 144));
 		
-		centerPanel=new RoundPanel();
-		centerPanel.setBackground(new Color(89, 145, 144));
+		northPanel= new JPanel();
+		northPanel.setLayout(new BorderLayout());
 		
-//		Circle dash board
-		circleDashBoard();
+		northWestPanel= new JPanel();
+		northWestPanel.add(createPieChartPanel("Tỉ lệ tin tuyển dụng theo hình thức làm việc", createHinhThucTinTuyenDungDataset(), tinTuyenDung_DAO.thongKeHinhThuc()));
+		northWestPanel.add(createPieChartPanel("Tỉ lệ tin tuyển dụng theo trình độ", createTrinhDoTinTuyenDungDataset(), tinTuyenDung_DAO.thongKeTrinhDo()));
 		
-		centerPanel.add(circleDashBoardPanel);
+		northPanel.add(northWestPanel, BorderLayout.WEST);
+		northPanel.add(createLineChartPanel(), BorderLayout.EAST);
 		
-		thongkePanel.add(centerPanel, BorderLayout.CENTER);
-	}
+		centerPanel= new JPanel();
+		centerPanel.setLayout(new BorderLayout());
+		centerPanel.add(createDemoBarChartPanel(), BorderLayout.CENTER);
+		
+		wrapPanel= new JPanel();
+		wrapPanel.setLayout(new BorderLayout());
+		wrapPanel.add(northPanel, BorderLayout.NORTH);
+		wrapPanel.add(centerPanel, BorderLayout.CENTER);
+		
+
+		btnThongKeHD = createButton("Thống kê hợp đồng");
+		btnThongKeNTD = createButton("Thống kê nhà tuyển dụng");
+		btnThongKeNV = createButton("Thống kê nhân viên");
+		
+		JPanel panel = new JPanel();
+		panel.add(btnThongKeHD);
+		panel.add(btnThongKeNTD);
+		panel.add(btnThongKeNV);
+		
+		northNorthPanel=new JPanel();
+		northNorthPanel.setLayout(new BorderLayout());
+		northNorthPanel.add(panel, BorderLayout.WEST);
+		
+		thongKePanel.add(northNorthPanel, BorderLayout.NORTH);
+		thongKePanel.add(wrapPanel, BorderLayout.CENTER);
+		thongKePanel.setBackground(new Color(89, 145, 144));
+		
+		add(thongKePanel);
+	}	
+	
+	private static JPanel createPieChartPanel(String title, DefaultPieDataset dataset, ArrayList<Object[]> data) {
+        JFreeChart chart = createPieChart(title, dataset, data);
+        ChartPanel chartPanel = new ChartPanel(chart);
+        chartPanel.setPreferredSize(new Dimension(400, 300));
+        return chartPanel;
+    }
+
+	private static JPanel createLineChartPanel() {
+        JFreeChart chart = createLineChart("Số lượng các tin tuyển dụng theo ngành nghề theo tháng trong năm 2024", 
+        		"Tháng", "Số lượng tin", createNganhNgheTTDTheoThoiGianDataset());
+        ChartPanel chartPanel = new ChartPanel(chart);
+        chartPanel.setPreferredSize(new Dimension(800, 300));
+        return chartPanel;
+    }
+	
+	private static JPanel createDemoBarChartPanel() {
+        JFreeChart chart = createBarChart("Tổng số lượng tin tuyển dụng theo ngành nghề", "Ngành nghề", "Số lượng tin", createNganhNgheTrinhDoDataset());
+        ChartPanel chartPanel = new ChartPanel(chart);
+        return chartPanel;
+    }
+	
+    private static DefaultPieDataset createHinhThucTinTuyenDungDataset() {
+    	DefaultPieDataset dataset = new DefaultPieDataset();
+    	for (Object[] obj: tinTuyenDung_DAO.thongKeHinhThuc()) {
+    		dataset.setValue(obj[0].toString(), (Number) obj[1]);
+    	}
+    	return dataset;
+    }
+    
+    private static DefaultPieDataset createTrinhDoTinTuyenDungDataset() {
+    	DefaultPieDataset dataset = new DefaultPieDataset();
+    	for (Object[] obj: tinTuyenDung_DAO.thongKeTrinhDo()) {
+    		dataset.setValue(obj[0].toString(), (Number) obj[1]);
+    	}
+    	return dataset;
+    }
+    
+    private static DefaultCategoryDataset createNganhNgheTTDTheoThoiGianDataset() {
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        for (Object[] obj: tinTuyenDung_DAO.thongKeNganhNgheTheoThoiGian()) {
+    		dataset.addValue(Double.valueOf(obj[2].toString()) , obj[0].toString(), (Comparable) obj[1]);
+    	}
+        return dataset;
+    }
+    
+    private static DefaultCategoryDataset createNganhNgheTrinhDoDataset() {
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        for (Object[] obj: tinTuyenDung_DAO.thongKeNganhNgheTrinhDo()) {
+    		dataset.addValue(Double.valueOf(obj[2].toString()) , obj[1].toString(), obj[0].toString());
+    	}
+        return dataset;
+    }
+    
+    private static JFreeChart createBarChart(String title, String horizontalTitle, String verticalTitle, DefaultCategoryDataset dataset) {
+    	JFreeChart chart = ChartFactory.createBarChart(title, horizontalTitle, verticalTitle, dataset, PlotOrientation.VERTICAL, true, true, false);
+    	CategoryPlot plot = (CategoryPlot) chart.getPlot();
+        NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+        rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+    	
+        return chart;
+    }
+
+    private static JFreeChart createPieChart(String title, DefaultPieDataset dataset, ArrayList<Object[]> data) {
+        JFreeChart chart = ChartFactory.createPieChart(title, dataset, true, true, false);
+        PiePlot plot = (PiePlot) chart.getPlot();
+        ArrayList<Color> colors = new ArrayList<Color>();
+        colors.add(new Color(200, 255, 200));
+        colors.add(new Color(255, 200, 200));
+        colors.add(new Color(200, 200, 255));
+        colors.add(new Color(200, 255, 255));
+        
+        int length = data.size();
+        for (int i = 0; i < length; i++) {
+        	plot.setSectionPaint(data.get(i)[0].toString(), colors.get(i));
+        }   
+        return chart;
+    }
+    
+    private static JFreeChart createLineChart(String title, String horizontalTitle, String verticalTitle, DefaultCategoryDataset dataset) {
+        return ChartFactory.createLineChart(title, horizontalTitle, verticalTitle, dataset, PlotOrientation.VERTICAL, true, true, false);
+    }
 	
 	public JLabel createLabel(String title) {
 		JLabel label = new JLabel(title);
@@ -67,136 +213,27 @@ public class ThongKeFrame extends JFrame implements MouseListener{
 		return label;
 	}
 	
-	public ProgressBar createProgressBar(int value, Color color) {
-		ProgressBar progressCircle = new ProgressBar();
-		progressCircle.setBackground(color);
-		progressCircle.setBorder(BorderFactory.createEmptyBorder());
-		progressCircle.setValue(value);
-		return progressCircle;
-	}
-	
-	public void preparePanelCircle(JPanel panel, ProgressBar progressBar, JLabel label) {
-		GroupLayout layout=new GroupLayout(panel); 
-		panel.setLayout(layout);
-		layout.setHorizontalGroup(
-				layout.createParallelGroup(Alignment.LEADING)
-					   .addGroup(layout.createSequentialGroup()
-							            .addContainerGap()
-							            .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
-							            		         .addComponent(progressBar, GroupLayout.DEFAULT_SIZE,GroupLayout.DEFAULT_SIZE,Short.MAX_VALUE)
-							            		         .addComponent(label, GroupLayout.DEFAULT_SIZE,GroupLayout.DEFAULT_SIZE,Short.MAX_VALUE)
-							            		 )
-							            .addContainerGap()
-				        )
-		);
-		layout.setVerticalGroup(
-				layout.createParallelGroup(Alignment.LEADING)
-				       .addGroup(Alignment.TRAILING, layout.createSequentialGroup()
-				    		   								.addContainerGap()
-				    		   								.addComponent(label)
-				    		   								.addGap(18, 18, 18)
-				    		   								.addComponent(progressBar,GroupLayout.PREFERRED_SIZE,142,GroupLayout.PREFERRED_SIZE)
-				    		   								.addContainerGap()
-				       )
-		);
-	}
-	
-	public void circleDashBoard() {
-		circleDashBoardPanel=new RoundPanel();
-		circleDashBoardPanel.setLayout(new BorderLayout());
-		circleDashBoardPanel.setOpaque(false);
-		
-		north=new RoundPanel();
-		north.setLayout(new FlowLayout(FlowLayout.LEFT));
-		titleLabel=new JLabel("Báo cáo tháng");
-		titleLabel.setFont(new Font("Segoe UI",1,16));
-		titleLabel.setBorder(BorderFactory.createEmptyBorder(1, 10, 1, 1));
-		north.add(titleLabel);
-		circleDashBoardPanel.add(north, BorderLayout.NORTH);
-		
-		center= new RoundPanel();
-		
-		panelCircle1=new JPanel(); 
-		panelCircle1.setOpaque(false);
-		labelCircle1= createLabel("Thống kê nhân viên");
-		progressCircle1= createProgressBar(60, new Color(66, 246, 84));
-		preparePanelCircle(panelCircle1, progressCircle1, labelCircle1);
-		
-		panelCircle2=new JPanel(); 
-		panelCircle2.setOpaque(false);
-		labelCircle2= createLabel("Thống kê nhà tuyển dụng");
-		progressCircle2= createProgressBar(70, new Color(132, 66, 246));
-		preparePanelCircle(panelCircle2, progressCircle2, labelCircle2);
-		
-		panelCircle3=new JPanel(); panelCircle3.setOpaque(false);
-		labelCircle3= createLabel("Thống kê hợp đồng");
-		progressCircle3= createProgressBar(80, new Color(66, 193, 246));
-		preparePanelCircle(panelCircle3, progressCircle3, labelCircle3);
-
-		center.add(panelCircle1);
-		center.add(panelCircle2);
-		center.add(panelCircle3);
-		
-		circleDashBoardPanel.add(center, BorderLayout.CENTER);
-	}
-	
-	public void init() {
-		progressCircle1.start();
-		progressCircle2.start();
-		progressCircle3.start();
-		
-		labelCircle1.addMouseListener(this);
-		labelCircle2.addMouseListener(this);
-		labelCircle3.addMouseListener(this);
-	}
-	
 	public JPanel getPanel() {
-		return this.thongkePanel;
+		return this.thongKePanel;
 	}
 
 	@Override
-	public void mouseClicked(MouseEvent e) {
+	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		var obj=e.getSource();
-		if(obj.getClass().equals(JLabel.class)) {
-			if(((JLabel)obj).getText().equals("Thống kê nhà tuyển dụng")) {
-				centerPanel.removeAll();
-				centerPanel.add(new ThongKeNhaTuyenDungFrame(userName).getPanel());
-			}
-			else if(((JLabel)obj).getText().equals("Thống kê hợp đồng")) {
-				centerPanel.removeAll();
-				centerPanel.add(new ThongKeHopDongFrame(userName).getPanel());
-			}
-			else if(((JLabel)obj).getText().equals("Thống kê nhân viên")) {
-				centerPanel.removeAll();
-				centerPanel.add(new ThongKeNhanVienFrame(userName).getPanel());
-			}
-			centerPanel.revalidate();
-			centerPanel.repaint();
+		if(obj.equals(btnThongKeNTD)) {
+			wrapPanel.removeAll();
+			wrapPanel.add(new ThongKeNhaTuyenDungFrame(userName).getPanel());
 		}
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+		else if(obj.equals(btnThongKeHD)) {
+			wrapPanel.removeAll();
+			wrapPanel.add(new ThongKeHopDongFrame(userName).getPanel());
+		}
+		else if(obj.equals(btnThongKeNV)) {
+			wrapPanel.removeAll();
+			wrapPanel.add(new ThongKeNhanVienFrame(userName).getPanel());
+		}
+		wrapPanel.revalidate();
+		wrapPanel.repaint();
 	}
 }

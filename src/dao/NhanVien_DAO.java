@@ -264,4 +264,25 @@ public class NhanVien_DAO {
 		}
 		return n != 0;
 	}
+	
+	public ArrayList<Object[]> thongKeGioiTinh() {
+		ArrayList<Object[]> list = new ArrayList<Object[]>();
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			String sql = "select GioiTinh, count(*) from NhanVien group by GioiTinh";
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			while (rs.next()) {
+				String gioiTinh = rs.getString(1);
+				int soLuong = rs.getInt(2);
+				
+				list.add(new Object[] {gioiTinh, soLuong});
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
 }

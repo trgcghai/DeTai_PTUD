@@ -522,4 +522,117 @@ public class TinTuyenDung_DAO {
 		}
 		return n != 0;
 	}
+	
+	public ArrayList<Object[]> thongKeTrinhDo() {
+		ArrayList<Object[]> list = new ArrayList<Object[]>();
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			String sql = "select TrinhDo, COUNT(*) from TinTuyenDung group by TrinhDo";
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			while (rs.next()) {
+				String trinhDo = rs.getString(1);
+				int soLuong = rs.getInt(2);
+				
+				list.add(new Object[] {trinhDo, soLuong});
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return list;
+	}
+	
+	public ArrayList<Object[]> thongKeNganhNgheTheoThoiGian() {
+		ArrayList<Object[]> list = new ArrayList<Object[]>();
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			String sql = "select NganhNghe, MONTH(NgayDangTin), COUNT(*) from TinTuyenDung\r\n"
+					+ "group by NganhNghe, MONTH(NgayDangTin) order by NganhNghe ";
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			while (rs.next()) {
+				String nganhNghe = rs.getString(1);
+				int thang = rs.getInt(2);
+				int soluong = rs.getInt(3);
+				
+				list.add(new Object[] {nganhNghe, thang, soluong});
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return list;
+	}
+	
+	public ArrayList<Object[]> thongKeNganhNghe() {
+		ArrayList<Object[]> list = new ArrayList<Object[]>();
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			String sql = "select NganhNghe, COUNT(*) from TinTuyenDung group by NganhNghe";
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			while (rs.next()) {
+				String nganhNghe = rs.getString(1);
+				int soluong = rs.getInt(2);
+				
+				list.add(new Object[] {nganhNghe, soluong});
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return list;
+	}
+	
+	public ArrayList<Object[]> thongKeHinhThuc() {
+		ArrayList<Object[]> list = new ArrayList<Object[]>();
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			String sql = "select HinhThuc, count(*) from TinTuyenDung group by HinhThuc";
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			while (rs.next()) {
+				String hinhThuc = rs.getString(1);
+				int soluong = rs.getInt(2);
+				
+				list.add(new Object[] {hinhThuc, soluong});
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return list;
+	}
+	
+	public ArrayList<Object[]> thongKeNganhNgheTrinhDo() {
+		ArrayList<Object[]> list = new ArrayList<Object[]>();
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			String sql = "select NganhNghe, TrinhDo, Count(*) from TinTuyenDung group by NganhNghe, TrinhDo order by NganhNghe";
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			while (rs.next()) {
+				String nganhNghe = rs.getString(1);
+				String trinhDo = rs.getString(2);
+				int soluong = rs.getInt(3);
+				
+				list.add(new Object[] {nganhNghe, trinhDo, soluong});
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return list;
+	}
 }
