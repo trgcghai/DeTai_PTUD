@@ -90,8 +90,8 @@ public class HopDongFrame extends JFrame implements ActionListener, MouseListene
 		timviecPanel, centerPanelTimViec, northPanelTimViec;
 	JLabel titleTinTuyenDung, titleHoSo, titleHopDong, nhatuyendungLabel, ungvienLabel,
 		ngaybatdauLabel, ngayketthucLabel;
-	JTable tableTinTuyenDung, tableHoSo, tableHopDong;
-	DefaultTableModel modelTableTinTuyenDung, modelTableHoSo, modelTableHopDong;
+	JTable tableNhaTuyenDung, tableUngVien, tableHopDong;
+	DefaultTableModel modelTableNhaTuyenDung, modelTableUngVien, modelTableHopDong;
 	JScrollPane scrollTinTuyenDung, scrollHoSo, scrollHopDong;
 	JComboBox nhatuyendungCombo, ungvienCombo;
 	UtilDateModel modelDateBatDau, modelDateKetThuc;
@@ -128,29 +128,17 @@ public class HopDongFrame extends JFrame implements ActionListener, MouseListene
 		initComponent();
 		
 //		Thêm update và delete vào table
-		addTableTTDActionEvent();
-		addTableHoSoActionEvent();
 		addTableHopDongActionEvent();
 		
 //		Thêm sự kiện
 		addActionListener();
 		addMouseListener();
-		addFocusListener();
 		
 		loadData();
-		loadDataHoSo();
-		loadDataTinTuyenDung();
+		loadDataUngVien();
+		loadDataNhaTuyenDung();
 		loadDataHopDong();
 		
-		for(UngVien uv: ungvienDAO.getDSUngVien()) {
-			ungvienCombo.addItem(uv.getTenUV());
-			ungviens.add(uv);
-		}
-		
-		for(NhaTuyenDung ntd: nhatuyendungDAO.getDsNhaTuyenDung()) {
-			nhatuyendungCombo.addItem(ntd.getTenNTD());
-			nhatuyendungs.add(ntd);
-		}
 	}
 	
 	public JLabel createLabel(String title, boolean isBordered) {
@@ -183,7 +171,7 @@ public class HopDongFrame extends JFrame implements ActionListener, MouseListene
 		JPanel panelCenter=new JPanel();
 		panelCenter.setLayout(new BorderLayout());
 		panelCenter.setBackground(new Color(89, 145, 144));
-//		Danh sách tin tuyển dụng
+//		Danh sách nhà tuyển dụng
 		danhsachTTDPanel=new GradientRoundPanel();
 		danhsachTTDPanel.setBackground(Color.WHITE);
 		danhsachTTDPanel.setLayout(new BorderLayout(10, 10));
@@ -192,37 +180,37 @@ public class HopDongFrame extends JFrame implements ActionListener, MouseListene
 		danhsachTTDNorthPanel=new GradientRoundPanel();
 		danhsachTTDNorthPanel.setLayout(new BorderLayout(10,10));
 		danhsachTTDNorthPanel.setBackground(Color.WHITE);
-		JPanel resNTD=new JPanel();
-		resNTD.setOpaque(false);
-		resNTD.setBorder(BorderFactory.createEmptyBorder(10,10,0,15));
-		nhatuyendungLabel=new JLabel("Nhà tuyển dụng");
-		nhatuyendungLabel.setFont(new Font("Segoe UI",1,16));
-		nhatuyendungLabel.setForeground(Color.WHITE);
-		nhatuyendungCombo=new JComboBox();
-		nhatuyendungCombo.setFont(new Font("Segoe UI",0,16));
-		nhatuyendungCombo.setForeground(Color.WHITE);
-		nhatuyendungCombo.setBackground(new Color(89, 145, 144));
-		nhatuyendungCombo.setPreferredSize(new Dimension(200,25));
-		nhatuyendungCombo.setRenderer(new ComboBoxRenderer("Chọn nhà tuyển dụng"));
-		resNTD.add(nhatuyendungLabel); resNTD.add(nhatuyendungCombo);
-		titleTinTuyenDung=new JLabel("Danh sách tin tuyển dụng");
+//		JPanel resNTD=new JPanel();
+//		resNTD.setOpaque(false);
+//		resNTD.setBorder(BorderFactory.createEmptyBorder(10,10,0,15));
+//		nhatuyendungLabel=new JLabel("Nhà tuyển dụng");
+//		nhatuyendungLabel.setFont(new Font("Segoe UI",1,16));
+//		nhatuyendungLabel.setForeground(Color.WHITE);
+//		nhatuyendungCombo=new JComboBox();
+//		nhatuyendungCombo.setFont(new Font("Segoe UI",0,16));
+//		nhatuyendungCombo.setForeground(Color.WHITE);
+//		nhatuyendungCombo.setBackground(new Color(89, 145, 144));
+//		nhatuyendungCombo.setPreferredSize(new Dimension(200,25));
+//		nhatuyendungCombo.setRenderer(new ComboBoxRenderer("Chọn nhà tuyển dụng"));
+//		resNTD.add(nhatuyendungLabel); resNTD.add(nhatuyendungCombo);
+		titleTinTuyenDung=new JLabel("Danh sách nhà tuyển dụng");
 		titleTinTuyenDung.setFont(new Font("Segoe UI",1,16));
 		titleTinTuyenDung.setForeground(Color.WHITE);
 		titleTinTuyenDung.setBorder(BorderFactory.createEmptyBorder(10,20,0,10));
 		danhsachTTDNorthPanel.add(titleTinTuyenDung, BorderLayout.WEST);
-		danhsachTTDNorthPanel.add(resNTD, BorderLayout.EAST);
+//		danhsachTTDNorthPanel.add(resNTD, BorderLayout.EAST);
 		
 		danhsachTTDCenterPanel=new GradientRoundPanel();
 		danhsachTTDCenterPanel.setLayout(new BoxLayout(danhsachTTDCenterPanel, BoxLayout.PAGE_AXIS));
 		danhsachTTDCenterPanel.setBackground(Color.WHITE);
-		String[] colName= {"Mã","Tiêu đề","Trình độ","Lương", "Hành động"};
+		String[] colName= {"Mã","Tên nhà tuyển dụng","Email"};
 		Object[][] data = {
-			    {"1","Technical Project Manager","Đại học","1000",null},
-			    {"2","Manual Tester","Cao đẳng", "500",null}
+			    {"1","Technical Project Manager","Đại học"},
+			    {"2","Manual Tester","Cao đẳng", }
 			};
-		modelTableTinTuyenDung= new DefaultTableModel(data, colName){
+		modelTableNhaTuyenDung= new DefaultTableModel(data, colName){
 			boolean[] canEdit = new boolean [] {
-	                false,false, false, false, true
+	                false,false, false
 	            };
 			
             @Override
@@ -230,8 +218,8 @@ public class HopDongFrame extends JFrame implements ActionListener, MouseListene
                return canEdit[column];
             }
         };
-		tableTinTuyenDung=createTable(modelTableTinTuyenDung);
-		scrollTinTuyenDung=new JScrollPane(tableTinTuyenDung);
+		tableNhaTuyenDung=createTable(modelTableNhaTuyenDung);
+		scrollTinTuyenDung=new JScrollPane(tableNhaTuyenDung);
 		scrollTinTuyenDung.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
 		GradientRoundPanel resScrollTinTuyenDung=new GradientRoundPanel();
 		resScrollTinTuyenDung.setBorder(BorderFactory.createEmptyBorder(0,20,20,20));
@@ -297,10 +285,10 @@ public class HopDongFrame extends JFrame implements ActionListener, MouseListene
 //		
 		danhsachHopDongCenterPanel=new GradientRoundPanel();
 		danhsachHopDongCenterPanel.setLayout(new BoxLayout(danhsachHopDongCenterPanel, BoxLayout.PAGE_AXIS));
-		String[] column= {"Mã","Tiêu đề","Lương", "Tên ứng viên", "Ngày lập", "Hành động"};
+		String[] column= {"Mã","Tên nhà tuyển dụng","Tên ứng viên", "Phí", "Ngày lập", "Hành động"};
 		Object[][] dt = {
-			    {"1","Technical Project Manager","1000", "Minh Đạt", "13/12/2022", null},
-			    {"2","Manual Tester", "500", "Thắng Đạt", "13/01/2024", null}
+			    {"1","Technical Project Manager","Minh Đạt", "10000", "13/12/2022", null},
+			    {"2","Manual Tester", "Thắng Đạt", "2000", "13/01/2024", null}
 			};
 		modelTableHopDong= new DefaultTableModel(dt, column){
 			boolean[] canEdit = new boolean [] {
@@ -325,7 +313,7 @@ public class HopDongFrame extends JFrame implements ActionListener, MouseListene
 		danhsachHopDongPanel.add(danhsachHopDongNorthPanel, BorderLayout.NORTH);
 		danhsachHopDongPanel.add(danhsachHopDongCenterPanel, BorderLayout.CENTER);
 		
-//		Danh sách hồ sơ ứng viên
+//		Danh sách ứng viên
 		danhsachHoSoPanel=new GradientRoundPanel();
 		danhsachHoSoPanel.setLayout(new BorderLayout(10, 10));
 		danhsachHoSoPanel.setPreferredSize(new Dimension(660, 700));
@@ -333,39 +321,39 @@ public class HopDongFrame extends JFrame implements ActionListener, MouseListene
 		danhsachHoSoNorthPanel=new GradientRoundPanel();
 		danhsachHoSoNorthPanel.setLayout(new BorderLayout(10,10));
 		danhsachHoSoNorthPanel.setBackground(Color.WHITE);
-		JPanel resUngVien=new JPanel();
-		resUngVien.setOpaque(false);
-		resUngVien.setBorder(BorderFactory.createEmptyBorder(10,10,0,15));
-		resUngVien.setBackground(Color.WHITE);
+//		JPanel resUngVien=new JPanel();
+//		resUngVien.setOpaque(false);
+//		resUngVien.setBorder(BorderFactory.createEmptyBorder(10,10,0,15));
+//		resUngVien.setBackground(Color.WHITE);
+//		
+//		ungvienLabel=new JLabel("Ứng viên");
+//		ungvienLabel.setFont(new Font("Segoe UI",1,16));
+//		ungvienLabel.setForeground(Color.WHITE);
+//		
+//		ungvienCombo=new JComboBox();
+//		ungvienCombo.setForeground(Color.WHITE);
+//		ungvienCombo.setBackground(new Color(89, 145, 144));
+//		ungvienCombo.setFont(new Font("Segoe UI",0,16));
+//		ungvienCombo.setPreferredSize(new Dimension(200,25));
+//		ungvienCombo.setRenderer(new ComboBoxRenderer("Chọn ứng viên"));
+//		resUngVien.add(ungvienLabel); resUngVien.add(ungvienCombo);
 		
-		ungvienLabel=new JLabel("Ứng viên");
-		ungvienLabel.setFont(new Font("Segoe UI",1,16));
-		ungvienLabel.setForeground(Color.WHITE);
-		
-		ungvienCombo=new JComboBox();
-		ungvienCombo.setForeground(Color.WHITE);
-		ungvienCombo.setBackground(new Color(89, 145, 144));
-		ungvienCombo.setFont(new Font("Segoe UI",0,16));
-		ungvienCombo.setPreferredSize(new Dimension(200,25));
-		ungvienCombo.setRenderer(new ComboBoxRenderer("Chọn ứng viên"));
-		resUngVien.add(ungvienLabel); resUngVien.add(ungvienCombo);
-		
-		titleHoSo = createLabel("Danh sách hồ sơ ứng viên", true);
+		titleHoSo = createLabel("Danh sách ứng viên", true);
 		titleHoSo.setFont(new Font("Segoe UI",1,16));
 		titleHoSo.setForeground(Color.WHITE);
 		titleHoSo.setBorder(BorderFactory.createEmptyBorder(10,20,0,10));
 		danhsachHoSoNorthPanel.add(titleHoSo, BorderLayout.WEST);
-		danhsachHoSoNorthPanel.add(resUngVien, BorderLayout.EAST);
+//		danhsachHoSoNorthPanel.add(resUngVien, BorderLayout.EAST);
 		
 		danhsachHoSoCenterPanel=new GradientRoundPanel();
 		danhsachHoSoCenterPanel.setLayout(new BoxLayout(danhsachHoSoCenterPanel, BoxLayout.PAGE_AXIS));
 		danhsachHoSoCenterPanel.setBackground(Color.WHITE);
-		String[] col= {"Mã","Trạng thái","Tên ứng viên","Trình độ", "Hành động"};
+		String[] col= {"Mã","Tên ứng viên","Số điện thoại"};
 		Object[][] datas = {
-			    {"1","Chưa nộp","Minh Đạt", "Đại học", null},
-			    {"2","Chưa nộp","Thắng Đạt", "Cao đẳng", null}
+			    {"1","Chưa nộp","Minh Đạt"},
+			    {"2","Chưa nộp","Thắng Đạt"}
 			};
-		modelTableHoSo= new DefaultTableModel(datas, col){
+		modelTableUngVien= new DefaultTableModel(datas, col){
 			boolean[] canEdit = new boolean [] {
 	                false, false, false, false, true
 	            };
@@ -375,8 +363,8 @@ public class HopDongFrame extends JFrame implements ActionListener, MouseListene
                return canEdit[column];
             }
         };
-		tableHoSo=createTable(modelTableHoSo);
-		scrollHoSo=new JScrollPane(tableHoSo);
+		tableUngVien=createTable(modelTableUngVien);
+		scrollHoSo=new JScrollPane(tableUngVien);
 		scrollHoSo.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
 		GradientRoundPanel resScrollHoSo=new GradientRoundPanel();
 		resScrollHoSo.setBorder(BorderFactory.createEmptyBorder(0,20,20,20));
@@ -405,7 +393,7 @@ public class HopDongFrame extends JFrame implements ActionListener, MouseListene
 		table.setRowHeight(30);
 		DefaultTableCellRenderer centerRenderers = new DefaultTableCellRenderer();
 		centerRenderers.setHorizontalAlignment( JLabel.CENTER );
-		for(int i=0;i<table.getColumnCount()-1;i++) {
+		for(int i=0;i<table.getColumnCount();i++) {
 			table.getColumnModel().getColumn(i).setCellRenderer(centerRenderers);			
 		}
 		table.setAutoCreateRowSorter(true);
@@ -417,120 +405,6 @@ public class HopDongFrame extends JFrame implements ActionListener, MouseListene
         sorters.sort();
         
 		return table;
-	}
-	
-	public void addTableTTDActionEvent() {
-		TableActionEvent event=new TableActionEvent() {
-			@Override
-			public void onUpdate(int row) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void onDelete(int row) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onViewHoSo(int row) {
-				// TODO Auto-generated method stub
-			
-			}
-
-			@Override
-			public void onCreateHoSo(int row) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onCreateTaiKhoan(int row) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onViewTinTuyenDung(int row) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onCreateTinTuyenDung(int row) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onViewDetail(int row) {
-				// TODO Auto-generated method stub
-				TinTuyenDung ttd=tintuyendungDAO.getTinTuyenDung(tableTinTuyenDung.getValueAt(row, 0).toString());
-				new ChiTietViecLamDialog(parent, rootPaneCheckingEnabled, ttd, null, null, true).setVisible(true);
-			}
-			
-		};
-		
-		tableTinTuyenDung.getColumnModel().getColumn(4).setCellRenderer(new TableCellRendererDetail());
-		tableTinTuyenDung.getColumnModel().getColumn(4).setCellEditor(new TableCellEditorDetail(event));
-	}
-	
-	public void addTableHoSoActionEvent() {
-		TableActionEvent event=new TableActionEvent() {
-			@Override
-			public void onUpdate(int row) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void onDelete(int row) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onViewHoSo(int row) {
-				// TODO Auto-generated method stub
-			
-			}
-
-			@Override
-			public void onCreateHoSo(int row) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onCreateTaiKhoan(int row) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onViewTinTuyenDung(int row) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onCreateTinTuyenDung(int row) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onViewDetail(int row) {
-				// TODO Auto-generated method stub
-				HoSo hoso=hosoDAO.getHoSo(tableHoSo.getValueAt(row, 0).toString());
-				new ChiTietHoSoDialog(parent, rootPaneCheckingEnabled, hoso).setVisible(true);
-			}
-			
-		};
-		
-		tableHoSo.getColumnModel().getColumn(4).setCellRenderer(new TableCellRendererDetail());
-		tableHoSo.getColumnModel().getColumn(4).setCellEditor(new TableCellEditorDetail(event));
 	}
 	
 	public void addTableHopDongActionEvent() {
@@ -612,31 +486,27 @@ public class HopDongFrame extends JFrame implements ActionListener, MouseListene
 		hopdongDAO.setListHopDong(hopdongDAO.getDSHopDong());
 	}
 	
-	public void loadDataHoSo() {
-		modelTableHoSo.setRowCount(0);
-		for(HoSo i: hosoDAO.getListHoSo()) {
-			if(!i.getTrangThai().getValue().equalsIgnoreCase("Chưa nộp")) {
-				Object[] obj=new Object[] {
-						i.getMaHS(),
-						i.getTrangThai().getValue(), 
-						ungvienDAO.getUngVien(i.getUngVien().getMaUV()).getTenUV(), 
-						extracInfor(i.getMoTa(),"Trình độ"), null
-				};
-				modelTableHoSo.addRow(obj);
-			}
+	public void loadDataUngVien() {
+		modelTableUngVien.setRowCount(0);
+		for(UngVien i: ungvienDAO.getListUngVien()) {
+			Object[] obj=new Object[] {
+					i.getMaUV(),
+					i.getTenUV(), 
+					i.getSoDienThoai()
+			};
+			modelTableUngVien.addRow(obj);
 		}
 	}
 	
-	public void loadDataTinTuyenDung() {
-		modelTableTinTuyenDung.setRowCount(0);
+	public void loadDataNhaTuyenDung() {
+		modelTableNhaTuyenDung.setRowCount(0);
 		DecimalFormat df = new DecimalFormat("#,###");
-		for(TinTuyenDung i: tintuyendungDAO.getListTinTuyenDung()) {
+		for(NhaTuyenDung i: nhatuyendungDAO.getListNhatuyenDung()) {
 			Object[] obj=new Object[] {
-					i.getMaTTD(), i.getTieuDe(),
-					i.getTrinhDo().getValue(), 
-					df.format(i.getLuong())+" VNĐ",null
+					i.getMaNTD(), i.getTenNTD(),
+					i.getEmail()
 			};
-			modelTableTinTuyenDung.addRow(obj);
+			modelTableNhaTuyenDung.addRow(obj);
 		}
 	}
 	
@@ -647,9 +517,10 @@ public class HopDongFrame extends JFrame implements ActionListener, MouseListene
 		for(HopDong i: hopdongDAO.getListHopDong()) {
 			Object[] obj=new Object[] {
 					i.getMaHD(),
-					tintuyendungDAO.getTinTuyenDung(i.getTinTuyenDung().getMaTTD()).getTieuDe(),
-					df.format(tintuyendungDAO.getTinTuyenDung(i.getTinTuyenDung().getMaTTD()).getLuong())+" VNĐ", 
+					nhatuyendungDAO.getNhaTuyenDung(tintuyendungDAO.getTinTuyenDung(i.getTinTuyenDung().getMaTTD())
+							.getNhaTuyenDung().getMaNTD()).getTenNTD(),
 					ungvienDAO.getUngVien(i.getUngVien().getMaUV()).getTenUV(),
+					df.format(i.getPhiDichVu())+" VNĐ", 
 					format.format(i.getThoiGian()), null
 			};
 			modelTableHopDong.addRow(obj);
@@ -673,51 +544,20 @@ public class HopDongFrame extends JFrame implements ActionListener, MouseListene
 	}
 	
 //	Listener
-	public void addFocusListener() {
-
-	}
-	
 	public void addActionListener() {
-		ungvienCombo.addActionListener(this);
-		nhatuyendungCombo.addActionListener(this);
-		
 		btnHuy.addActionListener(this);
 		btnTimkiem.addActionListener(this);
 	}
 
-	private boolean flag=true;
-	private boolean check=true;
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		var obj=e.getSource();
-		if(obj.equals(ungvienCombo)) {
-			if(!flag) {
-				UngVien uv=ungviens.get(ungvienCombo.getSelectedIndex());
-				hosoDAO.setListHoSo(hosoDAO.getHoSoTheoUngVien(uv.getMaUV()));
-				loadDataHoSo();
-			}
-			else {
-				flag=false;
-			}
-		}
-		else if(obj.equals(nhatuyendungCombo)) {
-			if(!check) {
-				NhaTuyenDung ntd=nhatuyendungs.get(nhatuyendungCombo.getSelectedIndex());
-				tintuyendungDAO.setListTinTuyenDung(tintuyendungDAO.getTinTuyenDungTheoNTD(ntd.getMaNTD(), 1));
-				loadDataTinTuyenDung();
-			}
-			else {
-				check=false;
-			}
-		}
-		else if(obj.equals(btnHuy)) {
-			ungvienCombo.setSelectedIndex(0);
-			nhatuyendungCombo.setSelectedIndex(0);
+		if(obj.equals(btnHuy)) {
 			modelDateBatDau.setValue(new Date());
 			modelDateKetThuc.setValue(new Date());
 			loadData();
-			loadDataHoSo();
-			loadDataTinTuyenDung();
+			loadDataUngVien();
+			loadDataNhaTuyenDung();
 			loadDataHopDong();
 		}
 		else if(obj.equals(btnTimkiem)) {
@@ -741,34 +581,26 @@ public class HopDongFrame extends JFrame implements ActionListener, MouseListene
 	}
 	
 	public void addMouseListener() {
-		tableHoSo.addMouseListener(this);
-		tableTinTuyenDung.addMouseListener(this);
+		tableUngVien.addMouseListener(this);
+		tableNhaTuyenDung.addMouseListener(this);
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
-		if(e.getSource().equals(tableHoSo)) {
-			int index=tableHoSo.getSelectedRow();
+		if(e.getSource().equals(tableUngVien)) {
+			int index=tableUngVien.getSelectedRow();
 			if(index!=-1) {
 				DateTimeFormatter format=DateTimeFormatter.ofPattern("dd-MM-yyyy");
-				HoSo hoso=hosoDAO.getHoSo(tableHoSo.getValueAt(index, 0).toString());
-				HopDong hd=hopdongDAO.getHopDongTheoHoSo(hoso.getMaHS());
-				modelTableHopDong.setRowCount(0);
-				Object[] obj=new Object[] {
-						hd.getMaHD(),
-						tintuyendungDAO.getTinTuyenDung(hd.getTinTuyenDung().getMaTTD()).getTieuDe(),
-						tintuyendungDAO.getTinTuyenDung(hd.getTinTuyenDung().getMaTTD()).getLuong(), 
-						ungvienDAO.getUngVien(hd.getUngVien().getMaUV()).getTenUV(),
-						format.format(hd.getThoiGian()), null
-				};
-				modelTableHopDong.addRow(obj);
+				hopdongDAO.setListHopDong(hopdongDAO.
+						getHopDongTheoUngVien(tableUngVien.getValueAt(index, 0).toString()));
+				loadDataHopDong();
 			}
 		}
-		else if(e.getSource().equals(tableTinTuyenDung)) {
-			int idx=tableTinTuyenDung.getSelectedRow();
-			TinTuyenDung tintuyendung=tintuyendungDAO.getTinTuyenDung(tableTinTuyenDung.getValueAt(idx, 0).toString());
-			hopdongDAO.setListHopDong(hopdongDAO.getHopDongTheoTinTuyenDung(tintuyendung.getMaTTD()));
+		else if(e.getSource().equals(tableNhaTuyenDung)) {
+			int idx=tableNhaTuyenDung.getSelectedRow();
+			hopdongDAO.setListHopDong(hopdongDAO.
+					getHopDongTheoNhaTuyenDung(tableNhaTuyenDung.getValueAt(idx, 0).toString()));
 			loadDataHopDong();
 		}
 	}
