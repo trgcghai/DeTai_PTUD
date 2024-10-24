@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="lib/sqljdbc4.jar">
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk-17">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
@@ -11,22 +11,12 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/controlsfx-11.1.2.jar">
+	<classpathentry kind="lib" path="lib/jfreechart-1.0.19.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk-17">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/miglayout-4.0.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="lib/TimingFramework-0.55.jar">
+	<classpathentry kind="lib" path="lib/slf4j-api-2.0.13.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
@@ -36,17 +26,21 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-<<<<<<< HEAD
+	<classpathentry kind="lib" path="lib/sqljdbc4.jar">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="lib/jcommon-1.0.23.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/jfreechart-1.0.19.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="lib" path="lib/barcodes-8.0.3.jar"/>
+	<classpathentry kind="lib" path="lib/bouncy-castle-adapter-8.0.3.jar"/>
+	<classpathentry kind="lib" path="lib/bouncy-castle-connector-8.0.3.jar"/>
+	<classpathentry kind="lib" path="lib/bouncy-castle-fips-adapter-8.0.3.jar"/>
+	<classpathentry kind="lib" path="lib/commons-8.0.3.jar"/>
 	<classpathentry kind="lib" path="lib/commons-codec-1.15.jar"/>
 	<classpathentry kind="lib" path="lib/commons-collections4-4.4.jar"/>
 	<classpathentry kind="lib" path="lib/commons-compress-1.21.jar"/>
@@ -54,31 +48,26 @@
 	<classpathentry kind="lib" path="lib/commons-io-2.16.1.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/commons-math3-3.6.1.jar"/>
-	<classpathentry kind="lib" path="lib/log4j-api-2.23.1.jar"/>
-	<classpathentry kind="lib" path="lib/log4j-core-2.23.1.jar"/>
-	<classpathentry kind="lib" path="lib/poi-5.2.3.jar"/>
-	<classpathentry kind="lib" path="lib/poi-ooxml-5.2.3.jar"/>
-	<classpathentry kind="lib" path="lib/poi-ooxml-full-5.2.3.jar"/>
-	<classpathentry kind="lib" path="lib/xmlbeans-5.1.1.jar"/>
-	<classpathentry kind="lib" path="lib/barcodes-8.0.3.jar"/>
-	<classpathentry kind="lib" path="lib/bouncy-castle-adapter-8.0.3.jar"/>
-	<classpathentry kind="lib" path="lib/bouncy-castle-connector-8.0.3.jar"/>
-	<classpathentry kind="lib" path="lib/bouncy-castle-fips-adapter-8.0.3.jar"/>
-	<classpathentry kind="lib" path="lib/commons-8.0.3.jar"/>
+	<classpathentry kind="lib" path="lib/controlsfx-11.1.2.jar"/>
 	<classpathentry kind="lib" path="lib/font-asian-8.0.3.jar"/>
 	<classpathentry kind="lib" path="lib/forms-8.0.3.jar"/>
 	<classpathentry kind="lib" path="lib/hyph-8.0.3.jar"/>
 	<classpathentry kind="lib" path="lib/io-8.0.3.jar"/>
 	<classpathentry kind="lib" path="lib/kernel-8.0.3.jar"/>
 	<classpathentry kind="lib" path="lib/layout-8.0.3.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-api-2.23.1.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-core-2.23.1.jar"/>
+	<classpathentry kind="lib" path="lib/miglayout-4.0.jar"/>
 	<classpathentry kind="lib" path="lib/pdfa-8.0.3.jar"/>
 	<classpathentry kind="lib" path="lib/pdftest-8.0.3.jar"/>
 	<classpathentry kind="lib" path="lib/pdfua-8.0.3.jar"/>
+	<classpathentry kind="lib" path="lib/poi-5.2.3.jar"/>
+	<classpathentry kind="lib" path="lib/poi-ooxml-5.2.3.jar"/>
+	<classpathentry kind="lib" path="lib/poi-ooxml-full-5.2.3.jar"/>
 	<classpathentry kind="lib" path="lib/sign-8.0.3.jar"/>
 	<classpathentry kind="lib" path="lib/styled-xml-parser-8.0.3.jar"/>
 	<classpathentry kind="lib" path="lib/svg-8.0.3.jar"/>
-	<classpathentry kind="lib" path="lib/slf4j-api-2.0.13.jar"/>
-=======
->>>>>>> 39f8473622f63907cbd7ba4cc9b20c11a077e9d6
+	<classpathentry kind="lib" path="lib/TimingFramework-0.55.jar"/>
+	<classpathentry kind="lib" path="lib/xmlbeans-5.1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

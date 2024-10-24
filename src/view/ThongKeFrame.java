@@ -21,13 +21,8 @@ import javax.swing.JMenu;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import component.Button;
-import component.RoundPanel;
-import component.progress.ProgressBar;
-import dao.NhanVien_DAO;
 import dao.TinTuyenDung_DAO;
 import entity.NhanVien;
-import entity.constraint.GioiTinh;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -88,7 +83,7 @@ public class ThongKeFrame extends JFrame implements ActionListener {
 		
 		northWestPanel= new JPanel();
 		northWestPanel.add(createPieChartPanel("Tỉ lệ tin tuyển dụng theo hình thức làm việc", createHinhThucTinTuyenDungDataset(), tinTuyenDung_DAO.thongKeHinhThuc()));
-		northWestPanel.add(createPieChartPanel("Tỉ lệ tin tuyển dụng theo trình độ", createTrinhDoTinTuyenDungDataset(), tinTuyenDung_DAO.thongKeTrinhDo()));
+		northWestPanel.add(createPieChartPanel("Tỉ lệ tin tuyển dụng theo trình độ học vấn", createTrinhDoTinTuyenDungDataset(), tinTuyenDung_DAO.thongKeTrinhDo()));
 		
 		northPanel.add(northWestPanel, BorderLayout.WEST);
 		northPanel.add(createLineChartPanel(), BorderLayout.EAST);
@@ -108,6 +103,7 @@ public class ThongKeFrame extends JFrame implements ActionListener {
 		btnThongKeNV = createButton("Thống kê nhân viên");
 		
 		JPanel panel = new JPanel();
+		panel.setOpaque(false);
 		panel.add(btnThongKeHD);
 		panel.add(btnThongKeNTD);
 		panel.add(btnThongKeNV);
@@ -139,7 +135,7 @@ public class ThongKeFrame extends JFrame implements ActionListener {
     }
 	
 	private static JPanel createDemoBarChartPanel() {
-        JFreeChart chart = createBarChart("Tổng số lượng tin tuyển dụng theo ngành nghề", "Ngành nghề", "Số lượng tin", createNganhNgheTrinhDoDataset());
+        JFreeChart chart = createBarChart("Tổng số lượng tin tuyển dụng theo ngành nghề dựa trên trình độ học vấn", "Ngành nghề", "Số lượng tin", createNganhNgheTrinhDoDataset());
         ChartPanel chartPanel = new ChartPanel(chart);
         return chartPanel;
     }

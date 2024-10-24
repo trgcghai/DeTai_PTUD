@@ -146,13 +146,11 @@ public class ThongKeNhanVienFrame  extends JFrame implements ActionListener{
 		ngayBatDauLabel= createLabel("Ngày bắt đầu:"); 
 		ngayBatDau=new JDatePickerImpl(panelDate, new LabelDateFormatter());
 		ngayBatDau.setPreferredSize(new Dimension(150,25));
-		modelBatDau.setValue(new Date());
 
 		panelDate=new JDatePanelImpl(modelKetThuc, p);
 		ngayKetThucLabel= createLabel("Ngày kết thúc:"); 
 		ngayKetThuc=new JDatePickerImpl(panelDate, new LabelDateFormatter());
 		ngayKetThuc.setPreferredSize(new Dimension(150,25));
-		modelKetThuc.setValue(new Date());
 		
 		JPanel resBtnSearch=new JPanel();
 		resBtnSearch.setOpaque(false);

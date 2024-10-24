@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
@@ -55,8 +56,8 @@ public class ThongKeNhaTuyenDungFrame  extends JFrame implements ActionListener 
 	ThongKeNhaTuyenDungFrame parent;
 	
 //	Component thống kê tin tuyển dụng
-	JPanel menuPanel, timkiemPanel,nhaTuyenDungPanel,centerPanelNhaTuyenDung, danhsachPanel, danhsachNorthPanel, danhsachCenterPanel;
-	JLabel titleNhaTuyenDung, ngayBatDauLabel, ngayKetThucLabel, timkiemTenLabel;
+	JPanel menuPanel, timkiemPanel,nhaTuyenDungPanel,centerPanelNhaTuyenDung, danhsachPanel, danhsachNorthPanel, danhsachCenterPanel, tongketPanel;
+	JLabel titleNhaTuyenDung, ngayBatDauLabel, ngayKetThucLabel, timkiemTenLabel, summaryValueLabel, valueLabel;
 	Button btnTimKiem, btnLamLai, btnExcel;
 	JTable tableNhaTuyenDung;
 	DefaultTableModel modeltableNhaTuyenDung;
@@ -133,13 +134,11 @@ public class ThongKeNhaTuyenDungFrame  extends JFrame implements ActionListener 
 		ngayBatDauLabel= createLabel("Ngày bắt đầu:"); 
 		ngayBatDau=new JDatePickerImpl(panelDate, new LabelDateFormatter());
 		ngayBatDau.setPreferredSize(new Dimension(130,25));
-		modelBatDau.setValue(new Date());
 		
 		panelDate=new JDatePanelImpl(modelKetThuc, p);
 		ngayKetThucLabel= createLabel("Ngày kết thúc:"); 
 		ngayKetThuc=new JDatePickerImpl(panelDate, new LabelDateFormatter());
 		ngayKetThuc.setPreferredSize(new Dimension(130,25));
-		modelKetThuc.setValue(new Date());
 		
 		JPanel resBtnSearch=new JPanel();
 		resBtnSearch.setOpaque(false);
@@ -231,11 +230,34 @@ public class ThongKeNhaTuyenDungFrame  extends JFrame implements ActionListener 
 		resScroll.add(scrollNhaTuyenDung);
 		danhsachCenterPanel.add(resScroll);
 		
+		// tổng số lượng tin tuyển dụng
+		tongketPanel=new GradientRoundPanel();
+		tongketPanel.setLayout(new BorderLayout());
+		tongketPanel.setBorder(BorderFactory.createEmptyBorder(0, 17, 0, 0));
+		
+		JPanel resPanelSummary = new JPanel();
+		resPanelSummary.setOpaque(false);
+		resPanelSummary.setLayout(new GridLayout(2, 1));
+		
+		JPanel temp = new JPanel();
+		temp.setLayout(new FlowLayout(FlowLayout.RIGHT));
+		summaryValueLabel= createLabel("Tổng số lượng tin tuyển dụng:"); 
+		summaryValueLabel.setFont(new Font("Segoe UI",1,16));
+		valueLabel = createLabel("");
+		valueLabel.setFont(new Font("Segoe UI",1,16));
+		temp.add(summaryValueLabel);
+		temp.add(valueLabel);
+		temp.setOpaque(false);
+		resPanelSummary.add(temp);
+
+		tongketPanel.add(resPanelSummary, BorderLayout.WEST);
+		
 		danhsachPanel.add(danhsachNorthPanel, BorderLayout.NORTH);
 		danhsachPanel.add(danhsachCenterPanel, BorderLayout.CENTER);
 		
 		centerPanelNhaTuyenDung.add(timkiemPanel, BorderLayout.NORTH);
 		centerPanelNhaTuyenDung.add(danhsachPanel, BorderLayout.CENTER);
+		centerPanelNhaTuyenDung.add(tongketPanel, BorderLayout.SOUTH);
 		
 		nhaTuyenDungPanel.add(centerPanelNhaTuyenDung, BorderLayout.CENTER);
 	}
@@ -258,9 +280,12 @@ public class ThongKeNhaTuyenDungFrame  extends JFrame implements ActionListener 
 	
 	public void loadDataTable() {
 		modeltableNhaTuyenDung.setRowCount(0);
+		int totalNumber = 0;
 		for(Object[] i: hopDong_DAO.thongKeHopDongTheoNTD()) {
 			modeltableNhaTuyenDung.addRow(i);
+			totalNumber += Integer.valueOf(i[4].toString());
 		}
+		valueLabel.setText(String.valueOf(totalNumber));
 	}
 	
 	public void loadComboBox() {
@@ -343,26 +368,31 @@ public class ThongKeNhaTuyenDungFrame  extends JFrame implements ActionListener 
 			// 3 thống kê theo nhà tuyển dụng và thời gian
 			// 2 thống kê theo nhà tuyển dụng 
 			// 1 thống kê theo thời gian
+			int totalNumber = 0;
 			modeltableNhaTuyenDung.setRowCount(0);
 			switch(getFetchType()) {
 			case 3:
 				for (Object[] i : hopDong_DAO.thongKeHopDongTheoNTD(tenNtd, ngayBatDau, ngayKetThuc)) {
 					modeltableNhaTuyenDung.addRow(i);
+					totalNumber += Integer.valueOf(i[4].toString());
 				}
 				break;
 			case 2:
 				for (Object[] i : hopDong_DAO.thongKeHopDongTheoNTD(tenNtd)) {
 					modeltableNhaTuyenDung.addRow(i);
+					totalNumber += Integer.valueOf(i[4].toString());
 				}
 				break;
 			case 1:
 				for (Object[] i : hopDong_DAO.thongKeHopDongTheoNTD(ngayBatDau, ngayKetThuc)) {
 					modeltableNhaTuyenDung.addRow(i);
+					totalNumber += Integer.valueOf(i[4].toString());
 				}
 				break;
 			default:
 				break;
 			}
+			valueLabel.setText(String.valueOf(totalNumber));
 			
 		}
 		else if(obj.equals(btnLamLai)) {
