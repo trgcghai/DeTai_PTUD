@@ -13,7 +13,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import component.ButtonMenu;
+import swing.ButtonMenu;
 
 public class Navbar extends JPanel{
 

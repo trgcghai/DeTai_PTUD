@@ -30,8 +30,6 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
-import component.Button;
-import component.GradientPanel;
 import controller.FilterImp;
 import controller.LabelDateFormatter;
 import dao.NhanVien_DAO;
@@ -42,6 +40,8 @@ import exception.checkBirthday;
 import exception.checkDateOfWork;
 import exception.checkName;
 import exception.checkPhone;
+import swing.Button;
+import swing.GradientPanel;
 
 public class ThemSuaNhanVienDialog extends JDialog implements ActionListener{
 	

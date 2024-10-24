@@ -36,8 +36,6 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
-import component.Button;
-import component.GradientPanel;
 import controller.LabelDateFormatter;
 import dao.HoSo_DAO;
 import dao.NhaTuyenDung_DAO;
@@ -49,6 +47,8 @@ import entity.TinTuyenDung;
 import entity.UngVien;
 import entity.constraint.GioiTinh;
 import entity.constraint.TrangThai;
+import swing.Button;
+import swing.GradientPanel;
 
 public class TaoSuaHoSoDialog extends JDialog implements ActionListener, FocusListener{
 	

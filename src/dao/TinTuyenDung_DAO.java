@@ -529,7 +529,11 @@ public class TinTuyenDung_DAO {
 		Connection con = Database.getConnection();
 		
 		try {
-			String sql = "select TrinhDo, COUNT(*) from TinTuyenDung group by TrinhDo";
+			String sql = "\r\n"
+					+ "select TrinhDo, COUNT(*) as SoLuong \r\n"
+					+ "from TinTuyenDung \r\n"
+					+ "group by TrinhDo\r\n"
+					+ "Order by SoLuong DESC";
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
 			while (rs.next()) {
@@ -597,7 +601,10 @@ public class TinTuyenDung_DAO {
 		Connection con = Database.getConnection();
 		
 		try {
-			String sql = "select HinhThuc, count(*) from TinTuyenDung group by HinhThuc";
+			String sql = "SELECT HinhThuc, COUNT(*) as SoLuong\r\n"
+					+ "FROM TinTuyenDung\r\n"
+					+ "GROUP BY HinhThuc\r\n"
+					+ "ORDER BY SoLuong DESC";
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
 			while (rs.next()) {
@@ -613,15 +620,18 @@ public class TinTuyenDung_DAO {
 		return list;
 	}
 	
-	public ArrayList<Object[]> thongKeNganhNgheTrinhDo() {
+	public ArrayList<Object[]> thongKeNganhNgheTrinhDo(String nganhnghe, String trinhdo) {
 		ArrayList<Object[]> list = new ArrayList<Object[]>();
 		Database.getInstance();
 		Connection con = Database.getConnection();
 		
 		try {
-			String sql = "select NganhNghe, TrinhDo, Count(*) from TinTuyenDung group by NganhNghe, TrinhDo order by NganhNghe";
-			Statement stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery(sql);
+			PreparedStatement stmt = con.prepareStatement("select NganhNghe, TrinhDo, Count(*) \r\n"
+					+ "from TinTuyenDung group by NganhNghe, TrinhDo \r\n"
+					+ "Having NganhNghe LIKE ? AND TrinhDo LIKE ?");
+			stmt.setString(1, "%"+nganhnghe+"%");
+			stmt.setString(2, "%"+trinhdo+"%");
+			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
 				String nganhNghe = rs.getString(1);
 				String trinhDo = rs.getString(2);

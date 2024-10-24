@@ -30,9 +30,6 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
-import component.Button;
-import component.ComboBoxRenderer;
-import component.GradientPanel;
 import controller.LabelDateFormatter;
 import entity.NhaTuyenDung;
 import entity.TinTuyenDung;
@@ -41,6 +38,9 @@ import entity.constraint.HinhThucLamViec;
 import entity.constraint.NganhNghe;
 import entity.constraint.TrangThai;
 import entity.constraint.TrinhDo;
+import swing.Button;
+import swing.ComboBoxRenderer;
+import swing.GradientPanel;
 
 public class ChiTietTinTuyenDungDialog extends JDialog implements ActionListener{
 	

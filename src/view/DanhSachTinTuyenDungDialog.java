@@ -30,8 +30,6 @@ import javax.swing.SortOrder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
-import component.Button;
-import component.GradientPanel;
 import controller.actiontable.TableActionEvent;
 import controller.actiontable.TableCellEditorDetail;
 import controller.actiontable.TableCellEditorUpdateDelete;
@@ -41,6 +39,8 @@ import dao.TinTuyenDung_DAO;
 import entity.NhaTuyenDung;
 import entity.TinTuyenDung;
 import entity.constraint.TrangThai;
+import swing.Button;
+import swing.GradientPanel;
 
 public class DanhSachTinTuyenDungDialog extends JDialog implements FocusListener, ActionListener {
 	

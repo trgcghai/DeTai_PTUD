@@ -1,4 +1,4 @@
-package component;
+package swing;
 
 import java.awt.Color;
 import java.awt.Component;

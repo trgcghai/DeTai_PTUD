@@ -28,9 +28,6 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
-import component.Button;
-import component.ComboBoxRenderer;
-import component.GradientPanel;
 import controller.FilterImp;
 import controller.LabelDateFormatter;
 import dao.TaiKhoan_DAO;
@@ -40,6 +37,9 @@ import entity.constraint.GioiTinh;
 import entity.constraint.VaiTro;
 import exception.checkUserEmail;
 import exception.checkUserPass;
+import swing.Button;
+import swing.ComboBoxRenderer;
+import swing.GradientPanel;
 
 public class CapSuaTaiKhoanDialog extends JDialog implements ActionListener{
 	

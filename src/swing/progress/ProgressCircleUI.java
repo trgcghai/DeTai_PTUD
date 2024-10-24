@@ -1,4 +1,4 @@
-package component.progress;
+package swing.progress;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;

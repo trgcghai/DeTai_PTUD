@@ -1,4 +1,4 @@
-package component.progress;
+package swing.progress;
 
 import javax.swing.JProgressBar;
 

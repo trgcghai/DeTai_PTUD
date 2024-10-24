@@ -1,4 +1,4 @@
-package component;
+package swing;
 
 import javax.swing.JButton;
 

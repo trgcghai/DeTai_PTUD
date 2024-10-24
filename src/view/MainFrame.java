@@ -2,10 +2,10 @@ package view;
 
 import javax.swing.*;
 
-import component.ButtonMenu;
-import component.RoundPanel;
 import entity.NhanVien;
 import entity.constraint.VaiTro;
+import swing.ButtonMenu;
+import swing.RoundPanel;
 
 import java.awt.*;
 import java.awt.event.*;

@@ -34,8 +34,6 @@ import com.spire.doc.Document;
 import com.spire.doc.FileFormat;
 import com.spire.doc.Table;
 
-import component.Button;
-import component.GradientPanel;
 import controller.LabelDateFormatter;
 import dao.HopDong_DAO;
 import dao.NhaTuyenDung_DAO;
@@ -43,6 +41,8 @@ import dao.NhanVien_DAO;
 import dao.TinTuyenDung_DAO;
 import dao.UngVien_DAO;
 import entity.HopDong;
+import swing.Button;
+import swing.GradientPanel;
 
 public class ChiTietHopDongDialog extends JDialog implements ActionListener{
 	
