@@ -36,6 +36,7 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
+<<<<<<< HEAD
 	<classpathentry kind="lib" path="lib/jcommon-1.0.23.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
@@ -77,5 +78,7 @@
 	<classpathentry kind="lib" path="lib/styled-xml-parser-8.0.3.jar"/>
 	<classpathentry kind="lib" path="lib/svg-8.0.3.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-api-2.0.13.jar"/>
+=======
+>>>>>>> 39f8473622f63907cbd7ba4cc9b20c11a077e9d6
 	<classpathentry kind="output" path="bin"/>
 </classpath>

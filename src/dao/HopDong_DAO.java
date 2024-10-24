@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -393,7 +394,8 @@ public class HopDong_DAO {
 				int tongHopDong = rs.getInt(6);
 				double tongGiaTriHD = rs.getDouble(7);
 				
-				result.add(new Object[] {maNV, tenNV, dienThoai, gioitinh.getValue(), ngaySinh.format(formatter), tongHopDong, tongGiaTriHD});
+				result.add(new Object[] {maNV, tenNV, dienThoai, gioitinh.getValue(), ngaySinh.format(formatter), 
+						tongHopDong, tongGiaTriHD});
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

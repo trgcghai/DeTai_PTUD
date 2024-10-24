@@ -1,2 +1,9 @@
 /view/
+<<<<<<< HEAD
 /dao/
+=======
+/controller/
+/form/
+/dao/
+/image/
+>>>>>>> 39f8473622f63907cbd7ba4cc9b20c11a077e9d6

@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -18,6 +19,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Properties;
 
 import javax.swing.BorderFactory;
@@ -43,6 +45,7 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
+import component.Button;
 import component.GradientRoundPanel;
 import controller.ExcelHelper;
 import controller.LabelDateFormatter;
@@ -51,17 +54,18 @@ import dao.NhaTuyenDung_DAO;
 import dao.UngVien_DAO;
 import entity.HopDong;
 import entity.NhaTuyenDung;
+import entity.NhanVien;
 import entity.TinTuyenDung;
 import entity.UngVien;
 
 public class ThongKeHopDongFrame extends JFrame implements ActionListener {
-	String userName;
+	NhanVien userName;
 	ThongKeHopDongFrame parent;
 	
 //	Component thống kê hợp đồng
 	JPanel menuPanel, timkiemPanel, tongketPanel, hopDongPanel,centerPanelHopDong, danhsachPanel, danhsachNorthPanel, danhsachCenterPanel;
 	JLabel titleHopDong, ngayBatDauLabel, ngayKetThucLabel, timkiemNTDLabel, timkiemUVLabel, summaryValueLabel, summaryNumberLabel, valueLabel, numberLabel;
-	JButton btnTimKiem, btnLamLai, btnExcel;
+	Button btnTimKiem, btnLamLai, btnExcel;
 	JTable tableHopDong;
 	DefaultTableModel modelTableHopDong;
 	JScrollPane scrollHopDong;
@@ -74,7 +78,7 @@ public class ThongKeHopDongFrame extends JFrame implements ActionListener {
 	private NhaTuyenDung_DAO nhatuyendungDAO;
 	private UngVien_DAO ungVienDao;
 	
-	public ThongKeHopDongFrame(String userName) {
+	public ThongKeHopDongFrame(NhanVien userName) {
 		this.userName=userName;
 		this.parent = this;
 
@@ -83,8 +87,6 @@ public class ThongKeHopDongFrame extends JFrame implements ActionListener {
 		
 //		Thêm sự kiện
 		addActionListener();
-//		addMouseListener();
-//		addFocusListener();
 		
 		hopdong_dao = new HopDong_DAO();
 		nhatuyendungDAO = new NhaTuyenDung_DAO();
@@ -102,8 +104,8 @@ public class ThongKeHopDongFrame extends JFrame implements ActionListener {
 		return label;
 	}
 	
-	public JButton createButton(String title, Color bgColor, Color fgColor) {
-		JButton button = new JButton(title); 
+	public Button createButton(String title, Color bgColor, Color fgColor) {
+		Button button = new Button(title); 
 		button.setFont(new Font("Segoe UI",0,16));
 		button.setPreferredSize(new Dimension(120,25));
 		button.setBackground(bgColor);
@@ -122,26 +124,15 @@ public class ThongKeHopDongFrame extends JFrame implements ActionListener {
 		centerPanelHopDong.setBackground(new Color(89, 145, 144));
 //		Thống kê tin tuyển dụng
 		timkiemPanel=new GradientRoundPanel();
-		timkiemPanel.setBackground(Color.WHITE);
-		timkiemPanel.setLayout(new BorderLayout());
+		timkiemPanel.setLayout(new FlowLayout(FlowLayout.RIGHT,15,5));
 		
-		JPanel resFormSearch = new JPanel();
-		resFormSearch.setOpaque(false);
-		resFormSearch.setBackground(Color.WHITE);
-		
-		timkiemNTDLabel= createLabel("Nhà tuyển dụng:"); 
 		comboBoxNTD=new JComboBox<Object>(); 
 		comboBoxNTD.setFont(new Font("Segoe UI",0,16));
 		comboBoxNTD.setOpaque(false);
-		resFormSearch.add(timkiemNTDLabel);
-		resFormSearch.add(comboBoxNTD);
-		
-		timkiemUVLabel= createLabel("Ứng viên:"); 
+		comboBoxNTD.setPreferredSize(new Dimension(250,30));
 		comboBoxUV=new JComboBox<Object>(); 
 		comboBoxUV.setFont(new Font("Segoe UI",0,16));
 		comboBoxUV.setOpaque(false);
-		resFormSearch.add(timkiemUVLabel);
-		resFormSearch.add(comboBoxUV);
 		
 		modelBatDau=new UtilDateModel();
 		modelKetThuc=new UtilDateModel();
@@ -154,19 +145,16 @@ public class ThongKeHopDongFrame extends JFrame implements ActionListener {
 		
 		ngayBatDauLabel= createLabel("Ngày bắt đầu:"); 
 		ngayBatDau=new JDatePickerImpl(panelDateBatDau, new LabelDateFormatter());
-		ngayBatDau.setPreferredSize(new Dimension(150,25));
-		resFormSearch.add(ngayBatDauLabel);
-		resFormSearch.add(ngayBatDau);
+		ngayBatDau.setPreferredSize(new Dimension(130,25));
+		modelBatDau.setValue(new Date());
 		
 		ngayKetThucLabel= createLabel("Ngày kết thúc:"); 
 		ngayKetThuc=new JDatePickerImpl(panelDateKetThuc, new LabelDateFormatter());
-		ngayKetThuc.setPreferredSize(new Dimension(150,25));
-		resFormSearch.add(ngayKetThucLabel);
-		resFormSearch.add(ngayKetThuc);
+		ngayKetThuc.setPreferredSize(new Dimension(130,25));
+		modelKetThuc.setValue(new Date());
 		
 		JPanel resBtnSearch=new JPanel();
 		resBtnSearch.setOpaque(false);
-		resBtnSearch.setPreferredSize(new Dimension(350, 35));
 		resBtnSearch.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 5));
 		resBtnSearch.setBackground(Color.WHITE);
 		
@@ -175,8 +163,10 @@ public class ThongKeHopDongFrame extends JFrame implements ActionListener {
 		resBtnSearch.add(btnTimKiem); 
 		resBtnSearch.add(btnLamLai);
 		
-		timkiemPanel.add(resFormSearch, BorderLayout.WEST);
-		timkiemPanel.add(resBtnSearch, BorderLayout.EAST);
+		timkiemPanel.add(comboBoxNTD); timkiemPanel.add(comboBoxUV);
+		timkiemPanel.add(ngayBatDauLabel); timkiemPanel.add(ngayBatDau);
+		timkiemPanel.add(ngayKetThucLabel); timkiemPanel.add(ngayKetThuc);
+		timkiemPanel.add(resBtnSearch);
 		
 //		Danh sách tin tuyển dụng
 		danhsachPanel=new GradientRoundPanel();
@@ -192,7 +182,8 @@ public class ThongKeHopDongFrame extends JFrame implements ActionListener {
 		resBtnThem.setBorder(BorderFactory.createEmptyBorder(10,10,0,20));
 		resBtnThem.setBackground(Color.WHITE);
 		
-		btnExcel=new JButton("Xuất Excel", iconBtnSave); 
+		btnExcel=new Button("Xuất Excel");
+		btnExcel.setIcon(iconBtnSave);
 		btnExcel.setFont(new Font("Segoe UI",0,16));
 		btnExcel.setPreferredSize(new Dimension(140,30));
 		btnExcel.setBackground(new Color(51,51,255));
@@ -242,7 +233,7 @@ public class ThongKeHopDongFrame extends JFrame implements ActionListener {
         sorter.sort();
 		scrollHopDong=new JScrollPane(tableHopDong);
 		scrollHopDong.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
-		scrollHopDong.setPreferredSize(new Dimension(1280, 570));
+		scrollHopDong.setPreferredSize(new Dimension(1280, 480));
 		GradientRoundPanel resScroll=new GradientRoundPanel();
 		resScroll.setBorder(BorderFactory.createEmptyBorder(0,20,20,20));
 		resScroll.setLayout(new BoxLayout(resScroll, BoxLayout.PAGE_AXIS));
@@ -250,40 +241,41 @@ public class ThongKeHopDongFrame extends JFrame implements ActionListener {
 		resScroll.add(scrollHopDong);
 		danhsachCenterPanel.add(resScroll);
 		
+		danhsachPanel.add(danhsachNorthPanel, BorderLayout.NORTH);
+		danhsachPanel.add(danhsachCenterPanel, BorderLayout.CENTER);
+		
+//		Tổng số và giá trị hợp đồng
 		tongketPanel=new GradientRoundPanel();
-		tongketPanel.setBackground(Color.WHITE);
 		tongketPanel.setLayout(new BorderLayout());
+		tongketPanel.setBorder(BorderFactory.createEmptyBorder(0, 17, 0, 0));
 		
 		JPanel resPanelSummary = new JPanel();
 		resPanelSummary.setOpaque(false);
-		resPanelSummary.setBackground(Color.WHITE);
-		resPanelSummary.setLayout(new BorderLayout());
+		resPanelSummary.setLayout(new GridLayout(2, 1));
 		
 		JPanel temp = new JPanel();
+		temp.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		summaryValueLabel= createLabel("Tổng giá trị hợp đồng:"); 
-		summaryValueLabel.setFont(new Font("Segoe UI",1,20));
+		summaryValueLabel.setFont(new Font("Segoe UI",1,16));
 		valueLabel = createLabel("");
-		valueLabel.setFont(new Font("Segoe UI",1,20));
+		valueLabel.setFont(new Font("Segoe UI",1,16));
 		temp.add(summaryValueLabel);
 		temp.add(valueLabel);
 		temp.setOpaque(false);
-		temp.setBackground(Color.WHITE);
-		resPanelSummary.add(temp, BorderLayout.NORTH);
+		resPanelSummary.add(temp);
 		
 		JPanel temp1 = new JPanel();
+		temp1.setLayout(new FlowLayout(FlowLayout.LEFT));
 		summaryNumberLabel= createLabel("Tổng số lượng hợp đồng:"); 
-		summaryNumberLabel.setFont(new Font("Segoe UI",1,20));
+		summaryNumberLabel.setFont(new Font("Segoe UI",1,16));
 		numberLabel = createLabel("");
-		numberLabel.setFont(new Font("Segoe UI",1,20));
+		numberLabel.setFont(new Font("Segoe UI",1,16));
 		temp1.add(summaryNumberLabel);
 		temp1.add(numberLabel);
 		temp1.setOpaque(false);
-		temp1.setBackground(Color.WHITE);
-		resPanelSummary.add(temp1, BorderLayout.CENTER);
-		tongketPanel.add(resPanelSummary, BorderLayout.WEST);
+		resPanelSummary.add(temp1);
 		
-		danhsachPanel.add(danhsachNorthPanel, BorderLayout.NORTH);
-		danhsachPanel.add(danhsachCenterPanel, BorderLayout.CENTER);
+		tongketPanel.add(resPanelSummary, BorderLayout.WEST);
 		
 		centerPanelHopDong.add(timkiemPanel, BorderLayout.NORTH);
 		centerPanelHopDong.add(danhsachPanel, BorderLayout.CENTER);
@@ -472,8 +464,8 @@ public class ThongKeHopDongFrame extends JFrame implements ActionListener {
 					comboBoxNTD.setSelectedIndex(0);
 					comboBoxUV.setSelectedIndex(0);
 					hopdong_dao.setListHopDong(hopdong_dao.getDSHopDong());
-					ngayBatDau.getModel().setValue(null);
-					ngayKetThuc.getModel().setValue(null);
+					modelBatDau.setValue(new Date());
+					modelKetThuc.setValue(new Date());
 					
 					loadDataTable();
 					loadDataTotal();
@@ -502,7 +494,7 @@ public class ThongKeHopDongFrame extends JFrame implements ActionListener {
 		for (HopDong hd : hopdong_dao.getListHopDong()) {
 			totalHopDong += hd.getPhiDichVu();
 		}
-		valueLabel.setText(String.valueOf(format.format(totalHopDong)));
+		valueLabel.setText(format.format(totalHopDong));
 		numberLabel.setText(String.valueOf(hopdong_dao.getListHopDong().size()));
 	}
 	
@@ -511,7 +503,7 @@ public class ThongKeHopDongFrame extends JFrame implements ActionListener {
 		for(HopDong i: hopdong_dao.getListHopDong()) {
 			UngVien uv = ungVienDao.getUngVien(i.getUngVien().getMaUV());
 			NhaTuyenDung ntd = nhatuyendungDAO.getNhaTuyenDungTheoMaTTD(i.getTinTuyenDung().getMaTTD());
-			DateTimeFormatter formatters = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+			DateTimeFormatter formatters = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 			DecimalFormat formatLuong = new DecimalFormat("#,### VNĐ");
 			Object[] obj=new Object[] {
 					i.getMaHD(), uv.getTenUV(), uv.getSoDienThoai(), ntd.getTenNTD(), formatLuong.format(i.getPhiDichVu()), i.getThoiGian().format(formatters)

@@ -197,7 +197,7 @@ public class MainFrame extends JFrame implements ActionListener{
 			else if(((ButtonMenu)obj).getText().equals("Thống kê")) {
 				setSelected(((ButtonMenu)obj));
 				centerPanel.removeAll();
-				centerPanel.add(new ThongKeFrame("MinhDat").getPanel());
+				centerPanel.add(new ThongKeFrame(userName).getPanel());
 				this.setTitle("Thống kê");
 			}
 			else if(((ButtonMenu)obj).getText().equals("Trang chủ")) {

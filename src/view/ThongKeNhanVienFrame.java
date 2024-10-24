@@ -5,8 +5,11 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -14,6 +17,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Properties;
 
 import javax.swing.BorderFactory;
@@ -39,6 +43,7 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
+import component.Button;
 import component.GradientRoundPanel;
 import controller.ExcelHelper;
 import controller.LabelDateFormatter;
@@ -50,15 +55,16 @@ import entity.NhanVien;
 import entity.UngVien;
 import entity.constraint.GioiTinh;
 
-public class ThongKeNhanVienFrame  extends JFrame implements ActionListener {
-	String userName;
+public class ThongKeNhanVienFrame  extends JFrame implements ActionListener{
+	NhanVien userName;
 	ThongKeNhanVienFrame parent;
 	
 //	Component thống kê ứng viên
-	JPanel tongketPanel, menuPanel, timkiemPanel, NhanVienPanel, centerPanelNhanVien, danhsachPanel, danhsachNorthPanel, danhsachCenterPanel;
-	JLabel titleUngVien, ngayBatDauLabel, ngayKetThucLabel, numberLabel, summaryNumberLabel, valueLabel, summaryValueLabel;
+	JPanel  NhanVienPanel, centerPanelNhanVien, northPanelThongKe;
+	JLabel titleUngVien, ngayBatDauLabel, ngayKetThucLabel, 
+		numberLabel, summaryNumberLabel, valueLabel, summaryValueLabel;
 	JComboBox<String> gioitinhText, nhanVienText;
-	JButton btnTimKiem, btnLamLai, btnExcel;
+	Button btnTimKiem, btnLamLai, btnExcel, btnHuy;
 	JTable tableNhanVien;
 	DefaultTableModel modelTableNhanVien;
 	JScrollPane scrollNhanVien;
@@ -66,10 +72,13 @@ public class ThongKeNhanVienFrame  extends JFrame implements ActionListener {
 	JDatePickerImpl ngayBatDau, ngayKetThuc;
 	Icon iconBtnSave;
 	
+	GradientRoundPanel tongketPanel, menuPanel, timkiemPanel,
+		danhsachPanel, danhsachNorthPanel, danhsachCenterPanel;
+	
 	private NhanVien_DAO nhanvienDAO;
 	private HopDong_DAO hopdongDAO;
 	
-	public ThongKeNhanVienFrame(String userName) {
+	public ThongKeNhanVienFrame(NhanVien userName) {
 		this.userName = userName;
 		this.parent = this;
 
@@ -78,8 +87,6 @@ public class ThongKeNhanVienFrame  extends JFrame implements ActionListener {
 		
 //		Thêm sự kiện
 		addActionListener();
-//		addMouseListener();
-//		addFocusListener();
 		
 		nhanvienDAO=new NhanVien_DAO();
 		hopdongDAO=new HopDong_DAO();
@@ -95,8 +102,8 @@ public class ThongKeNhanVienFrame  extends JFrame implements ActionListener {
 		return label;
 	}
 	
-	public JButton createButton(String title, Color bgColor, Color fgColor) {
-		JButton button = new JButton(title); 
+	public Button createButton(String title, Color bgColor, Color fgColor) {
+		Button button = new Button(title); 
 		button.setFont(new Font("Segoe UI",0,16));
 		button.setPreferredSize(new Dimension(120,25));
 		button.setBackground(bgColor);
@@ -108,36 +115,25 @@ public class ThongKeNhanVienFrame  extends JFrame implements ActionListener {
 		NhanVienPanel=new JPanel(); 
 		NhanVienPanel.setLayout(new BorderLayout(5,5));
 		
-//		Hiển thị thống kê và danh sách ứng viên
+//		Hiển thị tìm kiếm và thống kê nhân viên 
 		centerPanelNhanVien=new JPanel();
 		centerPanelNhanVien.setLayout(new BorderLayout(10, 10));
 		centerPanelNhanVien.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		centerPanelNhanVien.setBackground(new Color(89, 145, 144));
-//		Thống kê ứng viên
+		
+//		Tìm kiếm nhân viên
 		timkiemPanel=new GradientRoundPanel();
-		timkiemPanel.setBackground(Color.WHITE);
-		timkiemPanel.setLayout(new BorderLayout());
+		timkiemPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 15, 5));
 		
-		JPanel resFormSearch = new JPanel();
-		resFormSearch.setOpaque(false);
-		resFormSearch.setBackground(Color.WHITE);
-		
-		JLabel nhanVienLabel = createLabel("Nhân viên");
 		nhanVienText=new JComboBox<String>(); 
 		nhanVienText.setFont(new Font("Segoe UI",0,16));
 		nhanVienText.addItem("Chọn nhân viên");
-		resFormSearch.add(nhanVienLabel);
-		resFormSearch.add(nhanVienText);
-		
-		JLabel gioiTinhLabel = createLabel("Giới tính");
 		gioitinhText=new JComboBox<String>(); 
 		gioitinhText.setFont(new Font("Segoe UI",0,16));
 		gioitinhText.addItem("Chọn giới tính");
 		for(GioiTinh g: GioiTinh.class.getEnumConstants()) {
 			gioitinhText.addItem(g.getValue());
 		}
-		resFormSearch.add(gioiTinhLabel);
-		resFormSearch.add(gioitinhText);
 		
 		modelBatDau=new UtilDateModel();
 		modelKetThuc=new UtilDateModel();
@@ -150,29 +146,28 @@ public class ThongKeNhanVienFrame  extends JFrame implements ActionListener {
 		ngayBatDauLabel= createLabel("Ngày bắt đầu:"); 
 		ngayBatDau=new JDatePickerImpl(panelDate, new LabelDateFormatter());
 		ngayBatDau.setPreferredSize(new Dimension(150,25));
-		resFormSearch.add(ngayBatDauLabel);
-		resFormSearch.add(ngayBatDau);
-		
+		modelBatDau.setValue(new Date());
+
 		panelDate=new JDatePanelImpl(modelKetThuc, p);
 		ngayKetThucLabel= createLabel("Ngày kết thúc:"); 
 		ngayKetThuc=new JDatePickerImpl(panelDate, new LabelDateFormatter());
 		ngayKetThuc.setPreferredSize(new Dimension(150,25));
-		resFormSearch.add(ngayKetThucLabel);
-		resFormSearch.add(ngayKetThuc);
+		modelKetThuc.setValue(new Date());
 		
 		JPanel resBtnSearch=new JPanel();
 		resBtnSearch.setOpaque(false);
 		resBtnSearch.setPreferredSize(new Dimension(350, 35));
 		resBtnSearch.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 5));
-		resBtnSearch.setBackground(Color.WHITE);
-		
 		btnTimKiem= createButton("Thống kê", new Color(0,102,102), Color.WHITE); 
 		btnLamLai= createButton("Hủy", Color.RED, Color.WHITE); 
 		resBtnSearch.add(btnTimKiem); 
 		resBtnSearch.add(btnLamLai);
 		
-		timkiemPanel.add(resFormSearch, BorderLayout.WEST);
-		timkiemPanel.add(resBtnSearch, BorderLayout.EAST);
+		timkiemPanel.add(nhanVienText);
+		timkiemPanel.add(gioitinhText);
+		timkiemPanel.add(ngayBatDauLabel); timkiemPanel.add(ngayBatDau);
+		timkiemPanel.add(ngayKetThucLabel); timkiemPanel.add(ngayKetThuc);
+		timkiemPanel.add(resBtnSearch);
 		
 //		Danh sách ứng viên
 		danhsachPanel=new GradientRoundPanel();
@@ -188,7 +183,8 @@ public class ThongKeNhanVienFrame  extends JFrame implements ActionListener {
 		resBtnThem.setBorder(BorderFactory.createEmptyBorder(10,10,0,20));
 		resBtnThem.setBackground(Color.WHITE);
 		
-		btnExcel=new JButton("Xuất Excel", iconBtnSave); 
+		btnExcel=new Button("Xuất Excel");
+		btnExcel.setIcon(iconBtnSave);
 		btnExcel.setFont(new Font("Segoe UI",0,16));
 		btnExcel.setPreferredSize(new Dimension(140,30));
 		btnExcel.setBackground(new Color(51,51,255));
@@ -204,7 +200,7 @@ public class ThongKeNhanVienFrame  extends JFrame implements ActionListener {
 		danhsachCenterPanel=new GradientRoundPanel();
 		danhsachCenterPanel.setLayout(new BoxLayout(danhsachCenterPanel, BoxLayout.PAGE_AXIS));
 		danhsachCenterPanel.setBackground(Color.WHITE);
-		String[] colName= {"Mã nhân viên","Tên nhân viên","Số điện thoại","Giới tính", "Ngày sinh", "Số hợp đồng quản lý", "Tổng giá trị hợp đồng quản lý"};
+		String[] colName= {"Mã nhân viên","Tên nhân viên","Số điện thoại","Giới tính", "Ngày sinh", "Số hợp đồng", "Tổng giá trị hợp đồng"};
 		Object[][] data = {
 			    {1, "Nguyễn Thắng Minh Đạt", "0123456789", "email@gmail.com"},
 			};
@@ -238,7 +234,7 @@ public class ThongKeNhanVienFrame  extends JFrame implements ActionListener {
         sorter.sort();
 		scrollNhanVien=new JScrollPane(tableNhanVien);
 		scrollNhanVien.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
-		scrollNhanVien.setPreferredSize(new Dimension(1280, 570));
+		scrollNhanVien.setPreferredSize(new Dimension(1280, 480));
 		GradientRoundPanel resScroll=new GradientRoundPanel();
 		resScroll.setBorder(BorderFactory.createEmptyBorder(0,20,20,20));
 		resScroll.setLayout(new BoxLayout(resScroll, BoxLayout.PAGE_AXIS));
@@ -246,40 +242,41 @@ public class ThongKeNhanVienFrame  extends JFrame implements ActionListener {
 		resScroll.add(scrollNhanVien);
 		danhsachCenterPanel.add(resScroll);
 		
+		danhsachPanel.add(danhsachNorthPanel, BorderLayout.NORTH);
+		danhsachPanel.add(danhsachCenterPanel, BorderLayout.CENTER);
+		
+//		Tổng số và giá trị hợp đồng
 		tongketPanel=new GradientRoundPanel();
-		tongketPanel.setBackground(Color.WHITE);
 		tongketPanel.setLayout(new BorderLayout());
+		tongketPanel.setBorder(BorderFactory.createEmptyBorder(0, 17, 0, 0));
 		
 		JPanel resPanelSummary = new JPanel();
 		resPanelSummary.setOpaque(false);
-		resPanelSummary.setBackground(Color.WHITE);
-		resPanelSummary.setLayout(new BorderLayout());
+		resPanelSummary.setLayout(new GridLayout(2, 1));
 		
 		JPanel temp = new JPanel();
+		temp.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		summaryValueLabel= createLabel("Tổng giá trị hợp đồng:"); 
-		summaryValueLabel.setFont(new Font("Segoe UI",1,20));
+		summaryValueLabel.setFont(new Font("Segoe UI",1,16));
 		valueLabel = createLabel("");
-		valueLabel.setFont(new Font("Segoe UI",1,20));
+		valueLabel.setFont(new Font("Segoe UI",1,16));
 		temp.add(summaryValueLabel);
 		temp.add(valueLabel);
 		temp.setOpaque(false);
-		temp.setBackground(Color.WHITE);
-		resPanelSummary.add(temp, BorderLayout.NORTH);
+		resPanelSummary.add(temp);
 		
 		JPanel temp1 = new JPanel();
+		temp1.setLayout(new FlowLayout(FlowLayout.LEFT));
 		summaryNumberLabel= createLabel("Tổng số lượng hợp đồng:"); 
-		summaryNumberLabel.setFont(new Font("Segoe UI",1,20));
+		summaryNumberLabel.setFont(new Font("Segoe UI",1,16));
 		numberLabel = createLabel("");
-		numberLabel.setFont(new Font("Segoe UI",1,20));
+		numberLabel.setFont(new Font("Segoe UI",1,16));
 		temp1.add(summaryNumberLabel);
 		temp1.add(numberLabel);
 		temp1.setOpaque(false);
-		temp1.setBackground(Color.WHITE);
-		resPanelSummary.add(temp1, BorderLayout.CENTER);
-		tongketPanel.add(resPanelSummary, BorderLayout.WEST);
+		resPanelSummary.add(temp1);
 		
-		danhsachPanel.add(danhsachNorthPanel, BorderLayout.NORTH);
-		danhsachPanel.add(danhsachCenterPanel, BorderLayout.CENTER);
+		tongketPanel.add(resPanelSummary, BorderLayout.WEST);
 		
 		centerPanelNhanVien.add(timkiemPanel, BorderLayout.NORTH);
 		centerPanelNhanVien.add(danhsachPanel, BorderLayout.CENTER);
@@ -306,17 +303,21 @@ public class ThongKeNhanVienFrame  extends JFrame implements ActionListener {
 	
 //	Load dữ liệu lên bảng
 	public void loadDataTable() {
+		DecimalFormat df = new DecimalFormat("#,###");
 		double totalValue = 0;
 		int countTotal = 0;
 		modelTableNhanVien.setRowCount(0);
 		for(Object[] i: hopdongDAO.thongKeHopDongTheoNhanVien()) {
-			modelTableNhanVien.addRow(i);
+			modelTableNhanVien.addRow(new Object[] {
+					i[0], i[1], i[2], i[3], i[4], 
+					i[5], df.format(i[6])+" VNĐ"
+			});
 
 			countTotal++;
 			totalValue += Double.valueOf(i[6].toString());
 		}
 
-		valueLabel.setText(String.valueOf(totalValue));
+		valueLabel.setText(df.format(totalValue)+" VNĐ");
 		numberLabel.setText(String.valueOf(countTotal));
 	}
 	
@@ -379,6 +380,7 @@ public class ThongKeNhanVienFrame  extends JFrame implements ActionListener {
 			excel.exportData(this, tableNhanVien, 0);
 		}
 		else if(obj.equals(btnTimKiem)) {
+			DecimalFormat df = new DecimalFormat("#,###");
 			Object ngayBD = ngayBatDau.getModel().getValue();
 			Object ngayKT = ngayKetThuc.getModel().getValue();
 			String gioiTinh = gioitinhText.getSelectedItem().toString();
@@ -431,49 +433,70 @@ public class ThongKeNhanVienFrame  extends JFrame implements ActionListener {
 			switch(getFetchType()) {
 			case 7: 
 				for(Object[] i: hopdongDAO.thongKeHopDongTheoNhanVien(nhanVien, gioiTinh, ngayBatDau, ngayKetThuc)) {
-					modelTableNhanVien.addRow(i);
+					modelTableNhanVien.addRow(new Object[] {
+							i[0], i[1], i[2], i[3], i[4], 
+							i[5], df.format(i[6])+" VNĐ"
+					});
 					countTotal++;
 					totalValue += Double.valueOf(i[6].toString());
 				}
 				break;
 			case 6:
 				for(Object[] i: hopdongDAO.thongKeHopDongTheoNhanVien(nhanVien, gioiTinh)) {
-					modelTableNhanVien.addRow(i);
+					modelTableNhanVien.addRow(new Object[] {
+							i[0], i[1], i[2], i[3], i[4], 
+							i[5], df.format(i[6])+" VNĐ"
+					});
 					countTotal++;
 					totalValue += Double.valueOf(i[6].toString());
 				}
 				break;
 			case 5:
 				for(Object[] i: hopdongDAO.thongKeHopDongTheoTenNhanVien(nhanVien, ngayBatDau, ngayKetThuc)) {
-					modelTableNhanVien.addRow(i);
+					modelTableNhanVien.addRow(new Object[] {
+							i[0], i[1], i[2], i[3], i[4], 
+							i[5], df.format(i[6])+" VNĐ"
+					});
 					countTotal++;
 					totalValue += Double.valueOf(i[6].toString());
 				}
 				break;
 			case 4:
 				for(Object[] i: hopdongDAO.thongKeHopDongTheoNhanVien(gioiTinh, ngayBatDau, ngayKetThuc)) {
-					modelTableNhanVien.addRow(i);
+					modelTableNhanVien.addRow(new Object[] {
+							i[0], i[1], i[2], i[3], i[4], 
+							i[5], df.format(i[6])+" VNĐ"
+					});
 					countTotal++;
 					totalValue += Double.valueOf(i[6].toString());
 				}
 				break;
 			case 3:
 				for(Object[] i: hopdongDAO.thongKeHopDongTheoNhanVien(ngayBatDau, ngayKetThuc)) {
-					modelTableNhanVien.addRow(i);
+					modelTableNhanVien.addRow(new Object[] {
+							i[0], i[1], i[2], i[3], i[4], 
+							i[5], df.format(i[6])+" VNĐ"
+					});
 					countTotal++;
 					totalValue += Double.valueOf(i[6].toString());
 				}
 				break;
 			case 2:
 				for(Object[] i: hopdongDAO.thongKeHopDongTheoNhanVien(gioiTinh)) {
-					modelTableNhanVien.addRow(i);
+					modelTableNhanVien.addRow(new Object[] {
+							i[0], i[1], i[2], i[3], i[4], 
+							i[5], df.format(i[6])+" VNĐ"
+					});
 					countTotal++;
 					totalValue += Double.valueOf(i[6].toString());
 				}
 				break;
 			case 1:
 				for(Object[] i: hopdongDAO.thongKeHopDongTheoTenNhanVien(nhanVien)) {
-					modelTableNhanVien.addRow(i);
+					modelTableNhanVien.addRow(new Object[] {
+							i[0], i[1], i[2], i[3], i[4], 
+							i[5], df.format(i[6])+" VNĐ"
+					});
 					countTotal++;
 					totalValue += Double.valueOf(i[6].toString());
 				}
@@ -481,14 +504,14 @@ public class ThongKeNhanVienFrame  extends JFrame implements ActionListener {
 			default:
 				return;
 			}
-			valueLabel.setText(String.valueOf(totalValue));
+			valueLabel.setText(df.format(totalValue)+" VNĐ");
 			numberLabel.setText(String.valueOf(countTotal));
 			
 		}
 		else if(obj.equals(btnLamLai)) {
 			nhanvienDAO.setListNhanVien((nhanvienDAO.getDSNhanVien()));
-			modelBatDau.setValue(null);
-			modelKetThuc.setValue(null);
+			modelBatDau.setValue(new Date());
+			modelKetThuc.setValue(new Date());
 			gioitinhText.setSelectedIndex(0);
 			nhanVienText.setSelectedIndex(0);
 			loadDataTable();
@@ -498,4 +521,5 @@ public class ThongKeNhanVienFrame  extends JFrame implements ActionListener {
 	public JPanel getPanel() {
 		return this.NhanVienPanel;
 	}
+
 }

@@ -43,7 +43,7 @@ import org.jfree.chart.plot.CategoryPlot;
 
 public class ThongKeFrame extends JFrame implements ActionListener {
 
-	String userName;
+	NhanVien userName;
 	ThongKeFrame parent;
 	
 //	Component thống kê
@@ -51,7 +51,7 @@ public class ThongKeFrame extends JFrame implements ActionListener {
 	JButton btnThongKeNV, btnThongKeNTD, btnThongKeHD;
 	private static TinTuyenDung_DAO tinTuyenDung_DAO;
 	
-	public ThongKeFrame(String userName) {
+	public ThongKeFrame(NhanVien userName) {
 		this.userName=userName;
 		this.parent=this;
 		
