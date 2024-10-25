@@ -25,6 +25,7 @@ import entity.constraint.NganhNghe;
 import entity.constraint.TrinhDo;
 import swing.Chart;
 import swing.GradientRoundPanel;
+import swing.PolarAreaLabel;
 import swing.PolarPieChart;
 
 import org.jfree.chart.ChartFactory;
@@ -46,7 +47,7 @@ public class ThongKeFrame extends JFrame implements ActionListener {
 //	Component thống kê
 	JPanel thongKePanel, northPanel, centerPanel, northWestPanel, northEastPanel, northNorthPanel, wrapPanel;
 	JButton btnThongKeNV, btnThongKeNTD, btnThongKeHD;
-	PolarPieChart chartHTLV, chartTTD;
+	PolarPieChart chartHTLV, chartTTD, chartNTD;
 	Chart lineChart;
 	private static TinTuyenDung_DAO tinTuyenDung_DAO;
 	
@@ -101,25 +102,66 @@ public class ThongKeFrame extends JFrame implements ActionListener {
 		
 //		Biểu đồ tròn
 		northWestPanel= new GradientRoundPanel();
+		northWestPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
 		
+//		thống kê theo hình thức làm việc
 		chartHTLV=new PolarPieChart();
 		chartHTLV.setChartType(PolarPieChart.PeiChartType.DONUT_CHART);
 		for (Object[] obj: tinTuyenDung_DAO.thongKeHinhThuc()) {
 			chartHTLV.addData(new ModelPieChart(getRandomColor(), obj[0].toString(),
 					Integer.parseInt(obj[1].toString())));
     	}
-		northWestPanel.add(createPanelCircelChart(chartHTLV, "Tỉ lệ tin tuyển dụng theo hình thức làm việc"));
+		JPanel note=new JPanel();
+		note.setOpaque(false);
+		for(ModelPieChart i: chartHTLV.getList()) {
+			PolarAreaLabel label=new PolarAreaLabel();
+			label.setText(i.getName());
+			label.setBackground(i.getColor());
+			label.setForeground(Color.WHITE);
+			label.setFont(new Font("Segoe UI",1,13));
+			note.add(label);
+		}
+		northWestPanel.add(createPanelCircelChart(chartHTLV, "Tỉ lệ hợp đồng theo hình thức làm việc", note));
+//		thống kê theo trình độ
 		chartTTD=new PolarPieChart();
 		chartTTD.setChartType(PolarPieChart.PeiChartType.DONUT_CHART);
 		for (Object[] obj: tinTuyenDung_DAO.thongKeTrinhDo()) {
 			chartTTD.addData(new ModelPieChart(getRandomColor(), obj[0].toString(),
 					Integer.parseInt(obj[1].toString())));
     	}
-		northWestPanel.add(createPanelCircelChart(chartTTD, "Tỉ lệ tin tuyển dụng theo trình độ"));
+		JPanel not=new JPanel();
+		not.setOpaque(false);
+		for(ModelPieChart i: chartTTD.getList()) {
+			PolarAreaLabel label=new PolarAreaLabel();
+			label.setText(i.getName());
+			label.setBackground(i.getColor());
+			label.setForeground(Color.WHITE);
+			label.setFont(new Font("Segoe UI",1,13));
+			not.add(label);
+		}
+		northWestPanel.add(createPanelCircelChart(chartTTD, "Tỉ lệ hợp đồng theo trình độ", not));
+//		thống kê theo ngành nghề
+		chartNTD=new PolarPieChart();
+		chartNTD.setChartType(PolarPieChart.PeiChartType.DONUT_CHART);
+		for (Object[] obj: tinTuyenDung_DAO.thongKeNganhNghe()) {
+			chartNTD.addData(new ModelPieChart(getRandomColor(), obj[0].toString(),
+					Integer.parseInt(obj[1].toString())));
+    	}
+		JPanel nt=new JPanel();
+		nt.setOpaque(false);
+		for(ModelPieChart i: chartNTD.getList()) {
+			PolarAreaLabel label=new PolarAreaLabel();
+			label.setText(i.getName());
+			label.setBackground(i.getColor());
+			label.setForeground(Color.WHITE);
+			label.setFont(new Font("Segoe UI",1,13));
+			nt.add(label);
+		}
+		northWestPanel.add(createPanelCircelChart(chartNTD, "Tỉ lệ hợp đồng theo ngành nghề", nt));
 		
-		northPanel.add(northWestPanel, BorderLayout.WEST);
+		northPanel.add(northWestPanel, BorderLayout.CENTER);
 		
-//		Biểu đồ cột
+//		Biểu đồ đường
 		centerPanel=new GradientRoundPanel();
 		centerPanel.setLayout(new BorderLayout());
 		
@@ -162,7 +204,7 @@ public class ThongKeFrame extends JFrame implements ActionListener {
 		add(thongKePanel);
 	}	
 	
-	private JPanel createPanelCircelChart(PolarPieChart chart, String title) {
+	private JPanel createPanelCircelChart(PolarPieChart chart, String title, JPanel note) {
 		JPanel panel=new JPanel();
 		panel.setOpaque(false);
 		panel.setLayout(new BorderLayout());
@@ -173,6 +215,7 @@ public class ThongKeFrame extends JFrame implements ActionListener {
 		
 		panel.add(titleLabel, BorderLayout.NORTH);
 		panel.add(chart, BorderLayout.CENTER);
+		panel.add(note, BorderLayout.SOUTH);
 		
 		return panel;
 	}

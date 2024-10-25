@@ -529,11 +529,10 @@ public class TinTuyenDung_DAO {
 		Connection con = Database.getConnection();
 		
 		try {
-			String sql = "\r\n"
-					+ "select TrinhDo, COUNT(*) as SoLuong \r\n"
-					+ "from TinTuyenDung \r\n"
-					+ "group by TrinhDo\r\n"
-					+ "Order by SoLuong DESC";
+			String sql = "SELECT TrinhDo, COUNT(*) as SoLuong\r\n"
+					+ "FROM TinTuyenDung ttd join HopDong hd on ttd.MaTTD=hd.MaTTD\r\n"
+					+ "GROUP BY TrinhDo\r\n"
+					+ "ORDER BY SoLuong DESC";
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
 			while (rs.next()) {
@@ -579,7 +578,10 @@ public class TinTuyenDung_DAO {
 		Connection con = Database.getConnection();
 		
 		try {
-			String sql = "select NganhNghe, COUNT(*) from TinTuyenDung group by NganhNghe";
+			String sql = "SELECT NganhNghe, COUNT(*) as SoLuong\r\n"
+					+ "FROM TinTuyenDung ttd join HopDong hd on ttd.MaTTD=hd.MaTTD\r\n"
+					+ "GROUP BY NganhNghe\r\n"
+					+ "ORDER BY SoLuong DESC";
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
 			while (rs.next()) {
@@ -602,7 +604,7 @@ public class TinTuyenDung_DAO {
 		
 		try {
 			String sql = "SELECT HinhThuc, COUNT(*) as SoLuong\r\n"
-					+ "FROM TinTuyenDung\r\n"
+					+ "FROM TinTuyenDung ttd join HopDong hd on ttd.MaTTD=hd.MaTTD\r\n"
 					+ "GROUP BY HinhThuc\r\n"
 					+ "ORDER BY SoLuong DESC";
 			Statement stmt = con.createStatement();
