@@ -167,7 +167,7 @@ public class NhanVien_DAO {
 			PreparedStatement stmt =null;
 			if(option==1) {
 				stmt = con.prepareStatement("Select * from NhanVien where TenNV LIKE ?");
-				stmt.setString(1, "N"+"%"+key+"%");
+				stmt.setString(1, "%"+key+"%");
 			}
 			else if(option==2) {
 				stmt = con.prepareStatement("Select * from NhanVien where SoDienThoai LIKE ?");
@@ -178,7 +178,7 @@ public class NhanVien_DAO {
 				String sdt=key.split("/")[1];
 				
 				stmt = con.prepareStatement("Select * from NhanVien where TenNV LIKE ? AND SoDienThoai LIKE ?");
-				stmt.setString(1, "N"+"%"+tenNV+"%");
+				stmt.setString(1, "%"+tenNV+"%");
 				stmt.setString(2, "%"+sdt+"%");
 			}
 			ResultSet rs = stmt.executeQuery();

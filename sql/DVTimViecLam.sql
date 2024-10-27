@@ -158,8 +158,7 @@ VALUES
 
 INSERT INTO HopDong (MaHD, PhiDichVu, ThoiGian, MaTTD, MaUV, MaNV)
 VALUES 
-    ('HD01', 500.00, CONVERT(DATE, '05/01/2024', 103), 'TTD01', 'UV01', 'NV01'),
-    ('HD02', 800.00, CONVERT(DATE, '06/01/2024', 103), 'TTD02', 'UV02', 'NV02');
+	('HD10', 100000, CONVERT(DATE, '05/02/2024', 103), 'TTD02', 'UV03', 'NV02');
 ================================================================================================================================
 
 Select * from TaiKhoan where MaNV='NV01'

@@ -14,6 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import swing.ButtonMenu;
+import view.frame.MainFrame;
 
 public class Navbar extends JPanel{
 

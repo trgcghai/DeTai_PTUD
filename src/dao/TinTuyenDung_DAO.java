@@ -647,4 +647,31 @@ public class TinTuyenDung_DAO {
 		
 		return list;
 	}
+	
+	public ArrayList<Object[]> thongKeNganhNgheHopDongTheoThang(String nganhnghe, int thangNumber) {
+		ArrayList<Object[]> list = new ArrayList<Object[]>();
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			PreparedStatement stmt = con.prepareStatement("select NganhNghe, MONTH(ThoiGian), COUNT(*) as SoLuong \r\n"
+					+ "from HopDong hd join TinTuyenDung ttd on hd.MaTTD=ttd.MaTTD\r\n"
+					+ "group by NganhNghe, MONTH(ThoiGian)\r\n"
+					+ "having NganhNghe like ? AND MONTH(ThoiGian) = ? ");
+			stmt.setString(1, "%"+nganhnghe+"%");
+			stmt.setInt(2, thangNumber);
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				String nganhNghe = rs.getString(1);
+				int thang = rs.getInt(2);
+				int soluong = rs.getInt(3);
+				
+				list.add(new Object[] {nganhNghe, thang, soluong});
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return list;
+	}
 }
