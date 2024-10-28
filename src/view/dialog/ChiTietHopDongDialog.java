@@ -275,8 +275,18 @@ public class ChiTietHopDongDialog extends JDialog implements ActionListener{
         writeDataToDocument(doc, purchaseData);
         
         doc.replace("#luong", df.format(tintuyendungDAO.getTinTuyenDung(hd.getTinTuyenDung().getMaTTD()).getLuong())+" VNĐ", true, true);
-        int tax=(int)(hd.getPhiDichVu()*100/tintuyendungDAO.getTinTuyenDung(hd.getTinTuyenDung().getMaTTD()).getLuong());
-        doc.replace("#number", String.valueOf(tax), true, true);
+        double luong=tintuyendungDAO.getTinTuyenDung(hd.getTinTuyenDung().getMaTTD()).getLuong();
+        if(luong < 5000000) {
+        	 doc.replace("#number", "2.00", true, true);
+        }
+        else {
+        	if(luong <= 10000000) {
+        		doc.replace("#number", "3.00", true, true);
+        	}
+        	else {
+        		doc.replace("#number", "5.00", true, true);
+        	}
+        }
         doc.replace("#thanhtien", df.format(hd.getPhiDichVu())+" VNĐ", true, true);
  
         doc.isUpdateFields(true);

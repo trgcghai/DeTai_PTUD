@@ -36,6 +36,7 @@ import controller.LabelDateFormatter;
 import dao.HoSo_DAO;
 import dao.HopDong_DAO;
 import dao.NhaTuyenDung_DAO;
+import dao.TinTuyenDung_DAO;
 import dao.UngVien_DAO;
 import entity.HoSo;
 import entity.HopDong;
@@ -74,6 +75,7 @@ public class ChiTietViecLamDialog extends JDialog implements ActionListener{
 	private HoSo hoso;
 	private NhanVien nv;
 	private NhaTuyenDung_DAO nhatuyendungDAO;
+	private TinTuyenDung_DAO tintuyendungDAO;
 	private UngVien_DAO ungvienDAO;
 	private HopDong_DAO hopdongDAO;
 	private HoSo_DAO hosoDAO;
@@ -92,6 +94,7 @@ public class ChiTietViecLamDialog extends JDialog implements ActionListener{
 		this.hoso=hoso;
 		this.nv=nv;
 		nhatuyendungDAO=new NhaTuyenDung_DAO();
+		tintuyendungDAO=new TinTuyenDung_DAO();
 		ungvienDAO=new UngVien_DAO();
 		hopdongDAO=new HopDong_DAO();
 		hosoDAO=new HoSo_DAO();
@@ -336,6 +339,9 @@ public class ChiTietViecLamDialog extends JDialog implements ActionListener{
 			hoso.setTrangThai(TrangThai.CHO);
 			hoso.setTinTuyenDung(ttd);
 			hosoDAO.update(hoso);
+			
+			ttd.setSoLuong(ttd.getSoLuong()-1);
+			tintuyendungDAO.update(ttd);
 			
 			JOptionPane.showMessageDialog(rootPane, "Ứng tuyển thành công");
 			this.dispose();

@@ -508,8 +508,8 @@ public class ThongKeNhanVienFrame  extends JFrame implements ActionListener{
 		}
 		else if(obj.equals(btnLamLai)) {
 			nhanvienDAO.setListNhanVien((nhanvienDAO.getDSNhanVien()));
-			modelBatDau.setValue(new Date());
-			modelKetThuc.setValue(new Date());
+			modelBatDau.setValue(null);
+			modelKetThuc.setValue(null);
 			gioitinhText.setSelectedIndex(0);
 			nhanVienText.setSelectedIndex(0);
 			loadDataTable();

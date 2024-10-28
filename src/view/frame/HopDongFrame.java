@@ -590,6 +590,7 @@ public class HopDongFrame extends JFrame implements ActionListener, MouseListene
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
 		if(e.getSource().equals(tableUngVien)) {
+			tableNhaTuyenDung.clearSelection();
 			int index=tableUngVien.getSelectedRow();
 			if(index!=-1) {
 				DateTimeFormatter format=DateTimeFormatter.ofPattern("dd-MM-yyyy");
@@ -599,6 +600,7 @@ public class HopDongFrame extends JFrame implements ActionListener, MouseListene
 			}
 		}
 		else if(e.getSource().equals(tableNhaTuyenDung)) {
+			tableUngVien.clearSelection();
 			int idx=tableNhaTuyenDung.getSelectedRow();
 			hopdongDAO.setListHopDong(hopdongDAO.
 					getHopDongTheoNhaTuyenDung(tableNhaTuyenDung.getValueAt(idx, 0).toString()));

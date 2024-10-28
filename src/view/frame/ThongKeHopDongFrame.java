@@ -462,8 +462,8 @@ public class ThongKeHopDongFrame extends JFrame implements ActionListener {
 					comboBoxNTD.setSelectedIndex(0);
 					comboBoxUV.setSelectedIndex(0);
 					hopdong_dao.setListHopDong(hopdong_dao.getDSHopDong());
-					modelBatDau.setValue(new Date());
-					modelKetThuc.setValue(new Date());
+					modelBatDau.setValue(null);
+					modelKetThuc.setValue(null);
 					
 					loadDataTable();
 					loadDataTotal();

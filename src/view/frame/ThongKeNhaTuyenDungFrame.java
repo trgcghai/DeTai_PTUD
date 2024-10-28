@@ -397,8 +397,8 @@ public class ThongKeNhaTuyenDungFrame  extends JFrame implements ActionListener 
 		}
 		else if(obj.equals(btnLamLai)) {
 			comboBoxNTD.setSelectedIndex(0);
-			modelBatDau.setValue(new Date());
-			modelKetThuc.setValue(new Date());
+			modelBatDau.setValue(null);
+			modelKetThuc.setValue(null);
 			loadDataTable();
 		}
 	}
