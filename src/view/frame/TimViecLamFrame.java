@@ -343,13 +343,15 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 		DecimalFormat df = new DecimalFormat("#,###");
 		modelTableTinTuyenDung.setRowCount(0);
 		for(TinTuyenDung i: tintuyendungDAO.getListTinTuyenDung()) {
-			if(i.getNgayHetHan().compareTo(LocalDate.now())>0) {
-				if(i.getNgayDangTin().compareTo(LocalDate.now())<=0 && i.isTrangThai()) {
-					Object[] obj=new Object[] {
-							i.getMaTTD(),
-							i.getTieuDe(), i.getTrinhDo().getValue(), df.format(i.getLuong())+" VNĐ", null
-					};
-					modelTableTinTuyenDung.addRow(obj);
+			if(i.getSoLuong() > 0) {
+				if(i.getNgayHetHan().compareTo(LocalDate.now())>0) {
+					if(i.getNgayDangTin().compareTo(LocalDate.now())<=0 && i.isTrangThai()) {
+						Object[] obj=new Object[] {
+								i.getMaTTD(),
+								i.getTieuDe(), i.getTrinhDo().getValue(), df.format(i.getLuong())+" VNĐ", null
+						};
+						modelTableTinTuyenDung.addRow(obj);
+					}
 				}
 			}
 		}

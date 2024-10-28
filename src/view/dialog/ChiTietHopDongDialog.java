@@ -3,6 +3,7 @@ package view.dialog;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Desktop;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -65,6 +66,28 @@ public class ChiTietHopDongDialog extends JDialog implements ActionListener{
 	private HopDong hd;
 	
 	public ChiTietHopDongDialog(Frame parent, boolean modal, HopDong hd) {
+		super(parent, modal);
+		setTitle("Xem chi tiết hợp đồng");
+		setResizable(false);
+		setSize(850,450);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		setLayout(new BorderLayout());
+		setLocationRelativeTo(null);
+		
+		this.hd=hd;
+		hopdongDAO=new HopDong_DAO();
+		ungvienDAO=new UngVien_DAO();
+		nhanvienDAO=new NhanVien_DAO();
+		tintuyendungDAO=new TinTuyenDung_DAO();
+		nhatuyendungDAO=new NhaTuyenDung_DAO();
+		
+		initComponent();
+		addActionListener();
+		loadData();
+		loadDataHopDong();
+	}
+	
+	public ChiTietHopDongDialog(Dialog parent, boolean modal, HopDong hd) {
 		super(parent, modal);
 		setTitle("Xem chi tiết hợp đồng");
 		setResizable(false);

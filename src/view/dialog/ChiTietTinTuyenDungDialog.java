@@ -79,6 +79,25 @@ public class ChiTietTinTuyenDungDialog extends JDialog implements ActionListener
 		loadData();
 	}
 	
+	public ChiTietTinTuyenDungDialog(Frame parent, boolean modal, TinTuyenDung ttd, NhaTuyenDung ntd) {
+		super(parent, modal);
+		setTitle("Xem chi tiết tin tuyển dụng");
+		setResizable(false);
+		setSize(800,680);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		setLayout(new BorderLayout());
+		setLocationRelativeTo(null);
+		
+		this.ttd=ttd;
+		this.ntd=ntd;
+		
+		initComponent();
+		
+		addActionListener();
+		
+		loadData();
+	}
+	
 	public void initComponent() {
 		inforTinTuyenDungPanel=new GradientPanel(Color.decode("#ABC8CB"), Color.decode("#7CBDBF")); 
 		inforTinTuyenDungPanel.setBackground(Color.WHITE);

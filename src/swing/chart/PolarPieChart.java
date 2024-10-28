@@ -237,8 +237,10 @@ public class PolarPieChart extends JPanel{
         Rectangle2D r2 = fm1.getStringBounds(detail, g2);
         double width = Math.max(r1.getWidth() + paceH * 2, r2.getWidth() + paceH * 2);
         double height = r1.getHeight() + r2.getHeight() + spaceV * 2;
-        double recY = up ? labelY - height - space : labelY + space;
-        double recX = labelX -= width / 2;
+//        double recY = up ? labelY - height - space : labelY + space;
+//        double recX = labelX -= width / 2;
+        double recX = labelX - width / 2; 
+        double recY = labelY - height / 2;
         g2.setColor(Color.WHITE);
         RoundRectangle2D rec = new RoundRectangle2D.Double(recX, recY, width, height, 5, 5);
         g2.fill(rec);

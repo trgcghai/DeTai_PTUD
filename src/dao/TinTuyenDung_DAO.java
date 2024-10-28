@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import controller.Database;
@@ -449,6 +450,170 @@ public class TinTuyenDung_DAO {
 		return list;
 	}
 	
+	public ArrayList<TinTuyenDung> thongKeTheoNTD(String tenNTD, LocalDate ngayBatDau, LocalDate ngayKetThuc) {
+		ArrayList<TinTuyenDung> result = new ArrayList<TinTuyenDung>();
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			DateTimeFormatter formater = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			PreparedStatement stmt = con.prepareStatement("select *\r\n"
+					+ "from TinTuyenDung ttd join NhaTuyenDung ntd\r\n"
+					+ "on ttd.MaNTD=ntd.MaNTD\r\n"
+					+ "where TenNTD = ? and NgayDangTin between ? and ?");
+			stmt.setString(1, tenNTD);
+			stmt.setString(2, formater.format(ngayBatDau));
+			stmt.setString(3, formater.format(ngayKetThuc));
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				String maTTD = rs.getString(1);
+				String tieuDe = rs.getString(2);
+				String moTa = rs.getString(3);
+				LocalDate ngayDangTin = rs.getDate(4).toLocalDate();
+				LocalDate ngayHetHan = rs.getDate(5).toLocalDate();
+				TrinhDo trinhdo=null;
+				for(TrinhDo t: TrinhDo.class.getEnumConstants()) {
+					if(t.getValue().equalsIgnoreCase(rs.getString(6))) {
+						trinhdo=t;
+						break;
+					}
+				}
+				int soLuong = rs.getInt(7);
+				double luong = rs.getDouble(8);
+				NganhNghe nganhnghe=null;
+				for(NganhNghe n: NganhNghe.class.getEnumConstants()) {
+					if(n.getValue().equalsIgnoreCase(rs.getString(9))) {
+						nganhnghe=n;
+						break;
+					}
+				}
+				boolean trangThai = rs.getBoolean(10);
+				HinhThucLamViec hinhthuc=null;
+				for(HinhThucLamViec h: HinhThucLamViec.class.getEnumConstants()) {
+					if(h.getValue().equalsIgnoreCase(rs.getString(11))) {
+						hinhthuc=h;
+						break;
+					}
+				}
+				NhaTuyenDung nhaTuyenDung = new NhaTuyenDung(rs.getString(12));
+				
+				result.add(new TinTuyenDung(maTTD, tieuDe, moTa, ngayDangTin, ngayHetHan, trinhdo, 
+						soLuong, luong, nganhnghe, hinhthuc, trangThai, nhaTuyenDung));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	public ArrayList<TinTuyenDung> thongKeTheoNTD(String tenNTD) {
+		ArrayList<TinTuyenDung> result = new ArrayList<TinTuyenDung>();
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			PreparedStatement stmt = con.prepareStatement("select *\r\n"
+					+ "from TinTuyenDung ttd join NhaTuyenDung ntd\r\n"
+					+ "on ttd.MaNTD=ntd.MaNTD\r\n"
+					+ "where TenNTD = ?");
+			stmt.setString(1, tenNTD);
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				String maTTD = rs.getString(1);
+				String tieuDe = rs.getString(2);
+				String moTa = rs.getString(3);
+				LocalDate ngayDangTin = rs.getDate(4).toLocalDate();
+				LocalDate ngayHetHan = rs.getDate(5).toLocalDate();
+				TrinhDo trinhdo=null;
+				for(TrinhDo t: TrinhDo.class.getEnumConstants()) {
+					if(t.getValue().equalsIgnoreCase(rs.getString(6))) {
+						trinhdo=t;
+						break;
+					}
+				}
+				int soLuong = rs.getInt(7);
+				double luong = rs.getDouble(8);
+				NganhNghe nganhnghe=null;
+				for(NganhNghe n: NganhNghe.class.getEnumConstants()) {
+					if(n.getValue().equalsIgnoreCase(rs.getString(9))) {
+						nganhnghe=n;
+						break;
+					}
+				}
+				boolean trangThai = rs.getBoolean(10);
+				HinhThucLamViec hinhthuc=null;
+				for(HinhThucLamViec h: HinhThucLamViec.class.getEnumConstants()) {
+					if(h.getValue().equalsIgnoreCase(rs.getString(11))) {
+						hinhthuc=h;
+						break;
+					}
+				}
+				NhaTuyenDung nhaTuyenDung = new NhaTuyenDung(rs.getString(12));
+				
+				result.add(new TinTuyenDung(maTTD, tieuDe, moTa, ngayDangTin, ngayHetHan, trinhdo, 
+						soLuong, luong, nganhnghe, hinhthuc, trangThai, nhaTuyenDung));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	public ArrayList<TinTuyenDung> thongKeTheoNTD(LocalDate ngayBatDau, LocalDate ngayKetThuc) {
+		ArrayList<TinTuyenDung> result = new ArrayList<TinTuyenDung>();
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			DateTimeFormatter formater = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			PreparedStatement stmt = con.prepareStatement("select *\r\n"
+					+ "from TinTuyenDung ttd join NhaTuyenDung ntd\r\n"
+					+ "on ttd.MaNTD=ntd.MaNTD\r\n"
+					+ "where NgayDangTin between ? and ?");
+			stmt.setString(1, formater.format(ngayBatDau));
+			stmt.setString(2, formater.format(ngayKetThuc));
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				String maTTD = rs.getString(1);
+				String tieuDe = rs.getString(2);
+				String moTa = rs.getString(3);
+				LocalDate ngayDangTin = rs.getDate(4).toLocalDate();
+				LocalDate ngayHetHan = rs.getDate(5).toLocalDate();
+				TrinhDo trinhdo=null;
+				for(TrinhDo t: TrinhDo.class.getEnumConstants()) {
+					if(t.getValue().equalsIgnoreCase(rs.getString(6))) {
+						trinhdo=t;
+						break;
+					}
+				}
+				int soLuong = rs.getInt(7);
+				double luong = rs.getDouble(8);
+				NganhNghe nganhnghe=null;
+				for(NganhNghe n: NganhNghe.class.getEnumConstants()) {
+					if(n.getValue().equalsIgnoreCase(rs.getString(9))) {
+						nganhnghe=n;
+						break;
+					}
+				}
+				boolean trangThai = rs.getBoolean(10);
+				HinhThucLamViec hinhthuc=null;
+				for(HinhThucLamViec h: HinhThucLamViec.class.getEnumConstants()) {
+					if(h.getValue().equalsIgnoreCase(rs.getString(11))) {
+						hinhthuc=h;
+						break;
+					}
+				}
+				NhaTuyenDung nhaTuyenDung = new NhaTuyenDung(rs.getString(12));
+				
+				result.add(new TinTuyenDung(maTTD, tieuDe, moTa, ngayDangTin, ngayHetHan, trinhdo, 
+						soLuong, luong, nganhnghe, hinhthuc, trangThai, nhaTuyenDung));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
 	public boolean create(TinTuyenDung ttd) {
 		int n = 0;
 		Database.getInstance();
@@ -640,33 +805,6 @@ public class TinTuyenDung_DAO {
 				int soluong = rs.getInt(3);
 				
 				list.add(new Object[] {nganhNghe, trinhDo, soluong});
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
-		return list;
-	}
-	
-	public ArrayList<Object[]> thongKeNganhNgheHopDongTheoThang(String nganhnghe, int thangNumber) {
-		ArrayList<Object[]> list = new ArrayList<Object[]>();
-		Database.getInstance();
-		Connection con = Database.getConnection();
-		
-		try {
-			PreparedStatement stmt = con.prepareStatement("select NganhNghe, MONTH(ThoiGian), COUNT(*) as SoLuong \r\n"
-					+ "from HopDong hd join TinTuyenDung ttd on hd.MaTTD=ttd.MaTTD\r\n"
-					+ "group by NganhNghe, MONTH(ThoiGian)\r\n"
-					+ "having NganhNghe like ? AND MONTH(ThoiGian) = ? ");
-			stmt.setString(1, "%"+nganhnghe+"%");
-			stmt.setInt(2, thangNumber);
-			ResultSet rs = stmt.executeQuery();
-			while (rs.next()) {
-				String nganhNghe = rs.getString(1);
-				int thang = rs.getInt(2);
-				int soluong = rs.getInt(3);
-				
-				list.add(new Object[] {nganhNghe, thang, soluong});
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

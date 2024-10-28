@@ -329,8 +329,8 @@ public class TaoSuaTinTuyenDungDialog extends JDialog implements ActionListener{
 		String mota=motaText.getText();
 		
 		if(!tieude.equals("") && !soluong.equals("") && !luong.equals("") && !mota.equals("")) {
-			if(Pattern.compile("^[0-9]+$").matcher(soluong).matches()
-				&& Pattern.compile("^[0-9]+$").matcher(luong).matches()) {
+			if(Pattern.compile("^[0-9]+$").matcher(soluong).matches() && Integer.parseInt(soluong) > 0
+				&& Pattern.compile("^[0-9]+$").matcher(luong).matches() && Integer.parseInt(luong) > 0) {
 				if(nganhngheBox.getSelectedIndex()!=-1) {
 					if(btnThem.getText().equalsIgnoreCase("Tạo mới")) {
 						if(LocalDate.parse(ngaydangtin).compareTo(LocalDate.now())>=0) {

@@ -8,11 +8,14 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Properties;
@@ -42,6 +45,9 @@ import org.jdatepicker.impl.UtilDateModel;
 
 import controller.ExcelHelper;
 import controller.LabelDateFormatter;
+import controller.actiontable.TableActionEvent;
+import controller.actiontable.TableCellEditorDetail;
+import controller.actiontable.TableCellRendererDetail;
 import dao.HopDong_DAO;
 import dao.NhaTuyenDung_DAO;
 import dao.TinTuyenDung_DAO;
@@ -50,39 +56,47 @@ import entity.NhanVien;
 import entity.TinTuyenDung;
 import swing.Button;
 import swing.GradientRoundPanel;
+import view.dialog.ChiTietTinTuyenDungDialog;
+import view.dialog.DanhSachHoSoDaNopDialog;
 
-public class ThongKeNhaTuyenDungFrame  extends JFrame implements ActionListener {
+public class ThongKeTinTuyenDungFrame  extends JFrame implements ActionListener, MouseListener {
 	NhanVien userName;
-	ThongKeNhaTuyenDungFrame parent;
+	ThongKeTinTuyenDungFrame parent;
 	
 //	Component thống kê tin tuyển dụng
-	JPanel menuPanel, timkiemPanel,nhaTuyenDungPanel,centerPanelNhaTuyenDung, danhsachPanel, danhsachNorthPanel, danhsachCenterPanel, tongketPanel;
-	JLabel titleNhaTuyenDung, ngayBatDauLabel, ngayKetThucLabel, timkiemTenLabel, summaryValueLabel, valueLabel;
+	JPanel menuPanel, timkiemPanel,tinTuyenDungPanel,centerPanelTinTuyenDung, danhsachPanel, danhsachNorthPanel, danhsachCenterPanel, tongketPanel;
+	JLabel titleTinTuyenDung, ngayBatDauLabel, ngayKetThucLabel, timkiemTenLabel, 
+	summaryValueLabel, valueLabel,summaryValueHireLabel, valueHireLabel, summaryValueDoneLabel, valueDoneLabel;
 	Button btnTimKiem, btnLamLai, btnExcel;
-	JTable tableNhaTuyenDung;
-	DefaultTableModel modeltableNhaTuyenDung;
-	JScrollPane scrollNhaTuyenDung;
+	JTable tableTinTuyenDung;
+	DefaultTableModel modeltableTinTuyenDung;
+	JScrollPane scrollTinTuyenDung;
 	UtilDateModel modelBatDau, modelKetThuc;
 	JDatePickerImpl ngayBatDau, ngayKetThuc;
 	JComboBox<Object> comboBoxNTD;
 	Icon iconBtnSave;
 	
 	private HopDong_DAO hopDong_DAO;
-	private NhaTuyenDung_DAO nhaTuyenDung_DAO;
+	private NhaTuyenDung_DAO nhatuyendung_DAO;
+	private TinTuyenDung_DAO tintuyendung_DAO;
 	
-	public ThongKeNhaTuyenDungFrame(NhanVien userName) {
+	public ThongKeTinTuyenDungFrame(NhanVien userName) {
 		this.userName=userName;
 		this.parent = this;
+		
+		hopDong_DAO=new HopDong_DAO();
+		nhatuyendung_DAO=new NhaTuyenDung_DAO();
+		tintuyendung_DAO=new TinTuyenDung_DAO();
 		
 //		Tạo component bên phải
 		initComponent();
 		
 //		Thêm sự kiện
+		addTableListener();
 		addActionListener();
+		addMouseListener();
 		
-		hopDong_DAO=new HopDong_DAO();
-		nhaTuyenDung_DAO=new NhaTuyenDung_DAO();
-		
+		loadData();
 		loadDataTable();
 		loadComboBox();
 	}
@@ -104,25 +118,25 @@ public class ThongKeNhaTuyenDungFrame  extends JFrame implements ActionListener 
 	}
 	
 	public void initComponent() {
-		nhaTuyenDungPanel=new JPanel(); 
-		nhaTuyenDungPanel.setLayout(new BorderLayout(5,5));
+		tinTuyenDungPanel=new JPanel(); 
+		tinTuyenDungPanel.setLayout(new BorderLayout(5,5));
 		
 //		Hiển thị Thống kê và danh sách tin tuyển dụng
-		centerPanelNhaTuyenDung=new JPanel();
-		centerPanelNhaTuyenDung.setLayout(new BorderLayout(10, 10));
-		centerPanelNhaTuyenDung.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		centerPanelNhaTuyenDung.setBackground(new Color(89, 145, 144));
+		centerPanelTinTuyenDung=new JPanel();
+		centerPanelTinTuyenDung.setLayout(new BorderLayout(5, 5));
+		centerPanelTinTuyenDung.setBackground(new Color(89, 145, 144));
 
 //		Thống kê tin tuyển dụng
 		timkiemPanel=new GradientRoundPanel();
-		timkiemPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 15, 5));
+		timkiemPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 19, 5));
 		
 		comboBoxNTD=new JComboBox<Object>(); 
 		comboBoxNTD.setFont(new Font("Segoe UI",0,16));
-//		comboBoxNTD.setPreferredSize(new Dimension(250,30));
 		comboBoxNTD.setOpaque(false);
 		comboBoxNTD.addItem("Chọn nhà tuyển dụng");
 		
+		JPanel res=new JPanel();
+		res.setOpaque(false);
 		modelBatDau=new UtilDateModel();
 		modelKetThuc=new UtilDateModel();
 		Properties p=new Properties();
@@ -130,19 +144,21 @@ public class ThongKeNhaTuyenDungFrame  extends JFrame implements ActionListener 
 		p.put("text.month", "Month"); 
 		p.put("text.year", "Year");
 		JDatePanelImpl panelDate=new JDatePanelImpl(modelBatDau, p);
-		
-		ngayBatDauLabel= createLabel("Ngày bắt đầu:"); 
+		ngayBatDauLabel= createLabel("Ngày đăng tin:"); 
 		ngayBatDau=new JDatePickerImpl(panelDate, new LabelDateFormatter());
 		ngayBatDau.setPreferredSize(new Dimension(130,25));
-		
 		panelDate=new JDatePanelImpl(modelKetThuc, p);
-		ngayKetThucLabel= createLabel("Ngày kết thúc:"); 
+		ngayKetThucLabel= createLabel("-"); 
 		ngayKetThuc=new JDatePickerImpl(panelDate, new LabelDateFormatter());
 		ngayKetThuc.setPreferredSize(new Dimension(130,25));
+		
+		res.add(ngayBatDauLabel); res.add(ngayBatDau);
+		res.add(ngayKetThucLabel); res.add(ngayKetThuc);
 		
 		JPanel resBtnSearch=new JPanel();
 		resBtnSearch.setOpaque(false);
 		resBtnSearch.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 5));
+		resBtnSearch.setPreferredSize(new Dimension(400, 30));
 		resBtnSearch.setBackground(Color.WHITE);
 		
 		btnTimKiem= createButton("Thống kê", new Color(0,102,102), Color.WHITE); 
@@ -150,10 +166,9 @@ public class ThongKeNhaTuyenDungFrame  extends JFrame implements ActionListener 
 		resBtnSearch.add(btnTimKiem); 
 		resBtnSearch.add(btnLamLai);
 		
-		timkiemPanel.add(comboBoxNTD);
-		timkiemPanel.add(ngayBatDauLabel); timkiemPanel.add(ngayBatDau);
-		timkiemPanel.add(ngayKetThucLabel); timkiemPanel.add(ngayKetThuc);
-		timkiemPanel.add(resBtnSearch);
+		timkiemPanel.add(comboBoxNTD, BorderLayout.WEST);
+		timkiemPanel.add(res, BorderLayout.CENTER);
+		timkiemPanel.add(resBtnSearch, BorderLayout.EAST);
 		
 //		Danh sách tin tuyển dụng
 		danhsachPanel=new GradientRoundPanel();
@@ -166,7 +181,7 @@ public class ThongKeNhaTuyenDungFrame  extends JFrame implements ActionListener 
 		iconBtnSave=new ImageIcon(getClass().getResource("/image/save.png"));
 		JPanel resBtnThem=new JPanel();
 		resBtnThem.setOpaque(false);
-		resBtnThem.setBorder(BorderFactory.createEmptyBorder(10,10,0,20));
+		resBtnThem.setBorder(BorderFactory.createEmptyBorder(10,10,0,15));
 		resBtnThem.setBackground(Color.WHITE);
 		
 		btnExcel=new Button("Xuất Excel");
@@ -176,23 +191,26 @@ public class ThongKeNhaTuyenDungFrame  extends JFrame implements ActionListener 
 		btnExcel.setBackground(new Color(51,51,255));
 		btnExcel.setForeground(Color.WHITE);
 		resBtnThem.add(btnExcel);
-		titleNhaTuyenDung=new JLabel("Danh sách nhà tuyển dụng");
-		titleNhaTuyenDung.setForeground(Color.WHITE);
-		titleNhaTuyenDung.setFont(new Font("Segoe UI",1,16));
-		titleNhaTuyenDung.setBorder(BorderFactory.createEmptyBorder(10,20,0,10));
-		danhsachNorthPanel.add(titleNhaTuyenDung, BorderLayout.WEST);
+		titleTinTuyenDung=new JLabel("Danh sách tin tuyển dụng");
+		titleTinTuyenDung.setForeground(Color.WHITE);
+		titleTinTuyenDung.setFont(new Font("Segoe UI",1,16));
+		titleTinTuyenDung.setBorder(BorderFactory.createEmptyBorder(10,20,0,10));
+		danhsachNorthPanel.add(titleTinTuyenDung, BorderLayout.WEST);
 		danhsachNorthPanel.add(resBtnThem, BorderLayout.EAST);
 		
 		danhsachCenterPanel=new GradientRoundPanel();
 		danhsachCenterPanel.setLayout(new BoxLayout(danhsachCenterPanel, BoxLayout.PAGE_AXIS));
 		danhsachCenterPanel.setBackground(Color.WHITE);
-		String[] colName= {"Mã nhà tuyển dụng","Tên nhà tuyển dụng","Email","Số điện thoại", "Số lượng tin tuyển dụng"};
+		String[] colName= {"Mã", "Tiêu đề", "Nhà tuyển dụng","Hình thức làm việc", 
+				"Trình độ","Ngày đăng tin","Số lượng tuyển","Số lượng đã tuyển","Xem hồ sơ"};
 		Object[][] data = {
-			    {1, "Manual Tester", "Amazon", "5,000,000 VNĐ", "Cao đẳng", "Khả dụng"},
+			    {1, "Manual Tester", "Amazon", "Full-time", "Đại học",
+			    	"13-12-2024",10,5,null},
 		};
-		modeltableNhaTuyenDung= new DefaultTableModel(data, colName){
+		modeltableTinTuyenDung= new DefaultTableModel(data, colName){
 			boolean[] canEdit = new boolean [] {
-	                false, false, false, false, false,
+	                false, false, false, false, 
+	                false, false, false, false, true
 	            };
 			
             @Override
@@ -200,44 +218,44 @@ public class ThongKeNhaTuyenDungFrame  extends JFrame implements ActionListener 
                return canEdit[column];
             }
         };
-		tableNhaTuyenDung=new JTable(modeltableNhaTuyenDung);
-		tableNhaTuyenDung.getTableHeader().setFont(new Font("Segoe UI",1,14));
-		tableNhaTuyenDung.setFont(new Font("Segoe UI",0,16));
-		tableNhaTuyenDung.setRowHeight(30);
-		tableNhaTuyenDung.getColumnModel().getColumn(1).setPreferredWidth(200);
-		tableNhaTuyenDung.getColumnModel().getColumn(2).setPreferredWidth(150);
-		tableNhaTuyenDung.getColumnModel().getColumn(3).setPreferredWidth(150);
+		tableTinTuyenDung=new JTable(modeltableTinTuyenDung);
+		tableTinTuyenDung.getTableHeader().setFont(new Font("Segoe UI",1,14));
+		tableTinTuyenDung.setFont(new Font("Segoe UI",0,16));
+		tableTinTuyenDung.setRowHeight(30);
+		tableTinTuyenDung.getColumnModel().getColumn(1).setPreferredWidth(200);
+		tableTinTuyenDung.getColumnModel().getColumn(2).setPreferredWidth(150);
+		tableTinTuyenDung.getColumnModel().getColumn(3).setPreferredWidth(150);
 		
 		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
 		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
-		for(int i=0;i<tableNhaTuyenDung.getColumnCount();i++) {
-			tableNhaTuyenDung.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);			
+		for(int i=0;i<tableTinTuyenDung.getColumnCount()-1;i++) {
+			tableTinTuyenDung.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);			
 		}
-		tableNhaTuyenDung.setAutoCreateRowSorter(true);
+		tableTinTuyenDung.setAutoCreateRowSorter(true);
 		ArrayList<RowSorter.SortKey> list = new ArrayList<>();
-        DefaultRowSorter sorter = ((DefaultRowSorter)tableNhaTuyenDung.getRowSorter());
+        DefaultRowSorter sorter = ((DefaultRowSorter)tableTinTuyenDung.getRowSorter());
         sorter.setSortsOnUpdates(true);
         list.add( new RowSorter.SortKey(0, SortOrder.ASCENDING));
         sorter.setSortKeys(list);
         sorter.sort();
-		scrollNhaTuyenDung=new JScrollPane(tableNhaTuyenDung);
-		scrollNhaTuyenDung.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
-		scrollNhaTuyenDung.setPreferredSize(new Dimension(1280, 480));
+		scrollTinTuyenDung=new JScrollPane(tableTinTuyenDung);
+		scrollTinTuyenDung.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
+		scrollTinTuyenDung.setPreferredSize(new Dimension(1280, 480));
 		GradientRoundPanel resScroll=new GradientRoundPanel();
 		resScroll.setBorder(BorderFactory.createEmptyBorder(0,20,20,20));
 		resScroll.setLayout(new BoxLayout(resScroll, BoxLayout.PAGE_AXIS));
 		resScroll.setBackground(Color.WHITE);
-		resScroll.add(scrollNhaTuyenDung);
+		resScroll.add(scrollTinTuyenDung);
 		danhsachCenterPanel.add(resScroll);
 		
-		// tổng số lượng tin tuyển dụng
+		// tổng số lượng 
 		tongketPanel=new GradientRoundPanel();
-		tongketPanel.setLayout(new BorderLayout());
+		tongketPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
 		tongketPanel.setBorder(BorderFactory.createEmptyBorder(0, 17, 0, 0));
 		
 		JPanel resPanelSummary = new JPanel();
 		resPanelSummary.setOpaque(false);
-		resPanelSummary.setLayout(new GridLayout(2, 1));
+		resPanelSummary.setLayout(new FlowLayout(FlowLayout.LEFT, 50, 0));
 		
 		JPanel temp = new JPanel();
 		temp.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -249,48 +267,74 @@ public class ThongKeNhaTuyenDungFrame  extends JFrame implements ActionListener 
 		temp.add(valueLabel);
 		temp.setOpaque(false);
 		resPanelSummary.add(temp);
+		
+		JPanel temp1 = new JPanel();
+		temp1.setLayout(new FlowLayout(FlowLayout.RIGHT));
+		summaryValueHireLabel= createLabel("Tổng số lượng cần tuyển:"); 
+		summaryValueHireLabel.setFont(new Font("Segoe UI",1,16));
+		valueHireLabel = createLabel("");
+		valueHireLabel.setFont(new Font("Segoe UI",1,16));
+		temp1.add(summaryValueHireLabel);
+		temp1.add(valueHireLabel);
+		temp1.setOpaque(false);
+		resPanelSummary.add(temp1);
+		
+		JPanel temp2 = new JPanel();
+		temp2.setLayout(new FlowLayout(FlowLayout.RIGHT));
+		summaryValueDoneLabel= createLabel("Tổng số lượng đã tuyển:"); 
+		summaryValueDoneLabel.setFont(new Font("Segoe UI",1,16));
+		valueDoneLabel = createLabel("");
+		valueDoneLabel.setFont(new Font("Segoe UI",1,16));
+		temp2.add(summaryValueDoneLabel);
+		temp2.add(valueDoneLabel);
+		temp2.setOpaque(false);
+		resPanelSummary.add(temp2);
 
 		tongketPanel.add(resPanelSummary, BorderLayout.WEST);
 		
 		danhsachPanel.add(danhsachNorthPanel, BorderLayout.NORTH);
 		danhsachPanel.add(danhsachCenterPanel, BorderLayout.CENTER);
 		
-		centerPanelNhaTuyenDung.add(timkiemPanel, BorderLayout.NORTH);
-		centerPanelNhaTuyenDung.add(danhsachPanel, BorderLayout.CENTER);
-		centerPanelNhaTuyenDung.add(tongketPanel, BorderLayout.SOUTH);
+		centerPanelTinTuyenDung.add(timkiemPanel, BorderLayout.NORTH);
+		centerPanelTinTuyenDung.add(danhsachPanel, BorderLayout.CENTER);
+		centerPanelTinTuyenDung.add(tongketPanel, BorderLayout.SOUTH);
 		
-		nhaTuyenDungPanel.add(centerPanelNhaTuyenDung, BorderLayout.CENTER);
+		tinTuyenDungPanel.add(centerPanelTinTuyenDung, BorderLayout.CENTER);
 	}
 	
-//	Xóa trạng thái text chuột không nằm trong ô
-	public void removePlaceHolder(JTextField text) {
-		Font font=text.getFont();
-		font=font.deriveFont(Font.PLAIN);
-		text.setFont(font);
-		text.setForeground(Color.BLACK);
-	}
-	
-//	Trạng thái text chuột không nằm trong ô
-	public void addPlaceHolder(JTextField text) {
-		Font font=text.getFont();
-		font=font.deriveFont(Font.ITALIC);
-		text.setFont(font);
-		text.setForeground(Color.GRAY);
+	public void loadData() {
+		tintuyendung_DAO.setListTinTuyenDung(tintuyendung_DAO.getDsTinTuyenDung());
+		nhatuyendung_DAO.setListNhatuyenDung(nhatuyendung_DAO.getDsNhaTuyenDung());
+		hopDong_DAO.setListHopDong(hopDong_DAO.getDSHopDong());
 	}
 	
 	public void loadDataTable() {
-		modeltableNhaTuyenDung.setRowCount(0);
-		int totalNumber = 0;
-		for(Object[] i: hopDong_DAO.thongKeHopDongTheoNTD()) {
-			modeltableNhaTuyenDung.addRow(i);
-			totalNumber += Integer.valueOf(i[4].toString());
+		modeltableTinTuyenDung.setRowCount(0);
+		DateTimeFormatter format=DateTimeFormatter.ofPattern("dd-MM-yyyy");
+		int totalHire=0;
+		int totalDone=0;
+		
+		for(TinTuyenDung i: tintuyendung_DAO.getListTinTuyenDung()) {
+			totalHire+=i.getSoLuong();
+			totalDone+=hopDong_DAO.getSoLuongHopDongTheoTTD(i.getMaTTD());
+			
+			Object[] row=new Object[] {
+				i.getMaTTD(), i.getTieuDe(), nhatuyendung_DAO.getNhaTuyenDung(i.getNhaTuyenDung().getMaNTD()).getTenNTD(),
+				i.getHinhThuc().getValue(), i.getTrinhDo().getValue(), format.format(i.getNgayDangTin()),
+				i.getSoLuong()+hopDong_DAO.getSoLuongHopDongTheoTTD(i.getMaTTD()),
+				hopDong_DAO.getSoLuongHopDongTheoTTD(i.getMaTTD()), null
+			};
+			modeltableTinTuyenDung.addRow(row);
 		}
-		valueLabel.setText(String.valueOf(totalNumber));
+		
+		valueLabel.setText(String.valueOf(tintuyendung_DAO.getListTinTuyenDung().size()));
+		valueHireLabel.setText(String.valueOf(totalHire));
+		valueDoneLabel.setText(String.valueOf(totalDone));
 	}
 	
 	public void loadComboBox() {
-		nhaTuyenDung_DAO.setListNhatuyenDung(nhaTuyenDung_DAO.getDsNhaTuyenDung());
-		for (NhaTuyenDung ntd: nhaTuyenDung_DAO.getListNhatuyenDung()) {
+		nhatuyendung_DAO.setListNhatuyenDung(nhatuyendung_DAO.getDsNhaTuyenDung());
+		for (NhaTuyenDung ntd: nhatuyendung_DAO.getListNhatuyenDung()) {
 			comboBoxNTD.addItem(ntd.getTenNTD());			
 		}
 	}
@@ -299,6 +343,68 @@ public class ThongKeNhaTuyenDungFrame  extends JFrame implements ActionListener 
 		btnExcel.addActionListener(this);
 		btnTimKiem.addActionListener(this);
 		btnLamLai.addActionListener(this);
+	}
+	
+	public void addMouseListener() {
+		tableTinTuyenDung.addMouseListener(this);
+	}
+	
+	public void addTableListener() {
+		TableActionEvent event=new TableActionEvent() {
+			
+			@Override
+			public void onViewTinTuyenDung(int row) {
+				// TODO Auto-generated method stub
+			}
+			
+			@Override
+			public void onViewHoSo(int row) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onViewDetail(int row) {
+				// TODO Auto-generated method stub
+				String maTTD=tableTinTuyenDung.getValueAt(row, 0).toString();
+				TinTuyenDung ttd=tintuyendung_DAO.getTinTuyenDung(maTTD);
+				
+				new DanhSachHoSoDaNopDialog(parent, rootPaneCheckingEnabled, ttd).setVisible(true);;
+			}
+			
+			@Override
+			public void onUpdate(int row) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onDelete(int row) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onCreateTinTuyenDung(int row) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onCreateTaiKhoan(int row) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onCreateHoSo(int row) {
+				// TODO Auto-generated method stub
+				
+			}
+		};
+		
+		tableTinTuyenDung.getColumnModel().getColumn(8).setCellRenderer(new TableCellRendererDetail());
+		tableTinTuyenDung.getColumnModel().getColumn(8).setCellEditor(new TableCellEditorDetail(event));
 	}
 	
 	public int getFetchType() {
@@ -327,7 +433,7 @@ public class ThongKeNhaTuyenDungFrame  extends JFrame implements ActionListener 
 		var obj=e.getSource();
 		if(obj.equals(btnExcel)) {
 			ExcelHelper excel = new ExcelHelper();
-			excel.exportData(this, tableNhaTuyenDung, 0);
+			excel.exportData(this, tableTinTuyenDung, 1);
 		}
 		else if(obj.equals(btnTimKiem)) {
 			String tenNtd = comboBoxNTD.getSelectedItem().toString();
@@ -368,42 +474,65 @@ public class ThongKeNhaTuyenDungFrame  extends JFrame implements ActionListener 
 			// 3 thống kê theo nhà tuyển dụng và thời gian
 			// 2 thống kê theo nhà tuyển dụng 
 			// 1 thống kê theo thời gian
-			int totalNumber = 0;
-			modeltableNhaTuyenDung.setRowCount(0);
+			modeltableTinTuyenDung.setRowCount(0);
 			switch(getFetchType()) {
 			case 3:
-				for (Object[] i : hopDong_DAO.thongKeHopDongTheoNTD(tenNtd, ngayBatDau, ngayKetThuc)) {
-					modeltableNhaTuyenDung.addRow(i);
-					totalNumber += Integer.valueOf(i[4].toString());
-				}
+				tintuyendung_DAO.setListTinTuyenDung(tintuyendung_DAO.thongKeTheoNTD(tenNtd, ngayBatDau, ngayKetThuc));
+				loadDataTable();
 				break;
 			case 2:
-				for (Object[] i : hopDong_DAO.thongKeHopDongTheoNTD(tenNtd)) {
-					modeltableNhaTuyenDung.addRow(i);
-					totalNumber += Integer.valueOf(i[4].toString());
-				}
+				tintuyendung_DAO.setListTinTuyenDung(tintuyendung_DAO.thongKeTheoNTD(tenNtd));
+				loadDataTable();
 				break;
 			case 1:
-				for (Object[] i : hopDong_DAO.thongKeHopDongTheoNTD(ngayBatDau, ngayKetThuc)) {
-					modeltableNhaTuyenDung.addRow(i);
-					totalNumber += Integer.valueOf(i[4].toString());
-				}
+				tintuyendung_DAO.setListTinTuyenDung(tintuyendung_DAO.thongKeTheoNTD(ngayBatDau, ngayKetThuc));
+				loadDataTable();
 				break;
 			default:
 				break;
 			}
-			valueLabel.setText(String.valueOf(totalNumber));
 			
 		}
 		else if(obj.equals(btnLamLai)) {
 			comboBoxNTD.setSelectedIndex(0);
 			modelBatDau.setValue(null);
 			modelKetThuc.setValue(null);
+			loadData();
 			loadDataTable();
 		}
 	}
 
 	public JPanel getPanel() {
-		return this.nhaTuyenDungPanel;
+		return this.tinTuyenDungPanel;
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -322,22 +322,6 @@ public class HopDongFrame extends JFrame implements ActionListener, MouseListene
 		danhsachHoSoNorthPanel=new GradientRoundPanel();
 		danhsachHoSoNorthPanel.setLayout(new BorderLayout(10,10));
 		danhsachHoSoNorthPanel.setBackground(Color.WHITE);
-//		JPanel resUngVien=new JPanel();
-//		resUngVien.setOpaque(false);
-//		resUngVien.setBorder(BorderFactory.createEmptyBorder(10,10,0,15));
-//		resUngVien.setBackground(Color.WHITE);
-//		
-//		ungvienLabel=new JLabel("Ứng viên");
-//		ungvienLabel.setFont(new Font("Segoe UI",1,16));
-//		ungvienLabel.setForeground(Color.WHITE);
-//		
-//		ungvienCombo=new JComboBox();
-//		ungvienCombo.setForeground(Color.WHITE);
-//		ungvienCombo.setBackground(new Color(89, 145, 144));
-//		ungvienCombo.setFont(new Font("Segoe UI",0,16));
-//		ungvienCombo.setPreferredSize(new Dimension(200,25));
-//		ungvienCombo.setRenderer(new ComboBoxRenderer("Chọn ứng viên"));
-//		resUngVien.add(ungvienLabel); resUngVien.add(ungvienCombo);
 		
 		titleHoSo = createLabel("Danh sách ứng viên", true);
 		titleHoSo.setFont(new Font("Segoe UI",1,16));
