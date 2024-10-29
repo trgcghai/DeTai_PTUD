@@ -57,6 +57,7 @@ import entity.TinTuyenDung;
 import entity.UngVien;
 import swing.Button;
 import swing.GradientRoundPanel;
+import swing.TableCellGradient;
 
 public class ThongKeHopDongFrame extends JFrame implements ActionListener {
 	NhanVien userName;
@@ -216,11 +217,7 @@ public class ThongKeHopDongFrame extends JFrame implements ActionListener {
 		tableHopDong.setFont(new Font("Segoe UI",0,16));
 		tableHopDong.setRowHeight(30);
 		
-		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
-		for(int i=0;i<tableHopDong.getColumnCount();i++) {
-			tableHopDong.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);			
-		}
+		tableHopDong.setDefaultRenderer(Object.class, new TableCellGradient());
 		tableHopDong.setAutoCreateRowSorter(true);
 		ArrayList<RowSorter.SortKey> list = new ArrayList<>();
         DefaultRowSorter sorter = ((DefaultRowSorter)tableHopDong.getRowSorter());

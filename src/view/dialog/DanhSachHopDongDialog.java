@@ -39,6 +39,7 @@ import entity.HopDong;
 import entity.NhanVien;
 import swing.Button;
 import swing.GradientPanel;
+import swing.TableCellGradient;
 
 public class DanhSachHopDongDialog extends JDialog implements ActionListener{
 	
@@ -112,11 +113,7 @@ public class DanhSachHopDongDialog extends JDialog implements ActionListener{
 		tableHopDong.getTableHeader().setFont(new Font("Segoe UI",1,14));
 		tableHopDong.setFont(new Font("Segoe UI",0,16));
 		tableHopDong.setRowHeight(30);
-		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
-		for(int i=0;i<tableHopDong.getColumnCount()-1;i++) {
-			tableHopDong.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);			
-		}
+		tableHopDong.setDefaultRenderer(Object.class, new TableCellGradient());
 		tableHopDong.setAutoCreateRowSorter(true);
 		ArrayList<RowSorter.SortKey> list = new ArrayList<>();
         DefaultRowSorter sorter = ((DefaultRowSorter)tableHopDong.getRowSorter());

@@ -69,5 +69,8 @@
 	<classpathentry kind="lib" path="lib/svg-8.0.3.jar"/>
 	<classpathentry kind="lib" path="lib/TimingFramework-0.55.jar"/>
 	<classpathentry kind="lib" path="lib/xmlbeans-5.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/flatlaf-3.2.jar"/>
+	<classpathentry kind="lib" path="lib/flatlaf-extras-3.2.jar"/>
+	<classpathentry kind="lib" path="lib/jsvg-1.0.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

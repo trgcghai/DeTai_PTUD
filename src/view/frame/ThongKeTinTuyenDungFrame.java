@@ -56,6 +56,7 @@ import entity.NhanVien;
 import entity.TinTuyenDung;
 import swing.Button;
 import swing.GradientRoundPanel;
+import swing.TableCellGradient;
 import view.dialog.ChiTietTinTuyenDungDialog;
 import view.dialog.DanhSachHoSoDaNopDialog;
 
@@ -226,11 +227,7 @@ public class ThongKeTinTuyenDungFrame  extends JFrame implements ActionListener,
 		tableTinTuyenDung.getColumnModel().getColumn(2).setPreferredWidth(150);
 		tableTinTuyenDung.getColumnModel().getColumn(3).setPreferredWidth(150);
 		
-		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
-		for(int i=0;i<tableTinTuyenDung.getColumnCount()-1;i++) {
-			tableTinTuyenDung.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);			
-		}
+		tableTinTuyenDung.setDefaultRenderer(Object.class, new TableCellGradient());
 		tableTinTuyenDung.setAutoCreateRowSorter(true);
 		ArrayList<RowSorter.SortKey> list = new ArrayList<>();
         DefaultRowSorter sorter = ((DefaultRowSorter)tableTinTuyenDung.getRowSorter());

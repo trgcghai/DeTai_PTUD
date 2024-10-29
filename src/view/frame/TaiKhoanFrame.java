@@ -60,6 +60,7 @@ import swing.Button;
 import swing.ComboBoxRenderer;
 import swing.GradientRoundPanel;
 import swing.RoundPanel;
+import swing.TableCellGradient;
 import view.dialog.CapSuaTaiKhoanDialog;
 
 public class TaiKhoanFrame extends JFrame implements ActionListener, MouseListener, FocusListener {
@@ -192,11 +193,7 @@ public class TaiKhoanFrame extends JFrame implements ActionListener, MouseListen
 		tableTaiKhoan.getTableHeader().setFont(new Font("Segoe UI",1,14));
 		tableTaiKhoan.setFont(new Font("Segoe UI",0,16));
 		tableTaiKhoan.setRowHeight(30);
-		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
-		for(int i=0;i<tableTaiKhoan.getColumnCount()-1;i++) {
-			tableTaiKhoan.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);			
-		}
+		tableTaiKhoan.setDefaultRenderer(Object.class, new TableCellGradient());
 		tableTaiKhoan.setAutoCreateRowSorter(true);
 		ArrayList<RowSorter.SortKey> list = new ArrayList<>();
         DefaultRowSorter sorter = ((DefaultRowSorter)tableTaiKhoan.getRowSorter());

@@ -41,6 +41,7 @@ import entity.TinTuyenDung;
 import entity.constraint.TrangThai;
 import swing.Button;
 import swing.GradientPanel;
+import swing.TableCellGradient;
 
 public class DanhSachTinTuyenDungDialog extends JDialog implements FocusListener, ActionListener {
 	
@@ -150,11 +151,7 @@ public class DanhSachTinTuyenDungDialog extends JDialog implements FocusListener
 		tableTinTuyenDung.getTableHeader().setFont(new Font("Segoe UI",1,14));
 		tableTinTuyenDung.setFont(new Font("Segoe UI",0,16));
 		tableTinTuyenDung.setRowHeight(30);
-		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
-		for(int i=0;i<tableTinTuyenDung.getColumnCount()-1;i++) {
-			tableTinTuyenDung.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);			
-		}
+		tableTinTuyenDung.setDefaultRenderer(Object.class, new TableCellGradient());
 		tableTinTuyenDung.setAutoCreateRowSorter(true);
 		ArrayList<RowSorter.SortKey> list = new ArrayList<>();
         DefaultRowSorter sorter = ((DefaultRowSorter)tableTinTuyenDung.getRowSorter());

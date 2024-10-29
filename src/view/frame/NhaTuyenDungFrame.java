@@ -65,6 +65,7 @@ import swing.Button;
 import swing.ComboBoxRenderer;
 import swing.GradientRoundPanel;
 import swing.RoundPanel;
+import swing.TableCellGradient;
 import view.dialog.DanhSachTinTuyenDungDialog;
 import view.dialog.TaoSuaTinTuyenDungDialog;
 import view.dialog.ThemSuaNhaTuyenDungDialog;
@@ -216,11 +217,7 @@ public class NhaTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 		tableNhaTuyenDung.getTableHeader().setFont(new Font("Segoe UI",1,14));
 		tableNhaTuyenDung.setFont(new Font("Segoe UI",0,16));
 		tableNhaTuyenDung.setRowHeight(30);
-		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
-		for(int i=0;i<tableNhaTuyenDung.getColumnCount()-2;i++) {
-			tableNhaTuyenDung.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);			
-		}
+		tableNhaTuyenDung.setDefaultRenderer(Object.class, new TableCellGradient());
 		tableNhaTuyenDung.setAutoCreateRowSorter(true);
 		ArrayList<RowSorter.SortKey> list = new ArrayList<>();
         DefaultRowSorter sorter = ((DefaultRowSorter)tableNhaTuyenDung.getRowSorter());

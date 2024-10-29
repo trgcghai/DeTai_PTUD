@@ -79,6 +79,7 @@ import swing.Button;
 import swing.ComboBoxRenderer;
 import swing.GradientRoundPanel;
 import swing.RoundPanel;
+import swing.TableCellGradient;
 import view.dialog.ChiTietHoSoDialog;
 import view.dialog.ChiTietViecLamDialog;
 
@@ -187,7 +188,6 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 		nhatuyendungCombo.setForeground(Color.WHITE);
 		nhatuyendungCombo.setBackground(new Color(89, 145, 144));
 		nhatuyendungCombo.setPreferredSize(new Dimension(200,25));
-//		nhatuyendungCombo.setRenderer(new ComboBoxRenderer("Chọn nhà tuyển dụng"));
 		resNTD.add(nhatuyendungLabel); resNTD.add(nhatuyendungCombo);
 		titleTinTuyenDung=new JLabel("Danh sách tin tuyển dụng");
 		titleTinTuyenDung.setFont(new Font("Segoe UI",1,16));
@@ -301,11 +301,7 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 		table.getTableHeader().setFont(new Font("Segoe UI",1,14));
 		table.setFont(new Font("Segoe UI",0,16));
 		table.setRowHeight(30);
-		DefaultTableCellRenderer centerRenderers = new DefaultTableCellRenderer();
-		centerRenderers.setHorizontalAlignment( JLabel.CENTER );
-		for(int i=0;i<table.getColumnCount()-1;i++) {
-			table.getColumnModel().getColumn(i).setCellRenderer(centerRenderers);			
-		}
+		table.setDefaultRenderer(Object.class, new TableCellGradient());
 		table.setAutoCreateRowSorter(true);
 		ArrayList<RowSorter.SortKey> lists = new ArrayList<>();
         DefaultRowSorter sorters = ((DefaultRowSorter)table.getRowSorter());

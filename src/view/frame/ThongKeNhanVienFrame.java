@@ -57,6 +57,7 @@ import entity.UngVien;
 import entity.constraint.GioiTinh;
 import swing.Button;
 import swing.GradientRoundPanel;
+import swing.TableCellGradient;
 import view.dialog.DanhSachHopDongDialog;
 
 public class ThongKeNhanVienFrame  extends JFrame implements ActionListener, MouseListener{
@@ -225,11 +226,7 @@ public class ThongKeNhanVienFrame  extends JFrame implements ActionListener, Mou
 		tableNhanVien.getColumnModel().getColumn(1).setPreferredWidth(200);
 		tableNhanVien.getColumnModel().getColumn(3).setPreferredWidth(150);
 		
-		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
-		for(int i=0;i<tableNhanVien.getColumnCount();i++) {
-			tableNhanVien.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);			
-		}
+		tableNhanVien.setDefaultRenderer(Object.class, new TableCellGradient());
 		tableNhanVien.setAutoCreateRowSorter(true);
 		ArrayList<RowSorter.SortKey> list = new ArrayList<>();
         DefaultRowSorter sorter = ((DefaultRowSorter)tableNhanVien.getRowSorter());

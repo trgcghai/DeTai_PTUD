@@ -64,6 +64,7 @@ import swing.Button;
 import swing.ComboBoxRenderer;
 import swing.GradientRoundPanel;
 import swing.RoundPanel;
+import swing.TableCellGradient;
 import view.dialog.DanhSachHoSoDialog;
 import view.dialog.TaoSuaHoSoDialog;
 import view.dialog.ThemSuaUngVienDialog;
@@ -215,11 +216,7 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 		tableUngVien.getTableHeader().setFont(new Font("Segoe UI",1,14));
 		tableUngVien.setFont(new Font("Segoe UI",0,16));
 		tableUngVien.setRowHeight(30);
-		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
-		for(int i=0;i<tableUngVien.getColumnCount()-2;i++) {
-			tableUngVien.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);			
-		}
+		tableUngVien.setDefaultRenderer(Object.class, new TableCellGradient());
 		tableUngVien.setAutoCreateRowSorter(true);
 		ArrayList<RowSorter.SortKey> list = new ArrayList<>();
         DefaultRowSorter sorter = ((DefaultRowSorter)tableUngVien.getRowSorter());

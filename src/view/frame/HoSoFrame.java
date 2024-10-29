@@ -69,6 +69,7 @@ import swing.Button;
 import swing.ComboBoxRenderer;
 import swing.GradientRoundPanel;
 import swing.RoundPanel;
+import swing.TableCellGradient;
 import view.dialog.TaoSuaHoSoDialog;
 
 public class HoSoFrame extends JFrame implements ActionListener, MouseListener, FocusListener {
@@ -221,11 +222,7 @@ public class HoSoFrame extends JFrame implements ActionListener, MouseListener, 
 		tableHoSo.getTableHeader().setFont(new Font("Segoe UI",1,14));
 		tableHoSo.setFont(new Font("Segoe UI",0,16));
 		tableHoSo.setRowHeight(30);
-		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
-		for(int i=0;i<tableHoSo.getColumnCount()-1;i++) {
-			tableHoSo.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);			
-		}
+		tableHoSo.setDefaultRenderer(Object.class, new TableCellGradient());
 		tableHoSo.setAutoCreateRowSorter(true);
 		ArrayList<RowSorter.SortKey> list = new ArrayList<>();
         DefaultRowSorter sorter = ((DefaultRowSorter)tableHoSo.getRowSorter());

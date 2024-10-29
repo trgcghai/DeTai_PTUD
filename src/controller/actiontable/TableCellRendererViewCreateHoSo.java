@@ -15,9 +15,13 @@ public class TableCellRendererViewCreateHoSo extends DefaultTableCellRenderer{
 		Component com = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         PanelActionViewCreateHoSo action = new PanelActionViewCreateHoSo();
         if (isSelected == false && row % 2 == 0) {
-            action.setBackground(Color.WHITE);
-        } else {
-            action.setBackground(com.getBackground());
+            action.setBackground(Color.decode("#5faeb1"));
+        } 
+        else if(isSelected){
+        	action.setBackground(Color.decode("#33FF33"));
+        }
+        else {
+        	action.setBackground(com.getBackground());
         }
         return action;
 	}
