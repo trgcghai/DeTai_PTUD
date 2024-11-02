@@ -26,8 +26,10 @@ import controller.actiontable.TableCellEditorCreateTaiKhoan;
 import controller.actiontable.TableCellEditorUpdateDelete;
 import controller.actiontable.TableCellRendererCreateTaiKhoan;
 import controller.actiontable.TableCellRendererUpdateDelete;
+import dao.HopDong_DAO;
 import dao.NhanVien_DAO;
 import entity.constraint.VaiTro;
+import entity.HopDong;
 import entity.NhanVien;
 import swing.Button;
 import swing.GradientRoundPanel;
@@ -54,6 +56,7 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
 	GradientRoundPanel timkiemPanel, danhsachPanel, danhsachNorthPanel, danhsachCenterPanel;
 	
 	private NhanVien_DAO nhanvienDAO;
+	private HopDong_DAO hopdongDAO;
 	
 	public NhanVienFrame(NhanVien userName) {
 		this.userName=userName;
@@ -73,6 +76,7 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
 		Database.getInstance().connect();
 		
 		nhanvienDAO=new NhanVien_DAO();
+		hopdongDAO=new HopDong_DAO();
 				
 		loadData();
 		loadDataTable();
@@ -210,6 +214,12 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
 			public void onDelete(int row) {
 				// TODO Auto-generated method stub
 				NhanVien nv=nhanvienDAO.getNhanVien(tableNhanVien.getValueAt(row, 0).toString());
+				for(HopDong h: hopdongDAO.getListHopDong()) {
+					if(h.getNhanVien().getMaNV().equalsIgnoreCase(nv.getMaNV())) {
+						JOptionPane.showMessageDialog(rootPane, "Nhân viên không thể xóa vì đã lập hợp đồng");
+						return;
+					}
+				}
 				int check=JOptionPane.showConfirmDialog(rootPane, "Có chắc chắn xóa?");
 				if(check==JOptionPane.OK_OPTION) {
 					nhanvienDAO.delete(nv.getMaNV());
@@ -275,6 +285,7 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
 //	Lấy dữ liệu từ sql
 	public void loadData() {
 		nhanvienDAO.setListNhanVien(nhanvienDAO.getDSNhanVien());
+		hopdongDAO.setListHopDong(hopdongDAO.getDSHopDong());
 	}
 	
 //	Load dữ liệu lên bảng
