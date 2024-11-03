@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Properties;
 
@@ -32,6 +33,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
@@ -69,6 +72,7 @@ import swing.Button;
 import swing.ComboBoxRenderer;
 import swing.GradientRoundPanel;
 import swing.RoundPanel;
+import swing.TableCellGradient;
 import view.dialog.TaoSuaHoSoDialog;
 
 public class HoSoFrame extends JFrame implements ActionListener, MouseListener, FocusListener {
@@ -221,11 +225,7 @@ public class HoSoFrame extends JFrame implements ActionListener, MouseListener, 
 		tableHoSo.getTableHeader().setFont(new Font("Segoe UI",1,14));
 		tableHoSo.setFont(new Font("Segoe UI",0,16));
 		tableHoSo.setRowHeight(30);
-		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
-		for(int i=0;i<tableHoSo.getColumnCount()-1;i++) {
-			tableHoSo.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);			
-		}
+		tableHoSo.setDefaultRenderer(Object.class, new TableCellGradient());
 		tableHoSo.setAutoCreateRowSorter(true);
 		ArrayList<RowSorter.SortKey> list = new ArrayList<>();
         DefaultRowSorter sorter = ((DefaultRowSorter)tableHoSo.getRowSorter());
@@ -233,6 +233,7 @@ public class HoSoFrame extends JFrame implements ActionListener, MouseListener, 
         list.add( new RowSorter.SortKey(0, SortOrder.ASCENDING));
         sorter.setSortKeys(list);
         sorter.sort();
+		
 		scrollHoSo=new JScrollPane(tableHoSo);
 		scrollHoSo.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
 		GradientRoundPanel resScroll=new GradientRoundPanel();

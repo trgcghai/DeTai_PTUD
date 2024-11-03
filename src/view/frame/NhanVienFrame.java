@@ -2,66 +2,40 @@ package view.frame;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.GradientPaint;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Image;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Properties;
+import java.util.Comparator;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-
-import org.jdatepicker.impl.JDatePanelImpl;
-import org.jdatepicker.impl.JDatePickerImpl;
-import org.jdatepicker.impl.UtilDateModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 import controller.Database;
 import controller.ExcelHelper;
-import controller.FilterImp;
 import controller.actiontable.TableActionEvent;
 import controller.actiontable.TableCellEditorCreateTaiKhoan;
 import controller.actiontable.TableCellEditorUpdateDelete;
 import controller.actiontable.TableCellRendererCreateTaiKhoan;
 import controller.actiontable.TableCellRendererUpdateDelete;
-import dao.TaiKhoan_DAO;
+import dao.HopDong_DAO;
 import dao.NhanVien_DAO;
-import entity.TaiKhoan;
 import entity.constraint.VaiTro;
+import entity.HopDong;
 import entity.NhanVien;
-import exception.checkBirthday;
-import exception.checkDateOfWork;
-import exception.checkName;
-import exception.checkPhone;
-import exception.checkUserName;
-import exception.checkUserPass;
 import swing.Button;
-import swing.ComboBoxRenderer;
-import swing.GradientPanel;
 import swing.GradientRoundPanel;
-import swing.RoundPanel;
+import swing.TableCellGradient;
 import view.dialog.CapSuaTaiKhoanDialog;
 import view.dialog.ThemSuaNhanVienDialog;
 
@@ -84,6 +58,7 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
 	GradientRoundPanel timkiemPanel, danhsachPanel, danhsachNorthPanel, danhsachCenterPanel;
 	
 	private NhanVien_DAO nhanvienDAO;
+	private HopDong_DAO hopdongDAO;
 	
 	public NhanVienFrame(NhanVien userName) {
 		this.userName=userName;
@@ -103,6 +78,7 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
 		Database.getInstance().connect();
 		
 		nhanvienDAO=new NhanVien_DAO();
+		hopdongDAO=new HopDong_DAO();
 				
 		loadData();
 		loadDataTable();
@@ -201,11 +177,7 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
 		tableNhanVien.getTableHeader().setFont(new Font("Segoe UI",1,14));
 		tableNhanVien.setFont(new Font("Segoe UI",0,16));
 		tableNhanVien.setRowHeight(30);
-		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
-		for(int i=0;i<tableNhanVien.getColumnCount()-1;i++) {
-			tableNhanVien.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);			
-		}
+		tableNhanVien.setDefaultRenderer(Object.class, new TableCellGradient());
 		tableNhanVien.setAutoCreateRowSorter(true);
 		ArrayList<RowSorter.SortKey> list = new ArrayList<>();
         DefaultRowSorter sorter = ((DefaultRowSorter)tableNhanVien.getRowSorter());
@@ -213,6 +185,7 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
         list.add( new RowSorter.SortKey(0, SortOrder.ASCENDING));
         sorter.setSortKeys(list);
         sorter.sort();
+		
 		scrollNhanVien=new JScrollPane(tableNhanVien);
 		scrollNhanVien.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
 		GradientRoundPanel resScroll=new GradientRoundPanel();
@@ -244,6 +217,12 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
 			public void onDelete(int row) {
 				// TODO Auto-generated method stub
 				NhanVien nv=nhanvienDAO.getNhanVien(tableNhanVien.getValueAt(row, 0).toString());
+				for(HopDong h: hopdongDAO.getListHopDong()) {
+					if(h.getNhanVien().getMaNV().equalsIgnoreCase(nv.getMaNV())) {
+						JOptionPane.showMessageDialog(rootPane, "Nhân viên không thể xóa vì đã lập hợp đồng");
+						return;
+					}
+				}
 				int check=JOptionPane.showConfirmDialog(rootPane, "Có chắc chắn xóa?");
 				if(check==JOptionPane.OK_OPTION) {
 					nhanvienDAO.delete(nv.getMaNV());
@@ -309,6 +288,7 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
 //	Lấy dữ liệu từ sql
 	public void loadData() {
 		nhanvienDAO.setListNhanVien(nhanvienDAO.getDSNhanVien());
+		hopdongDAO.setListHopDong(hopdongDAO.getDSHopDong());
 	}
 	
 //	Load dữ liệu lên bảng

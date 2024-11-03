@@ -57,6 +57,7 @@ import entity.TinTuyenDung;
 import entity.UngVien;
 import swing.Button;
 import swing.GradientRoundPanel;
+import swing.TableCellGradient;
 
 public class ThongKeHopDongFrame extends JFrame implements ActionListener {
 	NhanVien userName;
@@ -119,17 +120,16 @@ public class ThongKeHopDongFrame extends JFrame implements ActionListener {
 		
 //		Hiển thị Thống kê và danh sách tin tuyển dụng
 		centerPanelHopDong=new JPanel();
-		centerPanelHopDong.setLayout(new BorderLayout(10, 10));
-		centerPanelHopDong.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		centerPanelHopDong.setLayout(new BorderLayout(5,5));
 		centerPanelHopDong.setBackground(new Color(89, 145, 144));
 //		Thống kê tin tuyển dụng
 		timkiemPanel=new GradientRoundPanel();
-		timkiemPanel.setLayout(new FlowLayout(FlowLayout.RIGHT,15,5));
+		timkiemPanel.setLayout(new FlowLayout(FlowLayout.LEFT,19,5));
 		
 		comboBoxNTD=new JComboBox<Object>(); 
 		comboBoxNTD.setFont(new Font("Segoe UI",0,16));
 		comboBoxNTD.setOpaque(false);
-		comboBoxNTD.setPreferredSize(new Dimension(250,30));
+		comboBoxNTD.setPreferredSize(new Dimension(270,30));
 		comboBoxUV=new JComboBox<Object>(); 
 		comboBoxUV.setFont(new Font("Segoe UI",0,16));
 		comboBoxUV.setOpaque(false);
@@ -153,7 +153,7 @@ public class ThongKeHopDongFrame extends JFrame implements ActionListener {
 		
 		JPanel resBtnSearch=new JPanel();
 		resBtnSearch.setOpaque(false);
-		resBtnSearch.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 5));
+		resBtnSearch.setLayout(new FlowLayout(FlowLayout.RIGHT, 7, 5));
 		resBtnSearch.setBackground(Color.WHITE);
 		
 		btnTimKiem= createButton("Thống kê", new Color(0,102,102), Color.WHITE); 
@@ -177,7 +177,7 @@ public class ThongKeHopDongFrame extends JFrame implements ActionListener {
 		iconBtnSave=new ImageIcon(getClass().getResource("/image/save.png"));
 		JPanel resBtnThem=new JPanel();
 		resBtnThem.setOpaque(false);
-		resBtnThem.setBorder(BorderFactory.createEmptyBorder(10,10,0,20));
+		resBtnThem.setBorder(BorderFactory.createEmptyBorder(10,10,0,15));
 		resBtnThem.setBackground(Color.WHITE);
 		
 		btnExcel=new Button("Xuất Excel");
@@ -217,11 +217,7 @@ public class ThongKeHopDongFrame extends JFrame implements ActionListener {
 		tableHopDong.setFont(new Font("Segoe UI",0,16));
 		tableHopDong.setRowHeight(30);
 		
-		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
-		for(int i=0;i<tableHopDong.getColumnCount();i++) {
-			tableHopDong.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);			
-		}
+		tableHopDong.setDefaultRenderer(Object.class, new TableCellGradient());
 		tableHopDong.setAutoCreateRowSorter(true);
 		ArrayList<RowSorter.SortKey> list = new ArrayList<>();
         DefaultRowSorter sorter = ((DefaultRowSorter)tableHopDong.getRowSorter());
@@ -462,8 +458,8 @@ public class ThongKeHopDongFrame extends JFrame implements ActionListener {
 					comboBoxNTD.setSelectedIndex(0);
 					comboBoxUV.setSelectedIndex(0);
 					hopdong_dao.setListHopDong(hopdong_dao.getDSHopDong());
-					modelBatDau.setValue(new Date());
-					modelKetThuc.setValue(new Date());
+					modelBatDau.setValue(null);
+					modelKetThuc.setValue(null);
 					
 					loadDataTable();
 					loadDataTotal();

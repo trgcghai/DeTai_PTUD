@@ -49,6 +49,7 @@ import controller.actiontable.TableCellRendererUpdateDelete;
 import controller.actiontable.TableCellRendererViewCreateHoSo;
 import controller.actiontable.TableCellRendererViewCreateTinTuyenDung;
 import dao.TaiKhoan_DAO;
+import dao.TinTuyenDung_DAO;
 import dao.NhaTuyenDung_DAO;
 import dao.NhanVien_DAO;
 import entity.TaiKhoan;
@@ -65,6 +66,7 @@ import swing.Button;
 import swing.ComboBoxRenderer;
 import swing.GradientRoundPanel;
 import swing.RoundPanel;
+import swing.TableCellGradient;
 import view.dialog.DanhSachTinTuyenDungDialog;
 import view.dialog.TaoSuaTinTuyenDungDialog;
 import view.dialog.ThemSuaNhaTuyenDungDialog;
@@ -89,6 +91,7 @@ public class NhaTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 	danhsachPanel, danhsachNorthPanel, danhsachCenterPanel;
 	
 	private NhaTuyenDung_DAO nhatuyendungDAO;
+	private TinTuyenDung_DAO tintuyendungDAO;
 	
 	public NhaTuyenDungFrame(NhanVien userName) {
 		this.userName=userName;
@@ -108,6 +111,7 @@ public class NhaTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 		Database.getInstance().connect();
 		
 		nhatuyendungDAO=new NhaTuyenDung_DAO();
+		tintuyendungDAO=new TinTuyenDung_DAO();
 		
 		loadData();
 		loadDataTable();
@@ -216,11 +220,7 @@ public class NhaTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 		tableNhaTuyenDung.getTableHeader().setFont(new Font("Segoe UI",1,14));
 		tableNhaTuyenDung.setFont(new Font("Segoe UI",0,16));
 		tableNhaTuyenDung.setRowHeight(30);
-		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
-		for(int i=0;i<tableNhaTuyenDung.getColumnCount()-2;i++) {
-			tableNhaTuyenDung.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);			
-		}
+		tableNhaTuyenDung.setDefaultRenderer(Object.class, new TableCellGradient());
 		tableNhaTuyenDung.setAutoCreateRowSorter(true);
 		ArrayList<RowSorter.SortKey> list = new ArrayList<>();
         DefaultRowSorter sorter = ((DefaultRowSorter)tableNhaTuyenDung.getRowSorter());
@@ -258,11 +258,16 @@ public class NhaTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 			@Override
 			public void onDelete(int row) {
 				// TODO Auto-generated method stub
-				int check=JOptionPane.showConfirmDialog(rootPane, "Có chắc chắn xóa?");
-				if(check==JOptionPane.OK_OPTION) {
-					nhatuyendungDAO.delete(tableNhaTuyenDung.getValueAt(row, 0).toString());
-					JOptionPane.showMessageDialog(rootPane, "Xóa nhà tuyển dụng thành công");
-					updateTable();
+				if(tintuyendungDAO.getTinTuyenDungTheoNTD(tableNhaTuyenDung.getValueAt(row, 0).toString(), 1).size() > 0) {
+					JOptionPane.showMessageDialog(rootPane, "Không thể xóa nhà tuyển dụng");
+				}
+				else {
+					int check=JOptionPane.showConfirmDialog(rootPane, "Có chắc chắn xóa?");
+					if(check==JOptionPane.OK_OPTION) {
+						nhatuyendungDAO.delete(tableNhaTuyenDung.getValueAt(row, 0).toString());
+						JOptionPane.showMessageDialog(rootPane, "Xóa nhà tuyển dụng thành công");
+						updateTable();
+					}
 				}
 			}
 
@@ -319,6 +324,7 @@ public class NhaTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 //	Lấy dữ liệu từ sql
 	public void loadData() {
 		nhatuyendungDAO.setListNhatuyenDung(nhatuyendungDAO.getDsNhaTuyenDung());
+		tintuyendungDAO.setListTinTuyenDung(tintuyendungDAO.getDsTinTuyenDung());
 	}
 	
 //	Load dữ liệu lên bảng

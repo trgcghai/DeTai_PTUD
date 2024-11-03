@@ -79,6 +79,7 @@ import swing.Button;
 import swing.ComboBoxRenderer;
 import swing.GradientRoundPanel;
 import swing.RoundPanel;
+import swing.TableCellGradient;
 import view.dialog.ChiTietHopDongDialog;
 
 public class HopDongFrame extends JFrame implements ActionListener, MouseListener, FocusListener {
@@ -181,25 +182,11 @@ public class HopDongFrame extends JFrame implements ActionListener, MouseListene
 		danhsachTTDNorthPanel=new GradientRoundPanel();
 		danhsachTTDNorthPanel.setLayout(new BorderLayout(10,10));
 		danhsachTTDNorthPanel.setBackground(Color.WHITE);
-//		JPanel resNTD=new JPanel();
-//		resNTD.setOpaque(false);
-//		resNTD.setBorder(BorderFactory.createEmptyBorder(10,10,0,15));
-//		nhatuyendungLabel=new JLabel("Nhà tuyển dụng");
-//		nhatuyendungLabel.setFont(new Font("Segoe UI",1,16));
-//		nhatuyendungLabel.setForeground(Color.WHITE);
-//		nhatuyendungCombo=new JComboBox();
-//		nhatuyendungCombo.setFont(new Font("Segoe UI",0,16));
-//		nhatuyendungCombo.setForeground(Color.WHITE);
-//		nhatuyendungCombo.setBackground(new Color(89, 145, 144));
-//		nhatuyendungCombo.setPreferredSize(new Dimension(200,25));
-//		nhatuyendungCombo.setRenderer(new ComboBoxRenderer("Chọn nhà tuyển dụng"));
-//		resNTD.add(nhatuyendungLabel); resNTD.add(nhatuyendungCombo);
 		titleTinTuyenDung=new JLabel("Danh sách nhà tuyển dụng");
 		titleTinTuyenDung.setFont(new Font("Segoe UI",1,16));
 		titleTinTuyenDung.setForeground(Color.WHITE);
 		titleTinTuyenDung.setBorder(BorderFactory.createEmptyBorder(10,20,0,10));
 		danhsachTTDNorthPanel.add(titleTinTuyenDung, BorderLayout.WEST);
-//		danhsachTTDNorthPanel.add(resNTD, BorderLayout.EAST);
 		
 		danhsachTTDCenterPanel=new GradientRoundPanel();
 		danhsachTTDCenterPanel.setLayout(new BoxLayout(danhsachTTDCenterPanel, BoxLayout.PAGE_AXIS));
@@ -322,29 +309,12 @@ public class HopDongFrame extends JFrame implements ActionListener, MouseListene
 		danhsachHoSoNorthPanel=new GradientRoundPanel();
 		danhsachHoSoNorthPanel.setLayout(new BorderLayout(10,10));
 		danhsachHoSoNorthPanel.setBackground(Color.WHITE);
-//		JPanel resUngVien=new JPanel();
-//		resUngVien.setOpaque(false);
-//		resUngVien.setBorder(BorderFactory.createEmptyBorder(10,10,0,15));
-//		resUngVien.setBackground(Color.WHITE);
-//		
-//		ungvienLabel=new JLabel("Ứng viên");
-//		ungvienLabel.setFont(new Font("Segoe UI",1,16));
-//		ungvienLabel.setForeground(Color.WHITE);
-//		
-//		ungvienCombo=new JComboBox();
-//		ungvienCombo.setForeground(Color.WHITE);
-//		ungvienCombo.setBackground(new Color(89, 145, 144));
-//		ungvienCombo.setFont(new Font("Segoe UI",0,16));
-//		ungvienCombo.setPreferredSize(new Dimension(200,25));
-//		ungvienCombo.setRenderer(new ComboBoxRenderer("Chọn ứng viên"));
-//		resUngVien.add(ungvienLabel); resUngVien.add(ungvienCombo);
 		
 		titleHoSo = createLabel("Danh sách ứng viên", true);
 		titleHoSo.setFont(new Font("Segoe UI",1,16));
 		titleHoSo.setForeground(Color.WHITE);
 		titleHoSo.setBorder(BorderFactory.createEmptyBorder(10,20,0,10));
 		danhsachHoSoNorthPanel.add(titleHoSo, BorderLayout.WEST);
-//		danhsachHoSoNorthPanel.add(resUngVien, BorderLayout.EAST);
 		
 		danhsachHoSoCenterPanel=new GradientRoundPanel();
 		danhsachHoSoCenterPanel.setLayout(new BoxLayout(danhsachHoSoCenterPanel, BoxLayout.PAGE_AXIS));
@@ -392,11 +362,7 @@ public class HopDongFrame extends JFrame implements ActionListener, MouseListene
 		table.getTableHeader().setFont(new Font("Segoe UI",1,14));
 		table.setFont(new Font("Segoe UI",0,16));
 		table.setRowHeight(30);
-		DefaultTableCellRenderer centerRenderers = new DefaultTableCellRenderer();
-		centerRenderers.setHorizontalAlignment( JLabel.CENTER );
-		for(int i=0;i<table.getColumnCount();i++) {
-			table.getColumnModel().getColumn(i).setCellRenderer(centerRenderers);			
-		}
+		table.setDefaultRenderer(Object.class, new TableCellGradient());
 		table.setAutoCreateRowSorter(true);
 		ArrayList<RowSorter.SortKey> lists = new ArrayList<>();
         DefaultRowSorter sorters = ((DefaultRowSorter)table.getRowSorter());
@@ -590,6 +556,7 @@ public class HopDongFrame extends JFrame implements ActionListener, MouseListene
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
 		if(e.getSource().equals(tableUngVien)) {
+			tableNhaTuyenDung.clearSelection();
 			int index=tableUngVien.getSelectedRow();
 			if(index!=-1) {
 				DateTimeFormatter format=DateTimeFormatter.ofPattern("dd-MM-yyyy");
@@ -599,6 +566,7 @@ public class HopDongFrame extends JFrame implements ActionListener, MouseListene
 			}
 		}
 		else if(e.getSource().equals(tableNhaTuyenDung)) {
+			tableUngVien.clearSelection();
 			int idx=tableNhaTuyenDung.getSelectedRow();
 			hopdongDAO.setListHopDong(hopdongDAO.
 					getHopDongTheoNhaTuyenDung(tableNhaTuyenDung.getValueAt(idx, 0).toString()));

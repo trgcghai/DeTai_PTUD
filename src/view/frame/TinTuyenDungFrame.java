@@ -52,6 +52,7 @@ import controller.actiontable.TableCellRendererUpdateDelete;
 import controller.actiontable.TableCellRendererViewCreateHoSo;
 import dao.TaiKhoan_DAO;
 import dao.TinTuyenDung_DAO;
+import dao.HopDong_DAO;
 import dao.NhaTuyenDung_DAO;
 import dao.NhanVien_DAO;
 import entity.TaiKhoan;
@@ -103,6 +104,7 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 	
 	private TinTuyenDung_DAO tintuyendungDAO;
 	private NhaTuyenDung_DAO nhatuyendungDAO;
+	private HopDong_DAO hopdongDAO;
 	
 	public TinTuyenDungFrame(NhanVien userName) {
 		this.userName=userName;
@@ -114,6 +116,7 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 		
 		tintuyendungDAO=new TinTuyenDung_DAO();
 		nhatuyendungDAO=new NhaTuyenDung_DAO();
+		hopdongDAO=new HopDong_DAO();
 		
 //		Tạo component bên phải
 		initComponent();
@@ -342,6 +345,7 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 	public void loadData() {
 		tintuyendungDAO.setListTinTuyenDung(tintuyendungDAO.getDsTinTuyenDung());
 		nhatuyendungDAO.setListNhatuyenDung(nhatuyendungDAO.getDsNhaTuyenDung());
+		hopdongDAO.setListHopDong(hopdongDAO.getDSHopDong());
 		
 		timkiemNTDText.addItem("Chọn nhà tuyển dụng");
 		for(NhaTuyenDung i: nhatuyendungDAO.getListNhatuyenDung()) {
@@ -613,10 +617,16 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 		}
 		for(int i=0; i<deletes.size();i++) {
 			if(obj.equals(deletes.get(i))) {
-				int check=JOptionPane.showConfirmDialog(parent, "Có chắc chắn xóa?");
-				if(check==JOptionPane.OK_OPTION) {
-					tintuyendungDAO.delete(deletes.get(i).getName());
-					updateData();
+				if(hopdongDAO.getHopDongTheoTinTuyenDung(deletes.get(i).getName()).size() > 0) {
+					JOptionPane.showMessageDialog(rootPane, "Không thể xóa tin tuyển dụng");
+				}
+				else {
+					int check=JOptionPane.showConfirmDialog(parent, "Có chắc chắn xóa?");
+					if(check==JOptionPane.OK_OPTION) {
+						tintuyendungDAO.delete(deletes.get(i).getName());
+						JOptionPane.showMessageDialog(rootPane, "Xóa tin tuyển dụng thành công");
+						updateData();
+					}
 				}
 				break;
 			}

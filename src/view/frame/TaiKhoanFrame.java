@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Properties;
 
@@ -32,6 +33,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
@@ -60,6 +63,7 @@ import swing.Button;
 import swing.ComboBoxRenderer;
 import swing.GradientRoundPanel;
 import swing.RoundPanel;
+import swing.TableCellGradient;
 import view.dialog.CapSuaTaiKhoanDialog;
 
 public class TaiKhoanFrame extends JFrame implements ActionListener, MouseListener, FocusListener {
@@ -192,11 +196,7 @@ public class TaiKhoanFrame extends JFrame implements ActionListener, MouseListen
 		tableTaiKhoan.getTableHeader().setFont(new Font("Segoe UI",1,14));
 		tableTaiKhoan.setFont(new Font("Segoe UI",0,16));
 		tableTaiKhoan.setRowHeight(30);
-		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
-		for(int i=0;i<tableTaiKhoan.getColumnCount()-1;i++) {
-			tableTaiKhoan.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);			
-		}
+		tableTaiKhoan.setDefaultRenderer(Object.class, new TableCellGradient());
 		tableTaiKhoan.setAutoCreateRowSorter(true);
 		ArrayList<RowSorter.SortKey> list = new ArrayList<>();
         DefaultRowSorter sorter = ((DefaultRowSorter)tableTaiKhoan.getRowSorter());
@@ -204,6 +204,7 @@ public class TaiKhoanFrame extends JFrame implements ActionListener, MouseListen
         list.add( new RowSorter.SortKey(0, SortOrder.ASCENDING));
         sorter.setSortKeys(list);
         sorter.sort();
+		
 		scrollTaiKhoan=new JScrollPane(tableTaiKhoan);
 		scrollTaiKhoan.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
 		GradientRoundPanel resScroll=new GradientRoundPanel();

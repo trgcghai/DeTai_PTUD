@@ -48,6 +48,8 @@ import controller.actiontable.TableCellRendererUpdateDelete;
 import controller.actiontable.TableCellRendererViewCreateHoSo;
 import dao.TaiKhoan_DAO;
 import dao.UngVien_DAO;
+import dao.HoSo_DAO;
+import dao.HopDong_DAO;
 import dao.NhanVien_DAO;
 import entity.TaiKhoan;
 import entity.UngVien;
@@ -64,6 +66,7 @@ import swing.Button;
 import swing.ComboBoxRenderer;
 import swing.GradientRoundPanel;
 import swing.RoundPanel;
+import swing.TableCellGradient;
 import view.dialog.DanhSachHoSoDialog;
 import view.dialog.TaoSuaHoSoDialog;
 import view.dialog.ThemSuaUngVienDialog;
@@ -88,6 +91,8 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 	danhsachPanel, danhsachNorthPanel, danhsachCenterPanel;
 	
 	private UngVien_DAO ungvienDAO;
+	private HoSo_DAO hosoDAO;
+	private HopDong_DAO hopdongDAO;
 	
 	
 	public UngVienFrame(NhanVien userName) {
@@ -108,6 +113,8 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 		Database.getInstance().connect();
 		
 		ungvienDAO=new UngVien_DAO();
+		hosoDAO=new HoSo_DAO();
+		hopdongDAO=new HopDong_DAO();
 		
 		loadData();
 		loadDataTable();
@@ -215,11 +222,7 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 		tableUngVien.getTableHeader().setFont(new Font("Segoe UI",1,14));
 		tableUngVien.setFont(new Font("Segoe UI",0,16));
 		tableUngVien.setRowHeight(30);
-		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
-		for(int i=0;i<tableUngVien.getColumnCount()-2;i++) {
-			tableUngVien.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);			
-		}
+		tableUngVien.setDefaultRenderer(Object.class, new TableCellGradient());
 		tableUngVien.setAutoCreateRowSorter(true);
 		ArrayList<RowSorter.SortKey> list = new ArrayList<>();
         DefaultRowSorter sorter = ((DefaultRowSorter)tableUngVien.getRowSorter());
@@ -258,11 +261,16 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 			public void onDelete(int row) {
 				// TODO Auto-generated method stub
 				UngVien uv=ungvienDAO.getUngVien(tableUngVien.getValueAt(row, 0).toString());
-				int check=JOptionPane.showConfirmDialog(rootPane, "Có chắc chắn xóa?");
-				if(check==JOptionPane.OK_OPTION) {
-					ungvienDAO.delete(uv.getMaUV());
-					JOptionPane.showMessageDialog(rootPane, "Xóa ứng viên thành công");
-					updateTable();
+				if(hopdongDAO.getHopDongTheoUngVien(uv.getMaUV()).size() > 0 || hosoDAO.getHoSoTheoUngVien(uv.getMaUV()).size() > 0) {
+					JOptionPane.showMessageDialog(rootPane, "Không thể xóa ứng viên vì đã lập hồ sơ hoặc hợp đồng");
+				}
+				else {
+					int check=JOptionPane.showConfirmDialog(rootPane, "Có chắc chắn xóa?");
+					if(check==JOptionPane.OK_OPTION) {
+						ungvienDAO.delete(uv.getMaUV());
+						JOptionPane.showMessageDialog(rootPane, "Xóa ứng viên thành công");
+						updateTable();
+					}
 				}
 			}
 
@@ -319,6 +327,8 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 //	Lấy dữ liệu từ sql
 	public void loadData() {
 		ungvienDAO.setListUngVien(ungvienDAO.getDSUngVien());
+		hosoDAO.setListHoSo(hosoDAO.getDSHoSo());
+		hopdongDAO.setListHopDong(hopdongDAO.getDSHopDong());
 	}
 	
 //	Load dữ liệu lên bảng

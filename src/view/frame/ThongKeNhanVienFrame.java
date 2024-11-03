@@ -45,6 +45,9 @@ import org.jdatepicker.impl.UtilDateModel;
 
 import controller.ExcelHelper;
 import controller.LabelDateFormatter;
+import controller.actiontable.TableActionEvent;
+import controller.actiontable.TableCellEditorDetail;
+import controller.actiontable.TableCellRendererDetail;
 import dao.HopDong_DAO;
 import dao.NhanVien_DAO;
 import dao.UngVien_DAO;
@@ -54,8 +57,10 @@ import entity.UngVien;
 import entity.constraint.GioiTinh;
 import swing.Button;
 import swing.GradientRoundPanel;
+import swing.TableCellGradient;
+import view.dialog.DanhSachHopDongDialog;
 
-public class ThongKeNhanVienFrame  extends JFrame implements ActionListener{
+public class ThongKeNhanVienFrame  extends JFrame implements ActionListener, MouseListener{
 	NhanVien userName;
 	ThongKeNhanVienFrame parent;
 	
@@ -87,6 +92,8 @@ public class ThongKeNhanVienFrame  extends JFrame implements ActionListener{
 		
 //		Thêm sự kiện
 		addActionListener();
+		addMousListener();
+		addTableListener();
 		
 		nhanvienDAO=new NhanVien_DAO();
 		hopdongDAO=new HopDong_DAO();
@@ -117,13 +124,12 @@ public class ThongKeNhanVienFrame  extends JFrame implements ActionListener{
 		
 //		Hiển thị tìm kiếm và thống kê nhân viên 
 		centerPanelNhanVien=new JPanel();
-		centerPanelNhanVien.setLayout(new BorderLayout(10, 10));
-		centerPanelNhanVien.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		centerPanelNhanVien.setLayout(new BorderLayout(5,5));
 		centerPanelNhanVien.setBackground(new Color(89, 145, 144));
 		
 //		Tìm kiếm nhân viên
 		timkiemPanel=new GradientRoundPanel();
-		timkiemPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 15, 5));
+		timkiemPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 19, 5));
 		
 		nhanVienText=new JComboBox<String>(); 
 		nhanVienText.setFont(new Font("Segoe UI",0,16));
@@ -143,19 +149,19 @@ public class ThongKeNhanVienFrame  extends JFrame implements ActionListener{
 		p.put("text.year", "Year");
 		JDatePanelImpl panelDate=new JDatePanelImpl(modelBatDau, p);
 		
-		ngayBatDauLabel= createLabel("Ngày bắt đầu:"); 
+		ngayBatDauLabel= createLabel("Ngày lập hợp đồng:"); 
 		ngayBatDau=new JDatePickerImpl(panelDate, new LabelDateFormatter());
 		ngayBatDau.setPreferredSize(new Dimension(150,25));
 
 		panelDate=new JDatePanelImpl(modelKetThuc, p);
-		ngayKetThucLabel= createLabel("Ngày kết thúc:"); 
+		ngayKetThucLabel= createLabel("-"); 
 		ngayKetThuc=new JDatePickerImpl(panelDate, new LabelDateFormatter());
 		ngayKetThuc.setPreferredSize(new Dimension(150,25));
 		
 		JPanel resBtnSearch=new JPanel();
 		resBtnSearch.setOpaque(false);
-		resBtnSearch.setPreferredSize(new Dimension(350, 35));
-		resBtnSearch.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 5));
+		resBtnSearch.setPreferredSize(new Dimension(433, 35));
+		resBtnSearch.setLayout(new FlowLayout(FlowLayout.RIGHT, 15, 5));
 		btnTimKiem= createButton("Thống kê", new Color(0,102,102), Color.WHITE); 
 		btnLamLai= createButton("Hủy", Color.RED, Color.WHITE); 
 		resBtnSearch.add(btnTimKiem); 
@@ -178,7 +184,7 @@ public class ThongKeNhanVienFrame  extends JFrame implements ActionListener{
 		iconBtnSave=new ImageIcon(getClass().getResource("/image/save.png"));
 		JPanel resBtnThem=new JPanel();
 		resBtnThem.setOpaque(false);
-		resBtnThem.setBorder(BorderFactory.createEmptyBorder(10,10,0,20));
+		resBtnThem.setBorder(BorderFactory.createEmptyBorder(10,10,0,15));
 		resBtnThem.setBackground(Color.WHITE);
 		
 		btnExcel=new Button("Xuất Excel");
@@ -198,13 +204,15 @@ public class ThongKeNhanVienFrame  extends JFrame implements ActionListener{
 		danhsachCenterPanel=new GradientRoundPanel();
 		danhsachCenterPanel.setLayout(new BoxLayout(danhsachCenterPanel, BoxLayout.PAGE_AXIS));
 		danhsachCenterPanel.setBackground(Color.WHITE);
-		String[] colName= {"Mã nhân viên","Tên nhân viên","Số điện thoại","Giới tính", "Ngày sinh", "Số hợp đồng", "Tổng giá trị hợp đồng"};
+		String[] colName= {"Mã nhân viên","Tên nhân viên","Số điện thoại","Giới tính", "Ngày sinh", 
+				"Số hợp đồng", "Tổng giá trị hợp đồng","Xem hợp đồng"};
 		Object[][] data = {
-			    {1, "Nguyễn Thắng Minh Đạt", "0123456789", "email@gmail.com"},
+			    {1, "Nguyễn Thắng Minh Đạt", "0123456789", "Nam",
+			    	"13-12-2003","10","1000000",null},
 			};
 		modelTableNhanVien= new DefaultTableModel(data, colName){
 		boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, true
             };
 		
         @Override
@@ -218,11 +226,7 @@ public class ThongKeNhanVienFrame  extends JFrame implements ActionListener{
 		tableNhanVien.getColumnModel().getColumn(1).setPreferredWidth(200);
 		tableNhanVien.getColumnModel().getColumn(3).setPreferredWidth(150);
 		
-		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-		centerRenderer.setHorizontalAlignment( JLabel.CENTER );
-		for(int i=0;i<tableNhanVien.getColumnCount();i++) {
-			tableNhanVien.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);			
-		}
+		tableNhanVien.setDefaultRenderer(Object.class, new TableCellGradient());
 		tableNhanVien.setAutoCreateRowSorter(true);
 		ArrayList<RowSorter.SortKey> list = new ArrayList<>();
         DefaultRowSorter sorter = ((DefaultRowSorter)tableNhanVien.getRowSorter());
@@ -265,7 +269,7 @@ public class ThongKeNhanVienFrame  extends JFrame implements ActionListener{
 		
 		JPanel temp1 = new JPanel();
 		temp1.setLayout(new FlowLayout(FlowLayout.LEFT));
-		summaryNumberLabel= createLabel("Tổng số lượng hợp đồng:"); 
+		summaryNumberLabel= createLabel("Tổng số lượng nhân viên:"); 
 		summaryNumberLabel.setFont(new Font("Segoe UI",1,16));
 		numberLabel = createLabel("");
 		numberLabel.setFont(new Font("Segoe UI",1,16));
@@ -283,22 +287,6 @@ public class ThongKeNhanVienFrame  extends JFrame implements ActionListener{
 		NhanVienPanel.add(centerPanelNhanVien, BorderLayout.CENTER);
 	}
 	
-//	Xóa trạng thái text chuột không nằm trong ô
-	public void removePlaceHolder(JTextField text) {
-		Font font=text.getFont();
-		font=font.deriveFont(Font.PLAIN);
-		text.setFont(font);
-		text.setForeground(Color.BLACK);
-	}
-	
-//	Trạng thái text chuột không nằm trong ô
-	public void addPlaceHolder(JTextField text) {
-		Font font=text.getFont();
-		font=font.deriveFont(Font.ITALIC);
-		text.setFont(font);
-		text.setForeground(Color.GRAY);
-	}
-	
 //	Load dữ liệu lên bảng
 	public void loadDataTable() {
 		DecimalFormat df = new DecimalFormat("#,###");
@@ -308,7 +296,7 @@ public class ThongKeNhanVienFrame  extends JFrame implements ActionListener{
 		for(Object[] i: hopdongDAO.thongKeHopDongTheoNhanVien()) {
 			modelTableNhanVien.addRow(new Object[] {
 					i[0], i[1], i[2], i[3], i[4], 
-					i[5], df.format(i[6])+" VNĐ"
+					i[5], df.format(i[6])+" VNĐ",null
 			});
 
 			countTotal++;
@@ -330,6 +318,70 @@ public class ThongKeNhanVienFrame  extends JFrame implements ActionListener{
 		btnExcel.addActionListener(this);
 		btnTimKiem.addActionListener(this);
 		btnLamLai.addActionListener(this);
+	}
+	
+	public void addMousListener() {
+		tableNhanVien.addMouseListener(this);
+	}
+	
+	public void addTableListener() {
+		TableActionEvent event=new TableActionEvent() {
+			
+			@Override
+			public void onViewTinTuyenDung(int row) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onViewHoSo(int row) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onViewDetail(int row) {
+				// TODO Auto-generated method stub
+				NhanVien nv=nhanvienDAO.getNhanVien(tableNhanVien.getValueAt(row, 0).toString());
+				SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd");
+				
+				new DanhSachHopDongDialog(parent, rootPaneCheckingEnabled, nv, 
+					modelBatDau.getValue()!=null?LocalDate.parse(format.format(modelBatDau.getValue())):null, 
+					modelKetThuc.getValue()!=null?LocalDate.parse(format.format(modelKetThuc.getValue())):null).setVisible(true);;
+			}
+			
+			@Override
+			public void onUpdate(int row) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onDelete(int row) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onCreateTinTuyenDung(int row) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onCreateTaiKhoan(int row) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onCreateHoSo(int row) {
+				// TODO Auto-generated method stub
+				
+			}
+		};
+		tableNhanVien.getColumnModel().getColumn(7).setCellRenderer(new TableCellRendererDetail());
+		tableNhanVien.getColumnModel().getColumn(7).setCellEditor(new TableCellEditorDetail(event));
 	}
 	
 	public int getFetchType() {
@@ -508,8 +560,8 @@ public class ThongKeNhanVienFrame  extends JFrame implements ActionListener{
 		}
 		else if(obj.equals(btnLamLai)) {
 			nhanvienDAO.setListNhanVien((nhanvienDAO.getDSNhanVien()));
-			modelBatDau.setValue(new Date());
-			modelKetThuc.setValue(new Date());
+			modelBatDau.setValue(null);
+			modelKetThuc.setValue(null);
 			gioitinhText.setSelectedIndex(0);
 			nhanVienText.setSelectedIndex(0);
 			loadDataTable();
@@ -518,6 +570,36 @@ public class ThongKeNhanVienFrame  extends JFrame implements ActionListener{
 
 	public JPanel getPanel() {
 		return this.NhanVienPanel;
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

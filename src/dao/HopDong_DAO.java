@@ -351,6 +351,29 @@ public class HopDong_DAO {
 		return res;
 	}
 	
+	public int getSoLuongHopDongTheoTTD(String maTTD) {
+		int res = 0;
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			PreparedStatement stmt = con.prepareStatement("\r\n"
+					+ "select COUNT(*) as soluong \r\n"
+					+ "from TinTuyenDung ttd join HopDong hd\r\n"
+					+ "on ttd.MaTTD=hd.MaTTD\r\n"
+					+ "where ttd.MaTTD=?\r\n"
+					+ "group by ttd.MaTTD");
+			stmt.setString(1, maTTD);
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				res = rs.getInt(1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return res;
+	}
+	
 	public double getTongGiaTriHopDong() {
 		double res = 0;
 		Database.getInstance();
@@ -765,6 +788,64 @@ public class HopDong_DAO {
 				int soLuongTtd = rs.getInt(5);
 				
 				result.add(new Object[] {maNtd, tenNtd, email, dienThoai, soLuongTtd});
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	public ArrayList<HopDong> getHopDongTheoNhanVien(String maNV, LocalDate ngaybatdau, LocalDate ngayketthuc) {
+		ArrayList<HopDong> list = new ArrayList<HopDong>();
+		DateTimeFormatter formater = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			PreparedStatement stmt=null;
+			if(ngaybatdau!=null && ngayketthuc!=null) {
+				stmt = con.prepareStatement("select * from HopDong \r\n"
+						+ "where MaNV = ? and ThoiGian Between ? and ?");
+				stmt.setString(1, maNV);
+				stmt.setString(2, formater.format(ngaybatdau));
+				stmt.setString(3, formater.format(ngayketthuc));
+			}
+			else {
+				stmt = con.prepareStatement("select * from HopDong where MaNV = ?");
+				stmt.setString(1, maNV);
+			}
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				String maHD = rs.getString(1);
+				double phiDichVu = rs.getDouble(2);
+				LocalDate thoiGian = rs.getDate(3).toLocalDate();
+				TinTuyenDung tinTuyenDung = new TinTuyenDung(rs.getString(4));
+				UngVien ungVien = new UngVien(rs.getString(5));
+				NhanVien nhanVien  = new NhanVien(rs.getString(6));
+				
+				list.add(new HopDong(maHD, phiDichVu, thoiGian, tinTuyenDung, ungVien, nhanVien));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+	
+	public double thongKeHopDongTheoNhanVien(String maNV, int thang) {
+		double result = 0;
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			PreparedStatement stmt = con.prepareStatement("select sum(PhiDichVu) \r\n"
+					+ "from HopDong hd join NhanVien nv on hd.MaNV = nv.MaNV\r\n"
+					+ "WHERE nv.MaNV= ? AND MONTH(ThoiGian)= ? \r\n"
+					+ "group by nv.Manv, TenNV, SoDienThoai, GioiTinh, NgaySinh, MONTH(ThoiGian)");
+			stmt.setString(1, maNV);
+			stmt.setInt(2, thang);
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				result = rs.getDouble(1);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

@@ -54,13 +54,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		vaitroLeftLabel.setFont(new Font("Segoe UI",1,16));
 		vaitroLeftLabel.setForeground(Color.WHITE);
 		vaitroLeftLabel.setPreferredSize(new Dimension(getWidth(), 50));
-		VaiTro[] vaitros=VaiTro.class.getEnumConstants();
-		for(VaiTro v: vaitros) {
-			if(v.toString().equalsIgnoreCase(vaitro)) {
-				vaitroLeftLabel.setText(v.getValue());
-				break;
-			}
-		}
+		vaitroLeftLabel.setText(vaitro);
 		
 		nav=new Navbar(this);
 		

@@ -36,6 +36,7 @@ import controller.LabelDateFormatter;
 import dao.HoSo_DAO;
 import dao.HopDong_DAO;
 import dao.NhaTuyenDung_DAO;
+import dao.TinTuyenDung_DAO;
 import dao.UngVien_DAO;
 import entity.HoSo;
 import entity.HopDong;
@@ -74,6 +75,7 @@ public class ChiTietViecLamDialog extends JDialog implements ActionListener{
 	private HoSo hoso;
 	private NhanVien nv;
 	private NhaTuyenDung_DAO nhatuyendungDAO;
+	private TinTuyenDung_DAO tintuyendungDAO;
 	private UngVien_DAO ungvienDAO;
 	private HopDong_DAO hopdongDAO;
 	private HoSo_DAO hosoDAO;
@@ -92,6 +94,7 @@ public class ChiTietViecLamDialog extends JDialog implements ActionListener{
 		this.hoso=hoso;
 		this.nv=nv;
 		nhatuyendungDAO=new NhaTuyenDung_DAO();
+		tintuyendungDAO=new TinTuyenDung_DAO();
 		ungvienDAO=new UngVien_DAO();
 		hopdongDAO=new HopDong_DAO();
 		hosoDAO=new HoSo_DAO();
@@ -314,33 +317,41 @@ public class ChiTietViecLamDialog extends JDialog implements ActionListener{
 	}
 	
 	public void ungtuyen() {
-		int check=JOptionPane.showConfirmDialog(rootPane, "Có chắc chắn ứng tuyển");
-		if(check==JOptionPane.OK_OPTION) {
-			String idHD=(idMax+1)<10?("HD0"+(idMax+1)):("HD"+(idMax+1));
-			UngVien uv=ungvienDAO.getUngVien(hoso.getUngVien().getMaUV());
-			double phi=0;
-			if(ttd.getLuong()<5000000) {
-				phi=ttd.getLuong()*0.02;
-			}
-			else {
-				if(ttd.getLuong()<=10000000) {
-					phi=ttd.getLuong()*0.03;
+		if(hoso.getUngVien()!=null) {
+			int check=JOptionPane.showConfirmDialog(rootPane, "Có chắc chắn ứng tuyển");
+			if(check==JOptionPane.OK_OPTION) {
+				String idHD=(idMax+1)<10?("HD0"+(idMax+1)):("HD"+(idMax+1));
+				UngVien uv=ungvienDAO.getUngVien(hoso.getUngVien().getMaUV());
+				double phi=0;
+				if(ttd.getLuong()<5000000) {
+					phi=ttd.getLuong()*0.02;
 				}
 				else {
-					phi=ttd.getLuong()*0.05;
+					if(ttd.getLuong()<=10000000) {
+						phi=ttd.getLuong()*0.03;
+					}
+					else {
+						phi=ttd.getLuong()*0.05;
+					}
 				}
+				HopDong hopdong=new HopDong(idHD,phi,LocalDate.now(),ttd,uv,nv);
+				hopdongDAO.create(hopdong);
+				
+				hoso.setTrangThai(TrangThai.CHO);
+				hoso.setTinTuyenDung(ttd);
+				hosoDAO.update(hoso);
+				
+				ttd.setSoLuong(ttd.getSoLuong()-1);
+				tintuyendungDAO.update(ttd);
+				
+				JOptionPane.showMessageDialog(rootPane, "Ứng tuyển thành công");
+				this.dispose();
+				
+				((TimViecLamFrame)parent).updateData();
 			}
-			HopDong hopdong=new HopDong(idHD,phi,LocalDate.now(),ttd,uv,nv);
-			hopdongDAO.create(hopdong);
-			
-			hoso.setTrangThai(TrangThai.CHO);
-			hoso.setTinTuyenDung(ttd);
-			hosoDAO.update(hoso);
-			
-			JOptionPane.showMessageDialog(rootPane, "Ứng tuyển thành công");
-			this.dispose();
-			
-			((TimViecLamFrame)parent).updateData();
+		}
+		else {
+			JOptionPane.showMessageDialog(rootPane, "Chọn hồ sơ ứng viên");
 		}
 	}
 	
