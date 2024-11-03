@@ -13,11 +13,13 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 import controller.Database;
 import controller.ExcelHelper;
@@ -183,6 +185,7 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
         list.add( new RowSorter.SortKey(0, SortOrder.ASCENDING));
         sorter.setSortKeys(list);
         sorter.sort();
+		
 		scrollNhanVien=new JScrollPane(tableNhanVien);
 		scrollNhanVien.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
 		GradientRoundPanel resScroll=new GradientRoundPanel();

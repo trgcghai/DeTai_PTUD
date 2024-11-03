@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Properties;
 
@@ -32,6 +33,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
@@ -201,6 +204,7 @@ public class TaiKhoanFrame extends JFrame implements ActionListener, MouseListen
         list.add( new RowSorter.SortKey(0, SortOrder.ASCENDING));
         sorter.setSortKeys(list);
         sorter.sort();
+		
 		scrollTaiKhoan=new JScrollPane(tableTaiKhoan);
 		scrollTaiKhoan.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
 		GradientRoundPanel resScroll=new GradientRoundPanel();
