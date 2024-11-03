@@ -134,6 +134,7 @@ public class ThongKeTinTuyenDungFrame  extends JFrame implements ActionListener,
 		comboBoxNTD=new JComboBox<Object>(); 
 		comboBoxNTD.setFont(new Font("Segoe UI",0,16));
 		comboBoxNTD.setOpaque(false);
+		comboBoxNTD.setPreferredSize(new Dimension(270,30));
 		comboBoxNTD.addItem("Chọn nhà tuyển dụng");
 		
 		JPanel res=new JPanel();
@@ -159,7 +160,7 @@ public class ThongKeTinTuyenDungFrame  extends JFrame implements ActionListener,
 		JPanel resBtnSearch=new JPanel();
 		resBtnSearch.setOpaque(false);
 		resBtnSearch.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 5));
-		resBtnSearch.setPreferredSize(new Dimension(400, 30));
+		resBtnSearch.setPreferredSize(new Dimension(610, 30));
 		resBtnSearch.setBackground(Color.WHITE);
 		
 		btnTimKiem= createButton("Thống kê", new Color(0,102,102), Color.WHITE); 

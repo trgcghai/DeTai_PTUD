@@ -317,36 +317,41 @@ public class ChiTietViecLamDialog extends JDialog implements ActionListener{
 	}
 	
 	public void ungtuyen() {
-		int check=JOptionPane.showConfirmDialog(rootPane, "Có chắc chắn ứng tuyển");
-		if(check==JOptionPane.OK_OPTION) {
-			String idHD=(idMax+1)<10?("HD0"+(idMax+1)):("HD"+(idMax+1));
-			UngVien uv=ungvienDAO.getUngVien(hoso.getUngVien().getMaUV());
-			double phi=0;
-			if(ttd.getLuong()<5000000) {
-				phi=ttd.getLuong()*0.02;
-			}
-			else {
-				if(ttd.getLuong()<=10000000) {
-					phi=ttd.getLuong()*0.03;
+		if(hoso.getUngVien()!=null) {
+			int check=JOptionPane.showConfirmDialog(rootPane, "Có chắc chắn ứng tuyển");
+			if(check==JOptionPane.OK_OPTION) {
+				String idHD=(idMax+1)<10?("HD0"+(idMax+1)):("HD"+(idMax+1));
+				UngVien uv=ungvienDAO.getUngVien(hoso.getUngVien().getMaUV());
+				double phi=0;
+				if(ttd.getLuong()<5000000) {
+					phi=ttd.getLuong()*0.02;
 				}
 				else {
-					phi=ttd.getLuong()*0.05;
+					if(ttd.getLuong()<=10000000) {
+						phi=ttd.getLuong()*0.03;
+					}
+					else {
+						phi=ttd.getLuong()*0.05;
+					}
 				}
+				HopDong hopdong=new HopDong(idHD,phi,LocalDate.now(),ttd,uv,nv);
+				hopdongDAO.create(hopdong);
+				
+				hoso.setTrangThai(TrangThai.CHO);
+				hoso.setTinTuyenDung(ttd);
+				hosoDAO.update(hoso);
+				
+				ttd.setSoLuong(ttd.getSoLuong()-1);
+				tintuyendungDAO.update(ttd);
+				
+				JOptionPane.showMessageDialog(rootPane, "Ứng tuyển thành công");
+				this.dispose();
+				
+				((TimViecLamFrame)parent).updateData();
 			}
-			HopDong hopdong=new HopDong(idHD,phi,LocalDate.now(),ttd,uv,nv);
-			hopdongDAO.create(hopdong);
-			
-			hoso.setTrangThai(TrangThai.CHO);
-			hoso.setTinTuyenDung(ttd);
-			hosoDAO.update(hoso);
-			
-			ttd.setSoLuong(ttd.getSoLuong()-1);
-			tintuyendungDAO.update(ttd);
-			
-			JOptionPane.showMessageDialog(rootPane, "Ứng tuyển thành công");
-			this.dispose();
-			
-			((TimViecLamFrame)parent).updateData();
+		}
+		else {
+			JOptionPane.showMessageDialog(rootPane, "Chọn hồ sơ ứng viên");
 		}
 	}
 	
