@@ -129,7 +129,7 @@ public class ThongKeHopDongFrame extends JFrame implements ActionListener {
 		comboBoxNTD=new JComboBox<Object>(); 
 		comboBoxNTD.setFont(new Font("Segoe UI",0,16));
 		comboBoxNTD.setOpaque(false);
-		comboBoxNTD.setPreferredSize(new Dimension(270,30));
+		comboBoxNTD.setPreferredSize(new Dimension(250,30));
 		comboBoxUV=new JComboBox<Object>(); 
 		comboBoxUV.setFont(new Font("Segoe UI",0,16));
 		comboBoxUV.setOpaque(false);

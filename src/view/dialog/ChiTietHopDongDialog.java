@@ -291,7 +291,7 @@ public class ChiTietHopDongDialog extends JDialog implements ActionListener{
         doc.replace("#sodienthoaiUV", ungvienDAO.getUngVien(hd.getUngVien().getMaUV()).getSoDienThoai(), true, true);
         
         String[][] purchaseData = {
-                new String[]{tintuyendungDAO.getTinTuyenDung(hd.getTinTuyenDung().getMaTTD()).getMoTa(),
+                new String[]{tintuyendungDAO.getTinTuyenDung(hd.getTinTuyenDung().getMaTTD()).getTieuDe(),
                 	tintuyendungDAO.getTinTuyenDung(hd.getTinTuyenDung().getMaTTD()).getTrinhDo().getValue(), 
                 	df.format(tintuyendungDAO.getTinTuyenDung(hd.getTinTuyenDung().getMaTTD()).getLuong())+" VNĐ"}
         };
