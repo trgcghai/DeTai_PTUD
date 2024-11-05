@@ -223,13 +223,20 @@ public class UngVienFrame extends JFrame implements ActionListener, MouseListene
 		tableUngVien.setFont(new Font("Segoe UI",0,16));
 		tableUngVien.setRowHeight(30);
 		tableUngVien.setDefaultRenderer(Object.class, new TableCellGradient());
+		
 		tableUngVien.setAutoCreateRowSorter(true);
 		ArrayList<RowSorter.SortKey> list = new ArrayList<>();
+		list.add( new RowSorter.SortKey(0, SortOrder.ASCENDING));
         DefaultRowSorter sorter = ((DefaultRowSorter)tableUngVien.getRowSorter());
+        sorter.setComparator(0, (o1, o2)->{
+       	 String str1 = o1.toString().replaceAll("[^0-9]", "");
+            String str2 = o2.toString().replaceAll("[^0-9]", "");
+            return Integer.compare(Integer.parseInt(str1), Integer.parseInt(str2));
+       });
         sorter.setSortsOnUpdates(true);
-        list.add( new RowSorter.SortKey(0, SortOrder.ASCENDING));
         sorter.setSortKeys(list);
         sorter.sort();
+        
 		scrollUngVien=new JScrollPane(tableUngVien);
 		scrollUngVien.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
 		GradientRoundPanel resScroll=new GradientRoundPanel();

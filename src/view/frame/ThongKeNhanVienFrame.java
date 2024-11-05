@@ -225,15 +225,21 @@ public class ThongKeNhanVienFrame  extends JFrame implements ActionListener, Mou
 		tableNhanVien.setRowHeight(30);
 		tableNhanVien.getColumnModel().getColumn(1).setPreferredWidth(200);
 		tableNhanVien.getColumnModel().getColumn(3).setPreferredWidth(150);
-		
 		tableNhanVien.setDefaultRenderer(Object.class, new TableCellGradient());
+		
 		tableNhanVien.setAutoCreateRowSorter(true);
 		ArrayList<RowSorter.SortKey> list = new ArrayList<>();
+		list.add( new RowSorter.SortKey(0, SortOrder.ASCENDING));
         DefaultRowSorter sorter = ((DefaultRowSorter)tableNhanVien.getRowSorter());
+        sorter.setComparator(0, (o1, o2)->{
+       	 String str1 = o1.toString().replaceAll("[^0-9]", "");
+            String str2 = o2.toString().replaceAll("[^0-9]", "");
+            return Integer.compare(Integer.parseInt(str1), Integer.parseInt(str2));
+       });
         sorter.setSortsOnUpdates(true);
-        list.add( new RowSorter.SortKey(0, SortOrder.ASCENDING));
         sorter.setSortKeys(list);
         sorter.sort();
+        
 		scrollNhanVien=new JScrollPane(tableNhanVien);
 		scrollNhanVien.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
 		scrollNhanVien.setPreferredSize(new Dimension(1280, 480));

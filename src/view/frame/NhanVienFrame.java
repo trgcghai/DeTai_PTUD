@@ -178,11 +178,17 @@ public class NhanVienFrame extends JFrame implements ActionListener, MouseListen
 		tableNhanVien.setFont(new Font("Segoe UI",0,16));
 		tableNhanVien.setRowHeight(30);
 		tableNhanVien.setDefaultRenderer(Object.class, new TableCellGradient());
+		
 		tableNhanVien.setAutoCreateRowSorter(true);
 		ArrayList<RowSorter.SortKey> list = new ArrayList<>();
+		list.add( new RowSorter.SortKey(0, SortOrder.ASCENDING));
         DefaultRowSorter sorter = ((DefaultRowSorter)tableNhanVien.getRowSorter());
+        sorter.setComparator(0, (o1, o2)->{
+       	 String str1 = o1.toString().replaceAll("[^0-9]", "");
+            String str2 = o2.toString().replaceAll("[^0-9]", "");
+            return Integer.compare(Integer.parseInt(str1), Integer.parseInt(str2));
+       });
         sorter.setSortsOnUpdates(true);
-        list.add( new RowSorter.SortKey(0, SortOrder.ASCENDING));
         sorter.setSortKeys(list);
         sorter.sort();
 		

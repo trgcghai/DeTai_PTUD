@@ -114,13 +114,20 @@ public class DanhSachHopDongDialog extends JDialog implements ActionListener{
 		tableHopDong.setFont(new Font("Segoe UI",0,16));
 		tableHopDong.setRowHeight(30);
 		tableHopDong.setDefaultRenderer(Object.class, new TableCellGradient());
+		
 		tableHopDong.setAutoCreateRowSorter(true);
 		ArrayList<RowSorter.SortKey> list = new ArrayList<>();
+		list.add( new RowSorter.SortKey(0, SortOrder.ASCENDING));
         DefaultRowSorter sorter = ((DefaultRowSorter)tableHopDong.getRowSorter());
+        sorter.setComparator(0, (o1, o2)->{
+       	 String str1 = o1.toString().replaceAll("[^0-9]", "");
+            String str2 = o2.toString().replaceAll("[^0-9]", "");
+            return Integer.compare(Integer.parseInt(str1), Integer.parseInt(str2));
+       });
         sorter.setSortsOnUpdates(true);
-        list.add( new RowSorter.SortKey(0, SortOrder.ASCENDING));
         sorter.setSortKeys(list);
         sorter.sort();
+        
 		scrollHopDong=new JScrollPane(tableHopDong);
 		scrollHopDong.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
 		JPanel resScroll=new JPanel();

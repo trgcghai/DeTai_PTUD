@@ -365,9 +365,14 @@ public class HopDongFrame extends JFrame implements ActionListener, MouseListene
 		table.setDefaultRenderer(Object.class, new TableCellGradient());
 		table.setAutoCreateRowSorter(true);
 		ArrayList<RowSorter.SortKey> lists = new ArrayList<>();
+		lists.add( new RowSorter.SortKey(0, SortOrder.ASCENDING));
         DefaultRowSorter sorters = ((DefaultRowSorter)table.getRowSorter());
+        sorters.setComparator(0, (o1, o2)->{
+       	 String str1 = o1.toString().replaceAll("[^0-9]", "");
+            String str2 = o2.toString().replaceAll("[^0-9]", "");
+            return Integer.compare(Integer.parseInt(str1), Integer.parseInt(str2));
+       });
         sorters.setSortsOnUpdates(true);
-        lists.add( new RowSorter.SortKey(0, SortOrder.ASCENDING));
         sorters.setSortKeys(lists);
         sorters.sort();
         

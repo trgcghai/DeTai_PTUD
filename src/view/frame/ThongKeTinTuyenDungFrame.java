@@ -227,15 +227,21 @@ public class ThongKeTinTuyenDungFrame  extends JFrame implements ActionListener,
 		tableTinTuyenDung.getColumnModel().getColumn(1).setPreferredWidth(200);
 		tableTinTuyenDung.getColumnModel().getColumn(2).setPreferredWidth(150);
 		tableTinTuyenDung.getColumnModel().getColumn(3).setPreferredWidth(150);
-		
 		tableTinTuyenDung.setDefaultRenderer(Object.class, new TableCellGradient());
+		
 		tableTinTuyenDung.setAutoCreateRowSorter(true);
 		ArrayList<RowSorter.SortKey> list = new ArrayList<>();
+		list.add( new RowSorter.SortKey(0, SortOrder.ASCENDING));
         DefaultRowSorter sorter = ((DefaultRowSorter)tableTinTuyenDung.getRowSorter());
+        sorter.setComparator(0, (o1, o2)->{
+       	 String str1 = o1.toString().replaceAll("[^0-9]", "");
+            String str2 = o2.toString().replaceAll("[^0-9]", "");
+            return Integer.compare(Integer.parseInt(str1), Integer.parseInt(str2));
+       });
         sorter.setSortsOnUpdates(true);
-        list.add( new RowSorter.SortKey(0, SortOrder.ASCENDING));
         sorter.setSortKeys(list);
         sorter.sort();
+        
 		scrollTinTuyenDung=new JScrollPane(tableTinTuyenDung);
 		scrollTinTuyenDung.setBorder(BorderFactory.createLineBorder(new Color(0,191,165)));
 		scrollTinTuyenDung.setPreferredSize(new Dimension(1280, 480));
