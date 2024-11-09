@@ -412,13 +412,15 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 			return;
 		}
 		
-		if(!tieude.equals("Nhập dữ liệu")) {
+		if(!tieude.equals("Nhập dữ liệu") && luong.equals("Nhập dữ liệu")
+				&& ntd.equalsIgnoreCase("Chọn nhà tuyển dụng") && trinhdo.equalsIgnoreCase("Chọn trình độ")) {
 			tintuyendungDAO.getListTinTuyenDung().clear();
 			tintuyendungDAO.setListTinTuyenDung(tintuyendungDAO.getTinTuyenDungTheo(tieude,1));
 			loadDataTinTuyenDung();
 			JOptionPane.showMessageDialog(rootPane, "Tìm thấy "+tintuyendungDAO.getListTinTuyenDung().size()+" tin tuyển dụng");
 		}
-		else if(!luong.equals("Nhập dữ liệu")) {
+		else if(!luong.equals("Nhập dữ liệu") && tieude.equals("Nhập dữ liệu")
+				&& ntd.equalsIgnoreCase("Chọn nhà tuyển dụng") && trinhdo.equalsIgnoreCase("Chọn trình độ")) {
 			if(Pattern.compile("^[0-9]+$").matcher(luong).matches()) {
 				tintuyendungDAO.getListTinTuyenDung().clear();
 				tintuyendungDAO.setListTinTuyenDung(tintuyendungDAO.getTinTuyenDungTheo(luong,2));
@@ -429,26 +431,30 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 				JOptionPane.showMessageDialog(rootPane, "Lương phải là số lớn hơn 0");
 			}
 		}
-		else if(!ntd.equalsIgnoreCase("Chọn nhà tuyển dụng")) {
+		else if(!ntd.equalsIgnoreCase("Chọn nhà tuyển dụng") && tieude.equals("Nhập dữ liệu") 
+				&& luong.equals("Nhập dữ liệu") && trinhdo.equalsIgnoreCase("Chọn trình độ")) {
 			tintuyendungDAO.getListTinTuyenDung().clear();
 			tintuyendungDAO.setListTinTuyenDung(tintuyendungDAO.getTinTuyenDungTheo(ntd,11));
 			loadDataTinTuyenDung();
 			JOptionPane.showMessageDialog(rootPane, "Tìm thấy "+tintuyendungDAO.getListTinTuyenDung().size()+" tin tuyển dụng");
 		}
-		else if(!trinhdo.equalsIgnoreCase("Chọn trình độ")) {
+		else if(!trinhdo.equalsIgnoreCase("Chọn trình độ") && ntd.equalsIgnoreCase("Chọn nhà tuyển dụng") 
+				&& tieude.equals("Nhập dữ liệu") && luong.equals("Nhập dữ liệu")) {
 			tintuyendungDAO.getListTinTuyenDung().clear();
 			tintuyendungDAO.setListTinTuyenDung(tintuyendungDAO.getTinTuyenDungTheo(trinhdo,12));
 			loadDataTinTuyenDung();
 			JOptionPane.showMessageDialog(rootPane, "Tìm thấy "+tintuyendungDAO.getListTinTuyenDung().size()+" tin tuyển dụng");
 		}
-		else if(!ntd.equalsIgnoreCase("Chọn nhà tuyển dụng") && !trinhdo.equalsIgnoreCase("Chọn trình độ")) {
+		else if(!ntd.equalsIgnoreCase("Chọn nhà tuyển dụng") && !trinhdo.equalsIgnoreCase("Chọn trình độ")
+				&& tieude.equals("Nhập dữ liệu") && luong.equals("Nhập dữ liệu")) {
 			tintuyendungDAO.getListTinTuyenDung().clear();
 			String key=ntd+"/"+trinhdo;
 			tintuyendungDAO.setListTinTuyenDung(tintuyendungDAO.getTinTuyenDungTheo(key,13));
 			loadDataTinTuyenDung();
 			JOptionPane.showMessageDialog(rootPane, "Tìm thấy "+tintuyendungDAO.getListTinTuyenDung().size()+" tin tuyển dụng");
 		}
-		else if(!tieude.equals("Nhập dữ liệu") && !luong.equals("Nhập dữ liệu")) {
+		else if(!tieude.equals("Nhập dữ liệu") && !luong.equals("Nhập dữ liệu")
+				&& ntd.equalsIgnoreCase("Chọn nhà tuyển dụng") && trinhdo.equalsIgnoreCase("Chọn trình độ")) {
 			if(Pattern.compile("^[0-9]+$").matcher(luong).matches()) {
 				tintuyendungDAO.getListTinTuyenDung().clear();
 				String key=tieude+"/"+luong;
@@ -460,21 +466,24 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 				JOptionPane.showMessageDialog(rootPane, "Lương phải là số lớn hơn 0");
 			}
 		}
-		else if(!tieude.equals("Nhập dữ liệu") && !ntd.equalsIgnoreCase("Chọn nhà tuyển dụng")) {
+		else if(!tieude.equals("Nhập dữ liệu") && !ntd.equalsIgnoreCase("Chọn nhà tuyển dụng")
+				&& luong.equals("Nhập dữ liệu") && trinhdo.equalsIgnoreCase("Chọn trình độ")) {
 			tintuyendungDAO.getListTinTuyenDung().clear();
 			String key=tieude+"/"+ntd;
 			tintuyendungDAO.setListTinTuyenDung(tintuyendungDAO.getTinTuyenDungTheo(key,4));
 			loadDataTinTuyenDung();
 			JOptionPane.showMessageDialog(rootPane, "Tìm thấy "+tintuyendungDAO.getListTinTuyenDung().size()+" tin tuyển dụng");
 		}
-		else if(!tieude.equals("Nhập dữ liệu") && !trinhdo.equalsIgnoreCase("Chọn trình độ")) {
+		else if(!tieude.equals("Nhập dữ liệu") && !trinhdo.equalsIgnoreCase("Chọn trình độ")
+				&& luong.equals("Nhập dữ liệu") && ntd.equalsIgnoreCase("Chọn nhà tuyển dụng")) {
 			tintuyendungDAO.getListTinTuyenDung().clear();
 			String key=tieude+"/"+trinhdo;
 			tintuyendungDAO.setListTinTuyenDung(tintuyendungDAO.getTinTuyenDungTheo(key,5));
 			loadDataTinTuyenDung();
 			JOptionPane.showMessageDialog(rootPane, "Tìm thấy "+tintuyendungDAO.getListTinTuyenDung().size()+" tin tuyển dụng");
 		}
-		else if(!luong.equals("Nhập dữ liệu") && !ntd.equalsIgnoreCase("Chọn nhà tuyển dụng")) {
+		else if(!luong.equals("Nhập dữ liệu") && !ntd.equalsIgnoreCase("Chọn nhà tuyển dụng")
+				&& tieude.equals("Nhập dữ liệu") && trinhdo.equalsIgnoreCase("Chọn trình độ")) {
 			if(Pattern.compile("^[0-9]+$").matcher(luong).matches()) {
 				tintuyendungDAO.getListTinTuyenDung().clear();
 				String key=luong+"/"+ntd;
@@ -486,7 +495,8 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 				JOptionPane.showMessageDialog(rootPane, "Lương phải là số lớn hơn 0");
 			}
 		}
-		else if(!luong.equals("Nhập dữ liệu") && !trinhdo.equalsIgnoreCase("Chọn trình độ")) {
+		else if(!luong.equals("Nhập dữ liệu") && !trinhdo.equalsIgnoreCase("Chọn trình độ")
+				&& tieude.equals("Nhập dữ liệu") && ntd.equalsIgnoreCase("Chọn nhà tuyển dụng")) {
 			if(Pattern.compile("^[0-9]+$").matcher(luong).matches()) {
 				tintuyendungDAO.getListTinTuyenDung().clear();
 				String key=luong+"/"+trinhdo;
@@ -499,7 +509,7 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 			}
 		}
 		else if(!tieude.equals("Nhập dữ liệu") && !ntd.equalsIgnoreCase("Chọn nhà tuyển dụng")
-				&& !trinhdo.equalsIgnoreCase("Chọn trình độ")) {
+				&& !trinhdo.equalsIgnoreCase("Chọn trình độ") && luong.equals("Nhập dữ liệu")) {
 			tintuyendungDAO.getListTinTuyenDung().clear();
 			String key=tieude+"/"+ntd+"/"+trinhdo;
 			tintuyendungDAO.setListTinTuyenDung(tintuyendungDAO.getTinTuyenDungTheo(key,14));
@@ -507,7 +517,7 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 			JOptionPane.showMessageDialog(rootPane, "Tìm thấy "+tintuyendungDAO.getListTinTuyenDung().size()+" tin tuyển dụng");
 		}
 		else if(!luong.equals("Nhập dữ liệu") && !ntd.equalsIgnoreCase("Chọn nhà tuyển dụng")
-				&& !trinhdo.equalsIgnoreCase("Chọn trình độ")) {
+				&& !trinhdo.equalsIgnoreCase("Chọn trình độ") && tieude.equals("Nhập dữ liệu")) {
 			if(Pattern.compile("^[0-9]+$").matcher(luong).matches()) {
 				tintuyendungDAO.getListTinTuyenDung().clear();
 				String key=luong+"/"+ntd+"/"+trinhdo;
@@ -519,7 +529,8 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 				JOptionPane.showMessageDialog(rootPane, "Lương phải là số lớn hơn 0");
 			}
 		}
-		else if(!tieude.equals("Nhập dữ liệu") && !luong.equals("Nhập dữ liệu") && !ntd.equalsIgnoreCase("Chọn nhà tuyển dụng")) {
+		else if(!tieude.equals("Nhập dữ liệu") && !luong.equals("Nhập dữ liệu") 
+				&& !ntd.equalsIgnoreCase("Chọn nhà tuyển dụng") && trinhdo.equalsIgnoreCase("Chọn trình độ")) {
 			if(Pattern.compile("^[0-9]+$").matcher(luong).matches()) {
 				tintuyendungDAO.getListTinTuyenDung().clear();
 				String key=tieude+"/"+luong+"/"+ntd;
@@ -531,7 +542,8 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 				JOptionPane.showMessageDialog(rootPane, "Lương phải là số lớn hơn 0");
 			}
 		}
-		else if(!tieude.equals("Nhập dữ liệu") && !luong.equals("Nhập dữ liệu") && !trinhdo.equalsIgnoreCase("Chọn trình độ")) {
+		else if(!tieude.equals("Nhập dữ liệu") && !luong.equals("Nhập dữ liệu") 
+				&& !trinhdo.equalsIgnoreCase("Chọn trình độ") && ntd.equalsIgnoreCase("Chọn nhà tuyển dụng")) {
 			if(Pattern.compile("^[0-9]+$").matcher(luong).matches()) {
 				tintuyendungDAO.getListTinTuyenDung().clear();
 				String key=tieude+"/"+luong+"/"+trinhdo;
