@@ -203,8 +203,11 @@ public class MainFrame extends JFrame implements ActionListener{
 			}
 			else if(((ButtonMenu)obj).getText().equals("Đăng xuất")) {
 				setSelected(((ButtonMenu)obj));
-				this.dispose();
-				new LoginFrame().setVisible(true);
+				int check=JOptionPane.showConfirmDialog(rootPane, "Có chắc chắn đăng xuất?");
+				if(check==JOptionPane.OK_OPTION) {
+					this.dispose();
+					new LoginFrame().setVisible(true);
+				}
 			}
 			centerPanel.revalidate();
 			centerPanel.repaint();
