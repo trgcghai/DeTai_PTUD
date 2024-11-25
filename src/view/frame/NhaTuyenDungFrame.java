@@ -488,6 +488,7 @@ public class NhaTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 			if(timkiemTenText.getText().equals("Nhập dữ liệu")) {
 				timkiemTenText.setText(null);
 				timkiemTenText.requestFocus();
+				timkiemTenText.setBorder(BorderFactory.createLineBorder(new Color(0,102,102), 3));
 				
 				removePlaceHolder(timkiemTenText);
 			}
@@ -496,6 +497,7 @@ public class NhaTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 			if(timkiemSDTText.getText().equals("Nhập dữ liệu")) {
 				timkiemSDTText.setText(null);
 				timkiemSDTText.requestFocus();
+				timkiemSDTText.setBorder(BorderFactory.createLineBorder(new Color(0,102,102), 3));
 				
 				removePlaceHolder(timkiemSDTText);
 			}
@@ -511,12 +513,14 @@ public class NhaTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 				addPlaceHolder(timkiemTenText);
 				timkiemTenText.setText("Nhập dữ liệu");
 			}
+			timkiemTenText.setBorder(BorderFactory.createLineBorder(Color.WHITE));
 		}
 		else if(obj.equals(timkiemSDTText)) {
 			if(timkiemSDTText.getText().length()==0) {
 				addPlaceHolder(timkiemSDTText);
 				timkiemSDTText.setText("Nhập dữ liệu");
 			}
+			timkiemSDTText.setBorder(BorderFactory.createLineBorder(Color.WHITE));
 		}
 	}
 

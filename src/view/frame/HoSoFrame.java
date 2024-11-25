@@ -472,6 +472,7 @@ public class HoSoFrame extends JFrame implements ActionListener, MouseListener, 
 			if(timkiemTenText.getText().equals("Nhập dữ liệu")) {
 				timkiemTenText.setText(null);
 				timkiemTenText.requestFocus();
+				timkiemTenText.setBorder(BorderFactory.createLineBorder(new Color(0,102,102), 3));
 				
 				removePlaceHolder(timkiemTenText);
 			}
@@ -487,6 +488,7 @@ public class HoSoFrame extends JFrame implements ActionListener, MouseListener, 
 				addPlaceHolder(timkiemTenText);
 				timkiemTenText.setText("Nhập dữ liệu");
 			}
+			timkiemTenText.setBorder(BorderFactory.createLineBorder(Color.WHITE));
 		}
 	}
 

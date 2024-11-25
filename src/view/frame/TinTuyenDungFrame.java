@@ -677,6 +677,7 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 			if(timkiemTenText.getText().equals("Nhập dữ liệu")) {
 				timkiemTenText.setText(null);
 				timkiemTenText.requestFocus();
+				timkiemTenText.setBorder(BorderFactory.createLineBorder(new Color(0,102,102), 3));
 				
 				removePlaceHolder(timkiemTenText);
 			}
@@ -685,6 +686,7 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 			if(timkiemLuongText.getText().equals("Nhập dữ liệu")) {
 				timkiemLuongText.setText(null);
 				timkiemLuongText.requestFocus();
+				timkiemLuongText.setBorder(BorderFactory.createLineBorder(new Color(0,102,102), 3));
 				
 				removePlaceHolder(timkiemLuongText);
 			}
@@ -700,12 +702,14 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 				addPlaceHolder(timkiemTenText);
 				timkiemTenText.setText("Nhập dữ liệu");
 			}
+			timkiemTenText.setBorder(BorderFactory.createLineBorder(Color.WHITE));
 		}
 		else if(obj.equals(timkiemLuongText)) {
 			if(timkiemLuongText.getText().length()==0) {
 				addPlaceHolder(timkiemLuongText);
 				timkiemLuongText.setText("Nhập dữ liệu");
 			}
+			timkiemLuongText.setBorder(BorderFactory.createLineBorder(Color.WHITE));
 		}
 	}
 

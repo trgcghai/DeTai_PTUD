@@ -424,6 +424,7 @@ public class TaiKhoanFrame extends JFrame implements ActionListener, MouseListen
 			if(timkiemTenText.getText().equals("Nhập dữ liệu")) {
 				timkiemTenText.setText(null);
 				timkiemTenText.requestFocus();
+				timkiemTenText.setBorder(BorderFactory.createLineBorder(new Color(0,102,102), 3));
 				
 				removePlaceHolder(timkiemTenText);
 			}
@@ -439,6 +440,7 @@ public class TaiKhoanFrame extends JFrame implements ActionListener, MouseListen
 				addPlaceHolder(timkiemTenText);
 				timkiemTenText.setText("Nhập dữ liệu");
 			}
+			timkiemTenText.setBorder(BorderFactory.createLineBorder(Color.WHITE));
 		}
 	}
 
