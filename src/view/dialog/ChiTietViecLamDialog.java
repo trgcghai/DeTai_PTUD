@@ -317,7 +317,7 @@ public class ChiTietViecLamDialog extends JDialog implements ActionListener{
 	}
 	
 	public void ungtuyen() {
-		if(hoso.getUngVien()!=null) {
+		if(hoso!=null && hoso.getMaHS()!=null) {
 			int check=JOptionPane.showConfirmDialog(rootPane, "Có chắc chắn ứng tuyển");
 			if(check==JOptionPane.OK_OPTION) {
 				String idHD=(idMax+1)<10?("HD0"+(idMax+1)):("HD"+(idMax+1));

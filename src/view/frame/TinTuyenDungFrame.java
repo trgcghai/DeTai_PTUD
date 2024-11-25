@@ -630,7 +630,7 @@ public class TinTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 		for(int i=0; i<deletes.size();i++) {
 			if(obj.equals(deletes.get(i))) {
 				if(hopdongDAO.getHopDongTheoTinTuyenDung(deletes.get(i).getName()).size() > 0) {
-					JOptionPane.showMessageDialog(rootPane, "Không thể xóa tin tuyển dụng");
+					JOptionPane.showMessageDialog(rootPane, "Không thể xóa tin tuyển dụng vì đã có hồ sơ ứng tuyển");
 				}
 				else {
 					int check=JOptionPane.showConfirmDialog(parent, "Có chắc chắn xóa?");

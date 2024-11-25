@@ -266,7 +266,7 @@ public class NhaTuyenDungFrame extends JFrame implements ActionListener, MouseLi
 			public void onDelete(int row) {
 				// TODO Auto-generated method stub
 				if(tintuyendungDAO.getTinTuyenDungTheoNTD(tableNhaTuyenDung.getValueAt(row, 0).toString(), 1).size() > 0) {
-					JOptionPane.showMessageDialog(rootPane, "Không thể xóa nhà tuyển dụng");
+					JOptionPane.showMessageDialog(rootPane, "Không thể xóa nhà tuyển dụng vì đã tạo tin tuyển dụng");
 				}
 				else {
 					int check=JOptionPane.showConfirmDialog(rootPane, "Có chắc chắn xóa?");

@@ -550,6 +550,7 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 			ungvienCombo.setSelectedIndex(0);
 			nhatuyendungCombo.setSelectedIndex(0);
 			
+			currentHoSo=null;
 			loadData();
 			loadDataUngVienHoSo();
 			loadDataTinTuyenDungNhaTuyenDung();
@@ -595,6 +596,7 @@ public class TimViecLamFrame extends JFrame implements ActionListener, MouseList
 		else if(e.getSource().equals(tableTinTuyenDung)) {
 			int idx=tableTinTuyenDung.getSelectedRow();
 			TinTuyenDung tintuyendung=tintuyendungDAO.getTinTuyenDung(tableTinTuyenDung.getValueAt(idx, 0).toString());
+			currentHoSo=null;
 			displayHoSo(tintuyendung);
 		}
 	}
