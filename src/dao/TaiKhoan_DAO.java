@@ -121,6 +121,36 @@ public class TaiKhoan_DAO {
 		return list.get(0);
 	}
 	
+	public TaiKhoan getTaiKhoanByNhanVien(String maNV) {
+		TaiKhoan tk = null;
+		Database.getInstance();
+		Connection con = Database.getConnection();
+		
+		try {
+			PreparedStatement stmt = con.prepareStatement("select * from TaiKhoan where MaNV like ?");
+			stmt.setString(1, "%" + maNV+ "%");
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				String ma = rs.getString(1);
+				String email = rs.getString(2);
+				String matKhau = rs.getString(3);
+				VaiTro vaitro=null;
+				for(VaiTro v: VaiTro.class.getEnumConstants()) {
+					if(v.toString().equalsIgnoreCase(rs.getString(4))) {
+						vaitro=v;
+						break;
+					}
+				}
+				NhanVien nhanVien = new NhanVien(rs.getString(5));
+				
+				tk=new TaiKhoan(ma, email, matKhau, vaitro, nhanVien);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return tk;
+	}
+	
 	public String getVaiTro(String email) {
 		Database.getInstance();
 		Connection con = Database.getConnection();

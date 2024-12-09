@@ -831,7 +831,7 @@ public class HopDong_DAO {
 		return list;
 	}
 	
-	public double thongKeHopDongTheoNhanVien(String maNV, int thang) {
+	public double thongKeHopDongTheoNhanVien(String maNV, int thang, int nam) {
 		double result = 0;
 		Database.getInstance();
 		Connection con = Database.getConnection();
@@ -839,10 +839,11 @@ public class HopDong_DAO {
 		try {
 			PreparedStatement stmt = con.prepareStatement("select sum(PhiDichVu) \r\n"
 					+ "from HopDong hd join NhanVien nv on hd.MaNV = nv.MaNV\r\n"
-					+ "WHERE nv.MaNV= ? AND MONTH(ThoiGian)= ? \r\n"
+					+ "WHERE nv.MaNV= ? AND MONTH(ThoiGian)= ? AND YEAR(ThoiGian)= ? \r\n"
 					+ "group by nv.Manv, TenNV, SoDienThoai, GioiTinh, NgaySinh, MONTH(ThoiGian)");
 			stmt.setString(1, maNV);
 			stmt.setInt(2, thang);
+			stmt.setInt(3, nam);
 			ResultSet rs = stmt.executeQuery();
 			while (rs.next()) {
 				result = rs.getDouble(1);

@@ -15,6 +15,7 @@ import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -22,10 +23,12 @@ import javax.swing.SwingConstants;
 
 import dao.HopDong_DAO;
 import dao.NhanVien_DAO;
+import dao.TaiKhoan_DAO;
 import dao.TinTuyenDung_DAO;
 import entity.ModelChart;
 import entity.ModelPieChart;
 import entity.NhanVien;
+import entity.TaiKhoan;
 import entity.constraint.NganhNghe;
 import entity.constraint.Thang;
 import entity.constraint.TrinhDo;
@@ -52,13 +55,16 @@ public class ThongKeFrame extends JFrame implements ActionListener {
 	ThongKeFrame parent;
 	
 //	Component thống kê
-	JPanel thongKePanel, northPanel, centerPanel, northWestPanel, northEastPanel, northNorthPanel, wrapPanel;
+	JPanel thongKePanel, northPanel, centerPanel, northWestPanel, 
+		northEastPanel, northNorthPanel, wrapPanel, titlePanel;
 	Button btnThongKeNV, btnThongKeTTD, btnThongKeHD;
+	JComboBox years;
 	PolarPieChart chartHTLV, chartTTD, chartNTD;
 	LineChart lineChart;
 	
 	private TinTuyenDung_DAO tinTuyenDungDAO;
 	private NhanVien_DAO nhanvienDAO;
+	private TaiKhoan_DAO taikhoanDAO;
 	private HopDong_DAO hopdongDAO;
 	
 	public ThongKeFrame(NhanVien userName) {
@@ -67,6 +73,7 @@ public class ThongKeFrame extends JFrame implements ActionListener {
 		
 		tinTuyenDungDAO = new TinTuyenDung_DAO();
 		nhanvienDAO=new NhanVien_DAO();
+		taikhoanDAO=new TaiKhoan_DAO();
 		hopdongDAO=new HopDong_DAO();
 		
 //		Tạo component bên phải
@@ -198,33 +205,49 @@ public class ThongKeFrame extends JFrame implements ActionListener {
 		centerPanel=new GradientRoundPanel();
 		centerPanel.setLayout(new BorderLayout());
 		
+		titlePanel=new JPanel();
+		titlePanel.setOpaque(false);
+		
 		JLabel titleLabel=new JLabel("Tổng doanh thu hợp đồng theo tháng của nhân viên", SwingConstants.CENTER);
 		titleLabel.setFont(new Font("Segoe UI",1,18));
 		titleLabel.setForeground(Color.WHITE);
+		titlePanel.add(titleLabel);
+		
+		years=new JComboBox(); 
+		years.setFont(new Font("Segoe UI",0,16));
+		years.setBackground(new Color(89, 145, 144));
+		years.setForeground(Color.WHITE);
+		years.addItem("Chọn năm");
+		titlePanel.add(years);
 		
 		lineChart=new LineChart();
 		lineChart.setOpaque(false);
 		Set<Color> tmp3 = new HashSet<>();
 		for(NhanVien n: nhanvienDAO.getDSNhanVien()) {
-			Color c;
-			do{
-				c=getRandomColor();
-			}while(c.equals(Color.WHITE) || tmp3.contains(c));
-			lineChart.addLegend(n.getTenNV(), c, c.brighter());
-			tmp3.add(c);
+			if(taikhoanDAO.getTaiKhoanByNhanVien(n.getMaNV())!=null) {
+				Color c;
+				do{
+					c=getRandomColor();
+				}while(c.equals(Color.WHITE) || tmp3.contains(c));
+				lineChart.addLegend(n.getTenNV(), c, c.brighter());
+				tmp3.add(c);
+			}
 		}
 		for(Thang t: Thang.class.getEnumConstants()) {
 			double[] soluong=new double[100];
 			int count=0;
 			for(NhanVien n: nhanvienDAO.getDSNhanVien()) {
-					soluong[count++]=hopdongDAO.thongKeHopDongTheoNhanVien(n.getMaNV(), Integer.parseInt(t.getValue().split(" ")[1]));
+				if(taikhoanDAO.getTaiKhoanByNhanVien(n.getMaNV())!=null) {
+					soluong[count++]=hopdongDAO.thongKeHopDongTheoNhanVien(n.getMaNV(), 
+							Integer.parseInt(t.getValue().split(" ")[1]), 2024);
+				}
 			}
 			lineChart.addData(new ModelChart(t.getValue(),
 					soluong));
 		}
         lineChart.start();
         
-        centerPanel.add(titleLabel, BorderLayout.NORTH);
+        centerPanel.add(titlePanel, BorderLayout.NORTH);
 		centerPanel.add(lineChart, BorderLayout.CENTER);
 		
 		wrapPanel= new JPanel();
