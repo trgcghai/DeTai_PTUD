@@ -9,6 +9,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
@@ -25,10 +26,12 @@ import dao.HopDong_DAO;
 import dao.NhanVien_DAO;
 import dao.TaiKhoan_DAO;
 import dao.TinTuyenDung_DAO;
+import entity.HopDong;
 import entity.ModelChart;
 import entity.ModelPieChart;
 import entity.NhanVien;
 import entity.TaiKhoan;
+import entity.UngVien;
 import entity.constraint.NganhNghe;
 import entity.constraint.Thang;
 import entity.constraint.TrinhDo;
@@ -58,7 +61,7 @@ public class ThongKeFrame extends JFrame implements ActionListener {
 	JPanel thongKePanel, northPanel, centerPanel, northWestPanel, 
 		northEastPanel, northNorthPanel, wrapPanel, titlePanel;
 	Button btnThongKeNV, btnThongKeTTD, btnThongKeHD;
-	JComboBox years;
+	JComboBox yearCombo;
 	PolarPieChart chartHTLV, chartTTD, chartNTD;
 	LineChart lineChart;
 	
@@ -66,6 +69,8 @@ public class ThongKeFrame extends JFrame implements ActionListener {
 	private NhanVien_DAO nhanvienDAO;
 	private TaiKhoan_DAO taikhoanDAO;
 	private HopDong_DAO hopdongDAO;
+	
+	private ArrayList<Integer> years;
 	
 	public ThongKeFrame(NhanVien userName) {
 		this.userName=userName;
@@ -75,6 +80,23 @@ public class ThongKeFrame extends JFrame implements ActionListener {
 		nhanvienDAO=new NhanVien_DAO();
 		taikhoanDAO=new TaiKhoan_DAO();
 		hopdongDAO=new HopDong_DAO();
+		
+		years=new ArrayList<Integer>();
+		for(HopDong hd: hopdongDAO.getDSHopDong()) {
+			int year=hd.getThoiGian().getYear();
+			if(!years.contains(year)) {
+				years.add(year);
+			}
+		}
+		years.sort(new Comparator<Integer>() {
+
+			@Override
+			public int compare(Integer o1, Integer o2) {
+				// TODO Auto-generated method stub
+				return o2-o1;
+			}
+			
+		});
 		
 //		Tạo component bên phải
 		initComponent();
@@ -95,6 +117,8 @@ public class ThongKeFrame extends JFrame implements ActionListener {
 		btnThongKeHD.addActionListener(this);
 		btnThongKeTTD.addActionListener(this);
 		btnThongKeNV.addActionListener(this);
+		
+		yearCombo.addActionListener(this);
 	}
 	
 	public void initComponent() {
@@ -213,38 +237,17 @@ public class ThongKeFrame extends JFrame implements ActionListener {
 		titleLabel.setForeground(Color.WHITE);
 		titlePanel.add(titleLabel);
 		
-		years=new JComboBox(); 
-		years.setFont(new Font("Segoe UI",0,16));
-		years.setBackground(new Color(89, 145, 144));
-		years.setForeground(Color.WHITE);
-		years.addItem("Chọn năm");
-		titlePanel.add(years);
+		yearCombo=new JComboBox(); 
+		yearCombo.setFont(new Font("Segoe UI",0,16));
+		yearCombo.setBackground(new Color(89, 145, 144));
+		yearCombo.setForeground(Color.WHITE);
+		yearCombo.addItem("Chọn năm");
+		for(Integer y: years) {
+			yearCombo.addItem(y);
+		}
+		titlePanel.add(yearCombo);
 		
-		lineChart=new LineChart();
-		lineChart.setOpaque(false);
-		Set<Color> tmp3 = new HashSet<>();
-		for(NhanVien n: nhanvienDAO.getDSNhanVien()) {
-			if(taikhoanDAO.getTaiKhoanByNhanVien(n.getMaNV())!=null) {
-				Color c;
-				do{
-					c=getRandomColor();
-				}while(c.equals(Color.WHITE) || tmp3.contains(c));
-				lineChart.addLegend(n.getTenNV(), c, c.brighter());
-				tmp3.add(c);
-			}
-		}
-		for(Thang t: Thang.class.getEnumConstants()) {
-			double[] soluong=new double[100];
-			int count=0;
-			for(NhanVien n: nhanvienDAO.getDSNhanVien()) {
-				if(taikhoanDAO.getTaiKhoanByNhanVien(n.getMaNV())!=null) {
-					soluong[count++]=hopdongDAO.thongKeHopDongTheoNhanVien(n.getMaNV(), 
-							Integer.parseInt(t.getValue().split(" ")[1]), 2024);
-				}
-			}
-			lineChart.addData(new ModelChart(t.getValue(),
-					soluong));
-		}
+		lineChart=createPanelLineChart(2024);
         lineChart.start();
         
         centerPanel.add(titlePanel, BorderLayout.NORTH);
@@ -283,6 +286,36 @@ public class ThongKeFrame extends JFrame implements ActionListener {
 		return panel;
 	}
 	
+	private LineChart createPanelLineChart(int year) {
+		lineChart=new LineChart();
+		lineChart.setOpaque(false);
+		Set<Color> tmp3 = new HashSet<>();
+		for(NhanVien n: nhanvienDAO.getDSNhanVien()) {
+			if(taikhoanDAO.getTaiKhoanByNhanVien(n.getMaNV())!=null) {
+				Color c;
+				do{
+					c=getRandomColor();
+				}while(c.equals(Color.WHITE) || tmp3.contains(c));
+				lineChart.addLegend(n.getTenNV(), c, c.brighter());
+				tmp3.add(c);
+			}
+		}
+		for(Thang t: Thang.class.getEnumConstants()) {
+			double[] soluong=new double[100];
+			int count=0;
+			for(NhanVien n: nhanvienDAO.getDSNhanVien()) {
+				if(taikhoanDAO.getTaiKhoanByNhanVien(n.getMaNV())!=null) {
+					soluong[count++]=hopdongDAO.thongKeHopDongTheoNhanVien(n.getMaNV(), 
+							Integer.parseInt(t.getValue().split(" ")[1]), year);
+				}
+			}
+			lineChart.addData(new ModelChart(t.getValue(),
+					soluong));
+		}
+		
+		return lineChart;
+	}
+	
 	public Color getRandomColor() {
 	    Random random = new Random();
 	    int r = random.nextInt(256);
@@ -302,16 +335,34 @@ public class ThongKeFrame extends JFrame implements ActionListener {
 		if(obj.equals(btnThongKeTTD)) {
 			wrapPanel.removeAll();
 			wrapPanel.add(new ThongKeTinTuyenDungFrame(userName).getPanel());
+			wrapPanel.revalidate();
+			wrapPanel.repaint();
 		}
 		else if(obj.equals(btnThongKeHD)) {
 			wrapPanel.removeAll();
 			wrapPanel.add(new ThongKeHopDongFrame(userName).getPanel());
+			wrapPanel.revalidate();
+			wrapPanel.repaint();
 		}
 		else if(obj.equals(btnThongKeNV)) {
 			wrapPanel.removeAll();
 			wrapPanel.add(new ThongKeNhanVienFrame(userName).getPanel());
+			wrapPanel.revalidate();
+			wrapPanel.repaint();
 		}
-		wrapPanel.revalidate();
-		wrapPanel.repaint();
+		else if(obj.equals(yearCombo)) {
+			int year=-1;
+			if(!yearCombo.getSelectedItem().toString().equalsIgnoreCase("Chọn năm")) {
+				year=Integer.parseInt(yearCombo.getSelectedItem().toString());
+				LineChart newLineChart=createPanelLineChart(year);
+				newLineChart.start();
+				
+				centerPanel.removeAll();
+				centerPanel.add(titlePanel, BorderLayout.NORTH);
+				centerPanel.add(newLineChart, BorderLayout.CENTER);
+				centerPanel.revalidate();
+				centerPanel.repaint();
+			}
+		}
 	}
 }
